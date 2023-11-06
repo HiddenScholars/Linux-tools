@@ -46,7 +46,6 @@ fi
 
 function install_nginx() {
     select=''
-    Controls
     $controls install -y wget curl 
     if [ $? -ne 0 ];then
       echo -e "${red}安装失败${plain}" && exit 0
@@ -76,7 +75,6 @@ function install_nginx() {
         exit 0
     fi
     echo $release
-    read -p
     if [ "$release" == "centos" ]; then
         yum update -y
         yum install -y gcc gcc-c++ pcre pcre-devel zlib zlib-devel openssl openssl-devel gd gd-devel
