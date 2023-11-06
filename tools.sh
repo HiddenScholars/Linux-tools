@@ -1,8 +1,8 @@
 #!/bin/bash
 
-red='\033[0;31m'
-green='\033[0;32m'
-yellow='\033[0;33m'
+red='\033[31m'
+green='\033[32m'
+yellow='\033[33m'
 plain='\033[0m'
 
 function Version(){
@@ -32,11 +32,12 @@ fi
 }
 
 
-echo "$green 0.$plain 软件安装."
+echo -e "${green}0. 软件安装.${plain}"
 
-read -p "输入序号【0-0】：" select2
+read -p "输入序号【0】：" select2
 case $select2 in
 0)
 echo -e "check system..."
+Controls
   ;;
 esac
