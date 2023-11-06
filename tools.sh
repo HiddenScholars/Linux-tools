@@ -32,7 +32,7 @@ fi
 }
 
 
-echo "${green}0.${plain} 软件安装."
+echo "$green 0.$plain 软件安装."
 
 read -p "输入序号【0-0】：" select2
 case $select2 in
