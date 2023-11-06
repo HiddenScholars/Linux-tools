@@ -10,7 +10,7 @@ nginx_download_url=https://nginx.org/download/nginx-1.24.0.tar.gz
 download_path=/tools/soft/
 #注：这里为所有安装软件的统一路径，任何软件都会以软件名在这个路径下创建路径安装，路径重复根据date +%Y%m%d进行备份
 install_path=/usr/local/soft/
-time=date +%Y%m%d
+time=$(date +%Y%m%d)
 #软件统一管理账号
 User=my_soft
 Groupadd=my_soft
