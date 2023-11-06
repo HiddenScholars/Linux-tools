@@ -125,9 +125,7 @@ function install_nginx() {
     useradd nginx
 
     tar xvf $download_path/${sorted_files[$select]} -C $install_path/nginx_file/ --strip-components 1
-    cd $install_path/nginx_file/ && ./configure --prefix=${install_path}/nginx/
---user=nginx \
---group=nginx \
+    cd $install_path/nginx_file/ && ./configure --prefix=${install_path}/nginx/ \
 --with-pcre \
 --with-http_ssl_module \
 --with-http_v2_module \
@@ -150,9 +148,7 @@ function install_nginx() {
 --with-file-aio \
 --with-stream \
 --with-mail_ssl_module \
---with-stream_ssl_module \
-make && make install
-    chown -R $User:$Groupadd $install_path/nginx/
+--with-stream_ssl_module && make && make install
     echo "Nginx_Home=$install_path/nginx/" >>/etc/profile
     source /etc/profile
     if [ -f $Nginx_home/sbin/nginx ]; then
