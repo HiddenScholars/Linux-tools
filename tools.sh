@@ -19,32 +19,33 @@ Groupadd=my_soft
 
 #服务配置变量
 #Nginx start
-install_nginx_config="--prefix=${install_path}/soft/nginx/
-                                    --user=$User \
-                                    --group=$Groupadd \
-                                    --with-pcre \
-                                    --with-http_ssl_module \
-                                    --with-http_v2_module \
-                                    --with-http_realip_module \
-                                    --with-http_addition_module \
-                                    --with-http_sub_module \
-                                    --with-http_dav_module \
-                                    --with-http_flv_module \
-                                    --with-http_mp4_module \
-                                    --with-http_gunzip_module \
-                                    --with-http_gzip_static_module \
-                                    --with-http_random_index_module \
-                                    --with-http_secure_link_module \
-                                    --with-http_stub_status_module \
-                                    --with-http_auth_request_module \
-                                    --with-http_image_filter_module \
-                                    --with-http_slice_module \
-                                    --with-mail \
-                                    --with-threads \
-                                    --with-file-aio \
-                                    --with-stream \
-                                    --with-mail_ssl_module \
-                                    --with-stream_ssl_module && make && make install"
+install_nginx_config="
+--prefix=${install_path}/soft/nginx/
+--user=$User \
+--group=$Groupadd \
+--with-pcre \
+--with-http_ssl_module \
+--with-http_v2_module \
+--with-http_realip_module \
+--with-http_addition_module \
+--with-http_sub_module \
+--with-http_dav_module \
+--with-http_flv_module \
+--with-http_mp4_module \
+--with-http_gunzip_module \
+--with-http_gzip_static_module \
+--with-http_random_index_module \
+--with-http_secure_link_module \
+--with-http_stub_status_module \
+--with-http_auth_request_module \
+--with-http_image_filter_module \
+--with-http_slice_module \
+--with-mail \
+--with-threads \
+--with-file-aio \
+--with-stream \
+--with-mail_ssl_module \
+--with-stream_ssl_module && make && make install"
 
 #END
 
@@ -75,7 +76,7 @@ if [ "$release" == "centos" ];then
   controls='yum'
 elif [ "$release" == "ubuntu" ];then
   controls='apt'
-elif [ "$release" == "debain" ]; then
+elif [ "$release" == "debian" ]; then
   controls='apt'
 fi
 
@@ -124,6 +125,7 @@ function install_nginx() {
     else
       useradd $User
       useradd $Groupadd
+      usermod -aG $Groupadd $User
     fi
 
     tar xvf $download_path/${sorted_files[$select]} -C $install_path/nginx_file/ --strip-components 1
