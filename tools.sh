@@ -10,9 +10,6 @@ download_path=/tools/soft/
 #注：这里为所有安装软件的统一路径，任何软件都会以软件名在这个路径下创建路径安装，路径重复根据date +%Y%m%d进行备份
 install_path=/usr/local/soft/
 time=`date +%Y%m%d`
-#软件统一管理账号
-User=my_soft
-Groupadd=my_soft
 
 
 
@@ -20,9 +17,7 @@ Groupadd=my_soft
 #Nginx start
 nginx_download_url=https://nginx.org/download/nginx-1.24.0.tar.gz
 install_nginx_config="
---prefix=${install_path}/nginx/
---user=$User \
---group=$Groupadd \
+--prefix=${install_path}/nginx/ \
 --with-pcre \
 --with-http_ssl_module \
 --with-http_v2_module \
@@ -107,6 +102,8 @@ function install_nginx() {
     for i in ${!sorted_files[@]}; do
       echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
     done
+    echo ""
+    echo ""
     read -p "选择安装包序号：：" select
     if [ -z select ]; then
         echo -e "${red}未选择安装包，退出脚本${plain}"
@@ -153,13 +150,34 @@ function install_nginx() {
     source /etc/profile
     if [ -f $NGINX_HOME/sbin/nginx ]; then
         echo -e "${green}安装完成...${plain}"
+        rm -rf $install_nginx/nginx_file
         else
         echo -e "${red}安装失败...${plain}'"
-        exit
+        exit 0
     fi
 
-}
+echo "[Unit]
+Description=The Nginx HTTP Server
+After=network.target remote-fs.target nss-lookup.target
 
+[Service]
+Type=forking
+PIDFile=$NGINX_HOME/logs/nginx.pid
+ExecStart=$NGINX_HOME/sbin/nginx
+ExecReload=$NGINX_HOME/sbin/nginx -s reload
+ExecStop=$NGINX_HOME/sbin/nginx -s stop
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target" > /usr/lib/systemd/system/nginx.service
+
+chmod +x /usr/lib/systemd/system/nginx.service
+systemctl daemon-reload
+systemctl start nginx.service
+systemctl status nginx.service
+ps -ef | grep nginx &>/dev/null
+[ $? -ne 0 ] && exit 0
+}
 select=''
 function show_Use() {
     select=''
