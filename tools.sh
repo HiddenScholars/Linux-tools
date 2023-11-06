@@ -151,7 +151,7 @@ function install_nginx() {
 --with-stream_ssl_module && make && make install
     echo "export NGINX_HOME=$install_path/nginx/" >>/etc/profile
     source /etc/profile
-    if [ -f $Nginx_home/sbin/nginx ]; then
+    if [ -f $NGINX_HOME/sbin/nginx ]; then
         echo -e "${green}安装完成...${plain}"
         else
         echo -e "${red}安装失败...${plain}'"
