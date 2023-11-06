@@ -88,9 +88,9 @@ function install_nginx() {
     if [ $? -ne 0 ];then
       echo -e "${red}安装失败${plain}" && exit 0
     fi
-    [ ! -d "$download_path" ] && echo "$download_path不存在，自动创建" && mkdir -p $download_path
-    wget -P $download_path/ $nginx_download_url
-    cd $download_path
+    [ ! -d "$download_path/nginx/" ] && echo "$download_path/nginx不存在，自动创建" && mkdir -p $download_path/nginx
+    wget -P $download_path/nginx/ $nginx_download_url
+    cd $download_path/nginx/
     # 定义一个空数组用于存储符合条件的文件
     files=()
 
@@ -124,7 +124,7 @@ function install_nginx() {
     mkdir -p $install_path/nginx_file/
     useradd nginx
 
-    tar xvf $download_path/${sorted_files[$select]} -C $install_path/nginx_file/ --strip-components 1
+    tar xvf $download_path/nginx/${sorted_files[$select]} -C $install_path/nginx_file/ --strip-components 1
     cd $install_path/nginx_file/ && ./configure --prefix=${install_path}/nginx/ \
 --with-pcre \
 --with-http_ssl_module \
@@ -149,7 +149,7 @@ function install_nginx() {
 --with-stream \
 --with-mail_ssl_module \
 --with-stream_ssl_module && make && make install
-    echo "export Nginx_Home=$install_path/nginx/" >>/etc/profile
+    echo "export NGINX_HOME=$install_path/nginx/" >>/etc/profile
     source /etc/profile
     if [ -f $Nginx_home/sbin/nginx ]; then
         echo -e "${green}安装完成...${plain}"
