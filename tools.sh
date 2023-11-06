@@ -5,7 +5,7 @@ green='\033[32m'
 yellow='\033[33m'
 plain='\033[0m'
 
-#常维护变量
+#统一配置变量，不清楚原理保持默认
 nginx_download_url=https://nginx.org/download/nginx-1.24.0.tar.gz
 download_path=/tools/soft/
 #注：这里为所有安装软件的统一路径，任何软件都会以软件名在这个路径下创建路径安装，路径重复根据date +%Y%m%d进行备份
@@ -14,6 +14,41 @@ time=`date +%Y%m%d`
 #软件统一管理账号
 User=my_soft
 Groupadd=my_soft
+
+
+
+#服务配置变量
+#Nginx start
+install_nginx_config="--prefix=${install_path}/soft/nginx/
+                                    --user=$User \
+                                    --group=$Groupadd \
+                                    --with-pcre \
+                                    --with-http_ssl_module \
+                                    --with-http_v2_module \
+                                    --with-http_realip_module \
+                                    --with-http_addition_module \
+                                    --with-http_sub_module \
+                                    --with-http_dav_module \
+                                    --with-http_flv_module \
+                                    --with-http_mp4_module \
+                                    --with-http_gunzip_module \
+                                    --with-http_gzip_static_module \
+                                    --with-http_random_index_module \
+                                    --with-http_secure_link_module \
+                                    --with-http_stub_status_module \
+                                    --with-http_auth_request_module \
+                                    --with-http_image_filter_module \
+                                    --with-http_slice_module \
+                                    --with-mail \
+                                    --with-threads \
+                                    --with-file-aio \
+                                    --with-stream \
+                                    --with-mail_ssl_module \
+                                    --with-stream_ssl_module && make && make install"
+
+#END
+
+
 
 
 #check systemctl version
@@ -87,35 +122,17 @@ function install_nginx() {
     fi
     [ -f $install_path/nginx/ ] && mv $install_path/nginx/ $install_path/nginx$time
     mkdir -p $install_path/nginx_file/
+    if [ "$User" == "$Groupadd" ]; then
+      useradd $User
+    else
+      useradd $User
+      useradd $Groupadd
+    fi
+
     tar xvf $download_path/${sorted_files[$select]} -C $install_path/nginx_file/ --strip-components 1
-    cd $install_path/nginx_file/ && ./configure --prefix=${install_path}/soft/nginx/
-                                    --user=$User \
-                                    --group=$Groupadd \
-                                    --with-pcre \
-                                    --with-http_ssl_module \
-                                    --with-http_v2_module \
-                                    --with-http_realip_module \
-                                    --with-http_addition_module \
-                                    --with-http_sub_module \
-                                    --with-http_dav_module \
-                                    --with-http_flv_module \
-                                    --with-http_mp4_module \
-                                    --with-http_gunzip_module \
-                                    --with-http_gzip_static_module \
-                                    --with-http_random_index_module \
-                                    --with-http_secure_link_module \
-                                    --with-http_stub_status_module \
-                                    --with-http_auth_request_module \
-                                    --with-http_image_filter_module \
-                                    --with-http_slice_module \
-                                    --with-mail \
-                                    --with-threads \
-                                    --with-file-aio \
-                                    --with-stream \
-                                    --with-mail_ssl_module \
-                                    --with-stream_ssl_module && make && make install
+    cd $install_path/nginx_file/ && ./configure $install_nginx_config
     chmod -R $User:$Groupadd $install_path/nginx/
-    echo "Nginx_Home=$install_path/nginx/" >/etc/profile
+    echo "Nginx_Home=$install_path/nginx/" >>/etc/profile
     source /etc/profile
     if [ -f $Nginx_home/sbin/nginx ]; then
         echo -e "${green}安装完成...${plain}"
