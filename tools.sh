@@ -16,34 +16,8 @@ time=`date +%Y%m%d`
 #服务配置变量
 #Nginx start
 nginx_download_url=https://nginx.org/download/nginx-1.24.0.tar.gz
-install_nginx_config="
---prefix=${install_path}/nginx/ \
---with-pcre \
---with-http_ssl_module \
---with-http_v2_module \
---with-http_realip_module \
---with-http_addition_module \
---with-http_sub_module \
---with-http_dav_module \
---with-http_flv_module \
---with-http_mp4_module \
---with-http_gunzip_module \
---with-http_gzip_static_module \
---with-http_random_index_module \
---with-http_secure_link_module \
---with-http_stub_status_module \
---with-http_auth_request_module \
---with-http_image_filter_module \
---with-http_slice_module \
---with-mail \
---with-threads \
---with-file-aio \
---with-stream \
---with-mail_ssl_module \
---with-stream_ssl_module \
-make \
-make install"
-
+#程序用户，无法登陆
+user=nginx
 #END
 
 
@@ -105,10 +79,11 @@ function install_nginx() {
     echo ""
     echo ""
     read -p "选择安装包序号：：" select
-    if [ -z select ]; then
+    if [ -z $select ]; then
         echo -e "${red}未选择安装包，退出脚本${plain}"
         exit 0
     fi
+    [ ! -f $download_path/nginx/${sorted_files[$select]} ] && echo -e "${red}文件不存在${plain}" && exit 0
     echo $release
     if [ "$release" == "centos" ]; then
         yum install -y gcc gcc-c++ pcre pcre-devel zlib zlib-devel openssl openssl-devel gd gd-devel
@@ -118,39 +93,42 @@ function install_nginx() {
         apt install -y gcc g++ libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev
     fi
     [ -f $install_path/nginx/ ] && mv $install_path/nginx/ $install_path/nginx$time
-    mkdir -p $install_path/nginx_file/
-    useradd nginx
-
+    mkdir -p $install_path/nginx_file
     tar xvf $download_path/nginx/${sorted_files[$select]} -C $install_path/nginx_file/ --strip-components 1
     cd $install_path/nginx_file/ && ./configure --prefix=${install_path}/nginx/ \
---with-pcre \
---with-http_ssl_module \
---with-http_v2_module \
---with-http_realip_module \
---with-http_addition_module \
---with-http_sub_module \
---with-http_dav_module \
---with-http_flv_module \
---with-http_mp4_module \
---with-http_gunzip_module \
---with-http_gzip_static_module \
---with-http_random_index_module \
---with-http_secure_link_module \
---with-http_stub_status_module \
---with-http_auth_request_module \
---with-http_image_filter_module \
---with-http_slice_module \
---with-mail \
---with-threads \
---with-file-aio \
---with-stream \
---with-mail_ssl_module \
---with-stream_ssl_module && make && make install
+                                                --with-pcre \
+                                                --with-http_ssl_module \
+                                                --with-http_v2_module \
+                                                --with-http_realip_module \
+                                                --with-http_addition_module \
+                                                --with-http_sub_module \
+                                                --with-http_dav_module \
+                                                --with-http_flv_module \
+                                                --with-http_mp4_module \
+                                                --with-http_gunzip_module \
+                                                --with-http_gzip_static_module \
+                                                --with-http_random_index_module \
+                                                --with-http_secure_link_module \
+                                                --with-http_stub_status_module \
+                                                --with-http_auth_request_module \
+                                                --with-http_image_filter_module \
+                                                --with-http_slice_module \
+                                                --with-mail \
+                                                --with-threads \
+                                                --with-file-aio \
+                                                --with-stream \
+                                                --with-mail_ssl_module \
+                                                --with-stream_ssl_module && make && make install
+    source /etc/profile
+    if [ -z $NGINX_HOME ];then
     echo "export NGINX_HOME=$install_path/nginx/" >>/etc/profile
     source /etc/profile
+    fi
+    useradd -s /sbin/nologin $user
+    chown -R $user:$user $NGINX_HOME
     if [ -f $NGINX_HOME/sbin/nginx ]; then
         echo -e "${green}安装完成...${plain}"
-        rm -rf $install_nginx/nginx_file
+        cd $NGINX_HOME && cd .. && rm -rf nginx_file
         else
         echo -e "${red}安装失败...${plain}'"
         exit 0
@@ -174,9 +152,30 @@ WantedBy=multi-user.target" > /usr/lib/systemd/system/nginx.service
 chmod +x /usr/lib/systemd/system/nginx.service
 systemctl daemon-reload
 systemctl start nginx.service
+systemctl enable nginx.service
 systemctl status nginx.service
 ps -ef | grep nginx &>/dev/null
 [ $? -ne 0 ] && exit 0
+
+echo -e "设置防火墙..."
+if [ `rpm -qa | grep firewalld | wc -l ` -ne 0 ]; then
+    if [ `ps -ef | grep firewalld | wc -l ` -ne 0 ];then
+    firewall-cmd --permanent --add-port=80/tcp
+    firewall-cmd --permanent --add-port=443/tcp
+    firewall-cmd --reload
+    else
+   [ "$(grep '<port protocol=\"tcp\" port=\"80\"/>' /etc/firewalld/zones/public.xml | wc -l)" -eq 0 ] && sed -i '$!N;$!P;$!D;$s|\(.*\)\n\(.*\)|\1\n<port protocol="tcp" port="80"/>\n\2|' /etc/firewalld/zones/public.xml
+   [ "$(grep '<port protocol=\"tcp\" port=\"443\"/>' /etc/firewalld/zones/public.xml | wc -l)" -eq 0 ] && sed -i '$!N;$!P;$!D;$s|\(.*\)\n\(.*\)|\1\n<port protocol="tcp" port="443"/>\n\2|' /etc/firewalld/zones/public.xml
+    fi
+elif [ `rpm -qa | grep ufw | wc -l ` -ne 0 ]; then
+    ufw allow 80/tcp
+    ufw allow 443/tcp
+    ufw reload
+else
+  echo -e "${red}无法识别，防火墙${plain}"
+fi
+
+
 }
 select=''
 function show_Use() {
@@ -216,6 +215,3 @@ function show_soft() {
 while [ true ]; do
 show_Use
 done
-
-
-
