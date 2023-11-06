@@ -51,7 +51,7 @@ function install_nginx() {
     if [ $? -ne 0 ];then
       echo -e "${red}安装失败${plain}" && exit 0
     fi
-    [ ! -f "$download_path" ] && echo "$download_path不存在，自动创建" && mkdir $download_path
+    [ ! -f "$download_path" ] && echo "$download_path不存在，自动创建" && mkdir -p $download_path
     wget -P $download_path/ $nginx_download_url
     num=0
     for i in ${download_path[@]}
