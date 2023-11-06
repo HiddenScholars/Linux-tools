@@ -68,16 +68,15 @@ function install_nginx() {
     # 对数组进行排序，并打印文件名和数字序号
     IFS=$'\n' sorted_files=($(sort <<<"${files[*]}"))
     for i in ${!sorted_files[@]}; do
-      echo "${green}$((i)):${sorted_files[$i]}${plain}"
+      echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
     done
     read -p "选择安装包序号：：" select
     if [ -z select ]; then
         echo -e "${red}未选择安装包，退出脚本${plain}"
         exit 0
     fi
-    [ -f $install_path/nginx/ ] && mv $install_path/nginx/ $install_path/nginx$time
-    mkdir -p $install_path/nginx_file/
-    tar xvf $download_path/${sorted_files[$select]} -C $install_path/nginx_file/ --strip-components 1
+    echo $release
+    read -p
     if [ "$release" == "centos" ]; then
         yum update -y
         yum install -y gcc gcc-c++ pcre pcre-devel zlib zlib-devel openssl openssl-devel gd gd-devel
@@ -88,6 +87,9 @@ function install_nginx() {
         apt update -y && apt upgrade -y
         apt install -y gcc g++ libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev
     fi
+    [ -f $install_path/nginx/ ] && mv $install_path/nginx/ $install_path/nginx$time
+    mkdir -p $install_path/nginx_file/
+    tar xvf $download_path/${sorted_files[$select]} -C $install_path/nginx_file/ --strip-components 1
     cd $install_path/nginx_file/ && ./configure --prefix=${install_path}/soft/nginx/
                                     --user=$User \
                                     --group=$Groupadd \
