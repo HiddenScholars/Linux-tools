@@ -6,7 +6,6 @@ yellow='\033[33m'
 plain='\033[0m'
 
 #统一配置变量，不清楚原理保持默认
-nginx_download_url=https://nginx.org/download/nginx-1.24.0.tar.gz
 download_path=/tools/soft/
 #注：这里为所有安装软件的统一路径，任何软件都会以软件名在这个路径下创建路径安装，路径重复根据date +%Y%m%d进行备份
 install_path=/usr/local/soft/
@@ -19,6 +18,7 @@ Groupadd=my_soft
 
 #服务配置变量
 #Nginx start
+nginx_download_url=https://nginx.org/download/nginx-1.24.0.tar.gz
 install_nginx_config="
 --prefix=${install_path}/soft/nginx/
 --user=$User \
@@ -45,7 +45,9 @@ install_nginx_config="
 --with-file-aio \
 --with-stream \
 --with-mail_ssl_module \
---with-stream_ssl_module && make && make install"
+--with-stream_ssl_module \
+make \
+make install"
 
 #END
 
@@ -130,7 +132,7 @@ function install_nginx() {
 
     tar xvf $download_path/${sorted_files[$select]} -C $install_path/nginx_file/ --strip-components 1
     cd $install_path/nginx_file/ && ./configure $install_nginx_config
-    chmod -R $User:$Groupadd $install_path/nginx/
+    chown -R $User:$Groupadd $install_path/nginx/
     echo "Nginx_Home=$install_path/nginx/" >>/etc/profile
     source /etc/profile
     if [ -f $Nginx_home/sbin/nginx ]; then
