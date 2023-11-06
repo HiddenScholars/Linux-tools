@@ -167,7 +167,7 @@ if [ `rpm -qa | grep firewalld | wc -l ` -ne 0 ]; then
    [ "$(grep '<port protocol=\"tcp\" port=\"80\"/>' /etc/firewalld/zones/public.xml | wc -l)" -eq 0 ] && sed -i '$!N;$!P;$!D;$s|\(.*\)\n\(.*\)|\1\n<port protocol="tcp" port="80"/>\n\2|' /etc/firewalld/zones/public.xml
    [ "$(grep '<port protocol=\"tcp\" port=\"443\"/>' /etc/firewalld/zones/public.xml | wc -l)" -eq 0 ] && sed -i '$!N;$!P;$!D;$s|\(.*\)\n\(.*\)|\1\n<port protocol="tcp" port="443"/>\n\2|' /etc/firewalld/zones/public.xml
     fi
-elif [ `rpm -qa | grep ufw | wc -l ` -ne 0 ]; then
+elif [ `dpkg --get-selections | grep nginx | wc -l` -ne 0 ]; then
     ufw allow 80/tcp
     ufw allow 443/tcp
     ufw reload
