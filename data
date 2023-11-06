@@ -1,0 +1,144 @@
+#!/bin/bash
+
+
+#Linux发行版本获取__定义函数：Version
+
+function Version(){
+serverVersion=`awk -F= '/^NAME/{print $2}' /etc/os-release`
+if [  "$serverVersion" == '"CentOS Linux"' ];then
+echo "CentOS"
+elif [ "$serverVersion" == '"Ubuntu"' ];then
+echo "Ubuntu"
+else
+echo $serverVersion
+fi
+}
+
+#获取服务器本机ip与公网ip__定义函数：Host_ip
+
+function Host_ip() {
+ipaddr=(`hostname -I`)
+for i in ${ipaddr[@]}
+do
+echo $i
+done
+ping ip.sb -c 1 &>>/dev/null
+if [ $? -eq 0 ];then
+curl ip.sb   #//公网ip查询通过第三方网站;
+fi
+}
+
+#获取服务器配置信息主要作用于巡检__定义函数：Check_host system cpu mem disk network safety
+
+function Check_host() {
+
+case $1 in
+
+system)
+echo "服务器系统时间：systemTime：`date +%F`"
+echo -e "****************系统检查****************"
+echo "系统：`uname -a | awk '{print $NF}'`"
+echo "内核：`uname -r`"
+if [ `Version` == "CentOS" ];then
+echo "发行版本：`cat /etc/redhat-release`"
+elif [ `Version` == "Ubuntu" ];then
+source /etc/os-release
+echo "发行版本：$PRETTY_NAME"
+else
+cat /etc/os-release
+fi
+echo "主机名：`hostname`"
+echo "语言/编码：`echo $LANG`"
+echo "启动时间：`who -b | awk '{print $3,$4}'`"
+echo "当前时间：`date +%F-%T`"
+echo "服务器运行天数：`uptime | awk '{print $3}' | sed 's/,//g'`"
+if [ `Version` == CentOS ];then
+echo "SELinux：`/usr/sbin/sestatus | grep 'SELinux status:' | awk '{print $3}'`"
+fi
+;;
+
+cpu)
+echo -e "****************CPU检查 ****************"
+echo "物理CPU个数: `cat /proc/cpuinfo | grep "physical id" | awk '{print $4}' | sort | uniq | wc -l`"
+echo "逻辑CPU个数: `cat /proc/cpuinfo | grep "processor" | awk '{print $3}' | sort | uniq | wc -l`"
+echo "每CPU核心数: `cat /proc/cpuinfo | grep "cores" | awk "NR==1" | awk '{print $4}'`"
+echo "CPU型号: `cat /proc/cpuinfo | grep "model name" | awk -F":" '{print $2}'| awk "NR==1"`"
+echo "CPU架构: `uname -m`"
+;;
+
+mem)
+echo -e "****************内存检查 ****************"
+echo -e "总共内存total：`free -mh | awk "NR==2"| awk '{print $2}'`"\
+"\t 使用内存used：`free -mh | awk "NR==2"| awk '{print $3}'` "\
+"\t 剩余内存free：`free -mh | awk "NR==2"| awk '{print $4}'`"\
+"\t 内存使用%：`free -m | sed -n '2p' | awk '{print $3/$2*100"%"}'`"
+;;
+
+disk)
+echo -e "****************硬盘检查 ****************"
+temp=`df -PH | wc -l`
+let temp++
+for((i=2;i<temp;i++))
+do
+echo  -e "磁盘名称 name： `df -hT | awk "NR==$i" | awk '{print $7}'`"\
+"\t磁盘总量 Size： `df -hT | awk "NR==$i" | awk '{print $3}'`"\
+"\t磁盘已用 Use%： `df -hT | awk "NR==$i" | awk '{print $6}'`"\
+"\t磁盘剩余 Avail：`df -hT | awk "NR==$i" | awk '{print $5}'`"
+echo ""
+done
+;;
+
+network)
+echo -e "****************网络检查 ****************"
+echo  "IP："
+ipaddr=(`hostname -I`)
+for i in ${ipaddr[@]}
+do
+echo $i
+done
+ping ip.sb -c 1 &>>/dev/null
+if [ $? -eq 0 ];then
+curl ip.sb   #//公网ip查询通过第三方网站;
+fi
+echo "网关：
+`ip route | awk 'NR==1'| awk '{print $3}'`"
+echo "DNS:
+`cat /etc/resolv.conf | grep "nameserver" | awk '{print $2}'`"
+ping `ip route | awk 'NR==1'| awk '{print $3}'` -c 4 &>>/dev/null
+if [ $? -eq 0 ];then
+    echo "网关连接：成功"
+else
+    echo "网关连接：失败"
+fi
+ping -c 4 www.baidu.com &>> /dev/null
+if [ $? -eq 0 ];then
+    echo "外网连接：成功"
+else
+    echo "外网连接：失败"
+fi
+;;
+
+safety)
+echo -e "****************安全检查****************"
+if [ `whoami` != root ];then
+echo -e "需要使用root账号登录"
+exit 1
+fi
+echo "当前连接服务器的账号信息：
+`who`"
+echo "近期服务器登录记录：
+`last`"
+echo "服务器本地可用于登录的账号："\
+`cat /etc/passwd|grep -v nologin|grep -v sync|grep -v halt|grep -v shutdown|awk -F":" '{ print $1 }'|more`
+echo "服务器本地特权用户："\
+`awk -F: '$3==0 {print $1}' /etc/passwd`
+echo "服务器本地没有设置密码的用户："\
+`awk -F: 'length($2)==0 {print $1}' /etc/shadow`
+
+
+;;
+
+*)
+echo "参数错误，如有问题请与开发者联系"
+esac
+}
