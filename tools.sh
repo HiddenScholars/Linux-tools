@@ -20,7 +20,7 @@ Groupadd=my_soft
 #Nginx start
 nginx_download_url=https://nginx.org/download/nginx-1.24.0.tar.gz
 install_nginx_config="
---prefix=${install_path}/soft/nginx/
+--prefix=${install_path}/nginx/
 --user=$User \
 --group=$Groupadd \
 --with-pcre \
