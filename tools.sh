@@ -126,8 +126,8 @@ function install_nginx() {
 
     tar xvf $download_path/${sorted_files[$select]} -C $install_path/nginx_file/ --strip-components 1
     cd $install_path/nginx_file/ && ./configure --prefix=${install_path}/nginx/
---user=$User \
---group=$Groupadd \
+--user=nginx \
+--group=nginx \
 --with-pcre \
 --with-http_ssl_module \
 --with-http_v2_module \
