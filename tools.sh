@@ -51,30 +51,43 @@ function install_nginx() {
     if [ $? -ne 0 ];then
       echo -e "${red}安装失败${plain}" && exit 0
     fi
-    [ ! -f "$download_path" ] && echo "$download_path不存在，自动创建" && mkdir -p $download_path
+    [ ! -d "$download_path" ] && echo "$download_path不存在，自动创建" && mkdir -p $download_path
     wget -P $download_path/ $nginx_download_url
-    num=0
-    for i in ${download_path[@]}
-    do
-    echo "$num：$i"
-    let num++
+    cd $download_path
+    # 定义一个空数组用于存储符合条件的文件
+    files=()
+
+    # 获取目录下所有文件，并将符合条件的文件添加到数组中
+    for file in *; do
+      # 过滤文件的条件，可以根据您的需求进行修改
+      if [[ ! "$file" =~ ^\..* ]]; then
+        files+=("$file")
+      fi
     done
-    read -p "选择安装包：" select
+
+    # 对数组进行排序，并打印文件名和数字序号
+    IFS=$'\n' sorted_files=($(sort <<<"${files[*]}"))
+    for i in ${!sorted_files[@]}; do
+      echo "${green}$((i)):${sorted_files[$i]}${plain}"
+    done
+    read -p "选择安装包序号：：" select
     if [ -z select ]; then
-        echo "未选择安装包，退出脚本"
+        echo -e "${red}未选择安装包，退出脚本${plain}"
         exit 0
     fi
     [ -f $install_path/nginx/ ] && mv $install_path/nginx/ $install_path/nginx$time
-    mkdir $install_path/nginx_file
-    tar xvf "${download_path[select]}" -C $install_path/nginx_file/ --strip-components 1
+    mkdir -p $install_path/nginx_file/
+    tar xvf $download_path/${sorted_files[$select]} -C $install_path/nginx_file/ --strip-components 1
     if [ "$release" == "centos" ]; then
+        yum update -y
         yum install -y gcc gcc-c++ pcre pcre-devel zlib zlib-devel openssl openssl-devel gd gd-devel
     elif [ "$release" == "ubuntu" ]; then
         apt install -y gcc g++ libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev
     else
+        apt update -y && apt upgrade -y
         apt install -y gcc g++ libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev
     fi
-    cd $install_path/nginx_file/ && ./configure --prefix=${install_path}/soft/nginx/  \
+    cd $install_path/nginx_file/ && ./configure --prefix=${install_path}/soft/nginx/
                                     --user=$User \
                                     --group=$Groupadd \
                                     --with-pcre \
@@ -102,11 +115,11 @@ function install_nginx() {
                                     --with-stream_ssl_module && make && make install
     chmod -R $User:$Groupadd $install_path/nginx/
     echo "Nginx_Home=$install_path/nginx/" >/etc/profile
-    source /etc/profile/
+    source /etc/profile
     if [ -f $Nginx_home/sbin/nginx ]; then
-        echo "${green}安装完成...${plain}"
+        echo -e "${green}安装完成...${plain}"
         else
-        echo "${red}安装失败...${plain}'"
+        echo -e "${red}安装失败...${plain}'"
         exit
     fi
 
