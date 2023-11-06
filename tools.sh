@@ -82,6 +82,7 @@ function install_nginx() {
         yum update -y
         yum install -y gcc gcc-c++ pcre pcre-devel zlib zlib-devel openssl openssl-devel gd gd-devel
     elif [ "$release" == "ubuntu" ]; then
+        apt update -y && apt upgrade -y
         apt install -y gcc g++ libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev
     else
         apt update -y && apt upgrade -y
