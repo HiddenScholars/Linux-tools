@@ -151,8 +151,7 @@ function install_nginx() {
 --with-stream \
 --with-mail_ssl_module \
 --with-stream_ssl_module \
-make \
-make install"
+make && make install
     chown -R $User:$Groupadd $install_path/nginx/
     echo "Nginx_Home=$install_path/nginx/" >>/etc/profile
     source /etc/profile
