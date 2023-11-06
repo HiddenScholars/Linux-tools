@@ -211,7 +211,7 @@ function show_soft() {
     esac
 }
 
-
+[ `whoami` != root ] && echo -e "${red}需要使用root权限${plain}" && exit 1
 while [ true ]; do
 show_Use
 done
