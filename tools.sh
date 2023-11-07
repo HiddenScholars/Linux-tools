@@ -327,7 +327,7 @@ function show_Use() {
     select=''
     echo -e "${green}0. ${plain}退出脚本."
     echo -e "${green}1. ${plain}软件安装."
-    echo -e "${green}2. ${plain}acme自动化申请和延期ssl证书（搭配cloudflare）."
+    echo -e "${green}2. ${plain}acme脚本(搭配cloudflare)."
     read -p   "输入序号【0-1】：" select
     case $select in
     0)
