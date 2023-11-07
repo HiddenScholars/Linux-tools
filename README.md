@@ -24,13 +24,13 @@ bash <(curl -Ls https://raw.githubusercontent.com/LGF-LGF/tools/main/tools.sh)
 
 
 
-| 函数                 | 调用参数                                                     | 作用                                     | 备注               |
-| -------------------- | ------------------------------------------------------------ | ---------------------------------------- | ------------------ |
-| check_install_system | 使用前需要设置参数：<br/>#process=() 检查此数组中的进程 <br/> #test_server_port=() 检查此数组中的端口<br/>使用哪个就在哪个数组中放入数据后调用check_install_system | 检测要安装服务器的端口和进程是否已经存在 |                    |
-| show_Use             | 主菜单                                                       | 菜单                                     |                    |
-| show_soft            | 软件安装菜单                                                 | 菜单                                     |                    |
-| install_nginx        | Nginx安装                                                    | 安装Nginx中间件                          |                    |
-| setting_ssl          |                                                              | 通过acme自动化部署和续签ssl证书          | 搭配cloudflare使用 |
+| 函数                 | 调用参数                                                     | 作用                                     | 备注                                                         |
+| -------------------- | ------------------------------------------------------------ | ---------------------------------------- | ------------------------------------------------------------ |
+| check_install_system | 使用前需要设置参数：<br/>#process=() 检查此数组中的进程 <br/> #test_server_port=() 检查此数组中的端口<br/>使用哪个就在哪个数组中放入数据后调用check_install_system | 检测要安装服务器的端口和进程是否已经存在 |                                                              |
+| show_Use             | 主菜单                                                       | 菜单                                     |                                                              |
+| show_soft            | 软件安装菜单                                                 | 菜单                                     |                                                              |
+| install_nginx        | Nginx安装                                                    | 安装Nginx中间件                          |                                                              |
+| setting_ssl          |                                                              | 通过acme自动化部署和续签ssl证书          | 搭配cloudflare使用关于如何使用acme脚本参考我的博客[点击前往](https://blog.blogscloud.top/doc_/2694138457) |
 
 
 
