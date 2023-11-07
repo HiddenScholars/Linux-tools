@@ -91,7 +91,7 @@ function check_install_system() {
         else
           select=''
           read -p "是否继续安装，继续安装可能会无法启动（y/n）:" select
-            if [ ${select} != y ]; then
+            if [ $select != 'y' ]; then
             exit 1
             fi
         fi
