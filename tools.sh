@@ -207,21 +207,23 @@ ps -ef | grep nginx &>/dev/null
 [ $? -ne 0 ] && exit 0
 
 echo -e "设置防火墙..."
-if [ `rpm -qa | grep firewalld | wc -l ` -ne 0 ]; then
+if [ ${release} == "centos" ]; then
     if [ `ps -ef | grep firewalld | wc -l ` -ne 0 ];then
-    firewall-cmd --permanent --add-port=80/tcp
-    firewall-cmd --permanent --add-port=443/tcp
-    firewall-cmd --reload
+        firewall-cmd --permanent --add-port=80/tcp
+        firewall-cmd --permanent --add-port=443/tcp
+        firewall-cmd --reload
     else
-   [ "$(grep '<port protocol=\"tcp\" port=\"80\"/>' /etc/firewalld/zones/public.xml | wc -l)" -eq 0 ] && sed -i '$!N;$!P;$!D;$s|\(.*\)\n\(.*\)|\1\n<port protocol="tcp" port="80"/>\n\2|' /etc/firewalld/zones/public.xml
-   [ "$(grep '<port protocol=\"tcp\" port=\"443\"/>' /etc/firewalld/zones/public.xml | wc -l)" -eq 0 ] && sed -i '$!N;$!P;$!D;$s|\(.*\)\n\(.*\)|\1\n<port protocol="tcp" port="443"/>\n\2|' /etc/firewalld/zones/public.xml
+       [ "$(grep '<port protocol=\"tcp\" port=\"80\"/>' /etc/firewalld/zones/public.xml | wc -l)" -eq 0 ] && sed -i '$!N;$!P;$!D;$s|\(.*\)\n\(.*\)|\1\n<port protocol="tcp" port="80"/>\n\2|' /etc/firewalld/zones/public.xml
+       [ "$(grep '<port protocol=\"tcp\" port=\"443\"/>' /etc/firewalld/zones/public.xml | wc -l)" -eq 0 ] && sed -i '$!N;$!P;$!D;$s|\(.*\)\n\(.*\)|\1\n<port protocol="tcp" port="443"/>\n\2|' /etc/firewalld/zones/public.xml
+     fi
+elif [ ${release} == "ubuntu" ]
+    if [ `dpkg --get-selections | grep ufw | wc -l` -ne 0 ]; then
+        ufw allow 80/tcp
+        ufw allow 443/tcp
+        ufw reload
     fi
-elif [ `dpkg --get-selections | grep nginx | wc -l` -ne 0 ]; then
-    ufw allow 80/tcp
-    ufw allow 443/tcp
-    ufw reload
 else
-  echo -e "${red}无法识别，防火墙${plain}"
+    echo -e "${red}无法识别的防火墙${plain}"
 fi
 
 
