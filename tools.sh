@@ -18,7 +18,7 @@ time=`date +%Y%m%d`
 #Nginx start
 nginx_download_url=https://nginx.org/download/nginx-1.24.0.tar.gz
 #程序用户，无法登陆
-user=nginx
+nginx_user=nginx
 #END
 
 #check systemctl version
@@ -46,6 +46,8 @@ if [ "$release" == "centos" ];then
 elif [ "$release" == "ubuntu" ];then
   controls='apt'
 elif [ "$release" == "debian" ]; then
+  controls='apt'
+else
   controls='apt'
 fi
 
@@ -167,8 +169,12 @@ function install_nginx() {
     echo "export NGINX_HOME=$install_path/nginx/" >>/etc/profile
     source /etc/profile
     fi
-    useradd -s /sbin/nologin $user
-    chown -R $user:$user $NGINX_HOME
+    if [ ! -z $nginx_user ]; then
+    id $nginx_user &>/dev/null
+    [ $? -ne 0 ] && useradd -s /sbin/nologin $nginx_user
+    chown -R $nginx_user:$nginx_user $NGINX_HOME
+    fi
+
     if [ -f $NGINX_HOME/sbin/nginx ]; then
         echo -e "${green}安装完成...${plain}"
         cd $NGINX_HOME && cd .. && rm -rf nginx_file
