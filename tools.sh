@@ -325,10 +325,15 @@ function setting_ssl() {
 select=''
 function show_Use() {
     select=''
+    echo -e "\n\n"
+    echo -e "***********************************************"
+    echo -e "**            欢迎使用tools脚本菜单              **"
+    echo -e "***********************************************"
     echo -e "${green}0. ${plain}退出脚本."
     echo -e "${green}1. ${plain}软件安装."
     echo -e "${green}2. ${plain}acme脚本(搭配cloudflare)."
-    read -p   "输入序号【0-1】：" select
+    echo -e "***********************************************"
+    read -p "输入序号【0-2】：" select
     case $select in
     0)
     exit 1
@@ -358,8 +363,13 @@ function show_soft() {
       else
       echo -e "${red}变量初始化失败${plain}"
     fi
+    echo -e "\n"
+    echo "***********************************************"
+    echo "**       欢迎使用tools脚本菜单                   **"
+    echo "***********************************************"
     echo -e "${green}0. ${plain}返回主页面."
     echo -e "${green}1. ${plain}Nginx."
+    echo "***********************************************"
     read -p   "输入序号【0-1】：" select
     case $select in
     0)
