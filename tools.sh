@@ -336,7 +336,7 @@ function show_Use() {
     1)
     show_soft
       ;;
-    1)
+    2)
        setting_ssl
        ;;
     *)
