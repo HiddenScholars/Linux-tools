@@ -98,6 +98,8 @@ function check_install_system() {
 } #check_install_nginx_system
 function install_nginx() {
     select=''
+    download_select=''
+    if_select=''
     $controls install -y wget curl net-tools
     if [ $? -ne 0 ];then
       echo -e "${red}安装失败${plain}" && exit 0
@@ -123,8 +125,31 @@ function install_nginx() {
             echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
           done
       read -p  "文件夹中存在文件是否继续下载（y/n）：" download_select
+
+      if [ "$download_select" == "y" ]; then
+            wget -P $download_path/nginx/ $nginx_download_url
+            cd $download_path/nginx/
+            # 定义一个空数组用于存储符合条件的文件
+            files=()
+
+            # 获取目录下所有文件，并将符合条件的文件添加到数组中
+            for file in *; do
+              # 过滤文件的条件，可以根据您的需求进行修改
+              if [[ ! "$file" =~ ^\..* ]]; then
+                files+=("$file")
+              fi
+            done
+
+            # 对数组进行排序，并打印文件名和数字序号
+            IFS=$'\n' sorted_files=($(sort <<<"${files[*]}"))
+            for i in ${!sorted_files[@]}; do
+              echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
+            done
+            #标记执行过下载安装包命令
+            if_select=true
+      fi
     fi
-    if [ "$download_select" == "y" ]; then
+    if [ "$if_select" != "true" ]; then
       wget -P $download_path/nginx/ $nginx_download_url
       cd $download_path/nginx/
       # 定义一个空数组用于存储符合条件的文件
@@ -143,25 +168,6 @@ function install_nginx() {
       for i in ${!sorted_files[@]}; do
         echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
       done
-    else
-      echo -e "${red}跳过下载${plain}"
-      cd $download_path/nginx/
-            # 定义一个空数组用于存储符合条件的文件
-            files=()
-
-            # 获取目录下所有文件，并将符合条件的文件添加到数组中
-            for file in *; do
-              # 过滤文件的条件，可以根据您的需求进行修改
-              if [[ ! "$file" =~ ^\..* ]]; then
-                files+=("$file")
-              fi
-            done
-
-            # 对数组进行排序，并打印文件名和数字序号
-            IFS=$'\n' sorted_files=($(sort <<<"${files[*]}"))
-            for i in ${!sorted_files[@]}; do
-              echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
-            done
     fi
 
     echo ""
