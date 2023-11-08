@@ -279,7 +279,7 @@ elif [ ${release} == "ubuntu" ];then
 else
     echo -e "${red}无法识别的防火墙${plain}"
 fi
-
+read -p "按任意键返回主菜单："
 } #install_nginx
 
 function setting_ssl() {
