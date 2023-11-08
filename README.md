@@ -21,6 +21,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/LGF-LGF/tools/main/tools.sh)
 | nginx_download_url                                           | https://nginx.org/download/nginx-1.24.0.tar.gz | nginx安装包下载路径                                          |                |
 | nginx_user                                                   | nginx                                          | nginx目录所属权，该账户为程序用户不可登陆                    | 不填写则不创建 |
 | red='\033[31m'<br/>green='\033[32m'<br/>yellow='\033[33m'<br/>plain='\033[0m' |                                                | 输出时颜色调用，red：红色，green：绿色，yellow：黄色，plain：白色 |                |
+| download_select                                              | 空                                             | 控制重复执行安装脚本时是否下载新的服务包                     |                |
 
 
 
