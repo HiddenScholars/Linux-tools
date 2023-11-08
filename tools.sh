@@ -379,7 +379,7 @@ function show_Use() {
     select=''
     echo -e "\n\n"
     echo -e "***********************************************"
-    echo -e "**            欢迎使用tools脚本菜单              **"
+    echo -e "**             欢迎使用tools脚本菜单             **"
     echo -e "***********************************************"
     echo -e "${green}0. ${plain}退出脚本."
     echo -e "${green}1. ${plain}软件安装."
@@ -417,17 +417,35 @@ function show_soft() {
     fi
     echo -e "\n"
     echo "***********************************************"
-    echo "**       欢迎使用tools脚本菜单                   **"
+    echo "**           欢迎使用tools脚本菜单              **"
     echo "***********************************************"
     echo -e "${green}0. ${plain}返回主页面."
-    echo -e "${green}1. ${plain}Nginx."
+    echo -e "${green}1. ${plain}配置信息查看."
+    echo -e "${green}2. ${plain}Nginx."
     echo "***********************************************"
     read -p   "输入序号【0-1】：" select
     case $select in
     0)
      return
       ;;
-    1)
+    0)
+      echo "***********************************************"
+      echo "**          欢迎使用tools脚本菜单               **"
+      echo "***********************************************"
+      echo -e "${green}现在时间：${plain}$time"
+      echo "***********************************************"
+      echo "**              全局配置信息                   **"
+      echo "***********************************************"
+      echo -e "${green}安装包下载路径：${plain}$download_path"
+      echo -e "${green}软件安装路径：${plain}$install_path"
+      echo "***********************************************"
+      echo "**              服务配置信息                   **"
+      echo "***********************************************"
+      echo -e "${green}Nginx服务包下载路径：${plain}$nginx_download_url"
+      echo -e "${green}Nginx程序用户：${plain}$nginx_user"
+      echo "***********************************************"
+      ;;
+    2)
      process=(nginx)
      test_server_port=(80 443)
      check_install_system
