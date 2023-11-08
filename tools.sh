@@ -126,28 +126,46 @@ function install_nginx() {
     fi
     if [ "$download_select" == "y" ]; then
       wget -P $download_path/nginx/ $nginx_download_url
-    cd $download_path/nginx/
-    # 定义一个空数组用于存储符合条件的文件
-    files=()
+      cd $download_path/nginx/
+      # 定义一个空数组用于存储符合条件的文件
+      files=()
 
-    # 获取目录下所有文件，并将符合条件的文件添加到数组中
-    for file in *; do
-      # 过滤文件的条件，可以根据您的需求进行修改
-      if [[ ! "$file" =~ ^\..* ]]; then
-        files+=("$file")
-      fi
-    done
+      # 获取目录下所有文件，并将符合条件的文件添加到数组中
+      for file in *; do
+        # 过滤文件的条件，可以根据您的需求进行修改
+        if [[ ! "$file" =~ ^\..* ]]; then
+          files+=("$file")
+        fi
+      done
 
-    # 对数组进行排序，并打印文件名和数字序号
-    IFS=$'\n' sorted_files=($(sort <<<"${files[*]}"))
-    for i in ${!sorted_files[@]}; do
-      echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
-    done
+      # 对数组进行排序，并打印文件名和数字序号
+      IFS=$'\n' sorted_files=($(sort <<<"${files[*]}"))
+      for i in ${!sorted_files[@]}; do
+        echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
+      done
+    else
+      cd $download_path/nginx/
+            # 定义一个空数组用于存储符合条件的文件
+            files=()
+
+            # 获取目录下所有文件，并将符合条件的文件添加到数组中
+            for file in *; do
+              # 过滤文件的条件，可以根据您的需求进行修改
+              if [[ ! "$file" =~ ^\..* ]]; then
+                files+=("$file")
+              fi
+            done
+
+            # 对数组进行排序，并打印文件名和数字序号
+            IFS=$'\n' sorted_files=($(sort <<<"${files[*]}"))
+            for i in ${!sorted_files[@]}; do
+              echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
+            done
     fi
 
     echo ""
     echo ""
-    read -p "选择安装包序号：：" select
+    read -p "选择安装包序号：" select
     if [ -z $select ]; then
         echo -e "${red}未选择安装包，退出脚本${plain}"
         exit 0
