@@ -144,6 +144,7 @@ function install_nginx() {
         echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
       done
     else
+      echo -e "${red}跳过下载${plain}"
       cd $download_path/nginx/
             # 定义一个空数组用于存储符合条件的文件
             files=()
