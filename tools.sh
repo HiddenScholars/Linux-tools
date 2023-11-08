@@ -103,7 +103,7 @@ function install_nginx() {
       echo -e "${red}安装失败${plain}" && exit 0
     fi
     [ ! -d "$download_path/nginx/" ] && echo "$download_path/nginx不存在，自动创建" && mkdir -p $download_path/nginx
-    if [ `ls $download_path/nginx/ | wc -l` -ne 1 ];then
+    if [ `ls $download_path/nginx/ | wc -l` -ne 0 ];then
       echo -e "${red}$download_path/nginx/中存在文件${plain}"
       cd $download_path/nginx/
           # 定义一个空数组用于存储符合条件的文件
