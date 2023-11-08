@@ -186,7 +186,7 @@ function install_nginx() {
     else
         apt install -y gcc g++ libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev
     fi
-    [ -f $install_path/nginx/ ] && mv $install_path/nginx/ $install_path/nginx$time
+    [ -d $install_path/nginx/ ] && mv $install_path/nginx/ $install_path/nginx$time
     mkdir -p $install_path/nginx_file
     tar xvf $download_path/nginx/${sorted_files[$select]} -C $install_path/nginx_file/ --strip-components 1
     cd $install_path/nginx_file/ && ./configure --prefix=${install_path}/nginx/ \
