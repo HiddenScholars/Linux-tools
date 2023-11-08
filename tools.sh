@@ -146,10 +146,13 @@ function install_nginx() {
               echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
             done
             #标记执行过下载安装包命令
-            if_select=true
+            if_select=0
+      else
+            #标记不执行
+            if_select=1
       fi
     fi
-    if [ "$if_select" != "true" ]; then
+    if [ "$if_select" != 1 ] && [ "$if_select" != 0 ]; then
       wget -P $download_path/nginx/ $nginx_download_url
       cd $download_path/nginx/
       # 定义一个空数组用于存储符合条件的文件
