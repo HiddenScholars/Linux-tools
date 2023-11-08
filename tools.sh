@@ -187,9 +187,9 @@ function install_nginx() {
         apt install -y gcc g++ libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev
     fi
     [ -d $install_path/nginx/ ] && mv $install_path/nginx/ $install_path/nginx$time
-    mkdir -p $install_path/nginx_file
-    tar xvf $download_path/nginx/${sorted_files[$select]} -C $install_path/nginx_file/ --strip-components 1
-    cd $install_path/nginx_file/ && ./configure --prefix=${install_path}/nginx/ \
+    mkdir -p /temp/nginx_file
+    tar xvf $download_path/nginx/${sorted_files[$select]} -C /temp/nginx_file/ --strip-components 1
+    cd /temp/nginx_file/ && ./configure --prefix=${install_path}/nginx/ \
                                                 --with-pcre \
                                                 --with-http_ssl_module \
                                                 --with-http_v2_module \
@@ -226,7 +226,7 @@ function install_nginx() {
 
     if [ -f $NGINX_HOME/sbin/nginx ]; then
         echo -e "${green}安装完成...${plain}"
-        cd $NGINX_HOME && cd .. && rm -rf nginx_file
+        cd /temp/  && rm -rf nginx_file
         else
         echo -e "${red}安装失败...${plain}"
         exit 0
