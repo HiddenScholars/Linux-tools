@@ -7,9 +7,9 @@ plain='\033[0m'
 
 #统一配置变量，不清楚原理保持默认
 #安装包下载路径，例如下载nginx，nginx安装包路径：$download_path/nginx/
-download_path=/tools/soft/
+download_path=/tools/soft
 #注：这里为所有安装软件的统一路径，任何软件都会以软件名在这个路径下创建路径安装，路径重复根据date +%Y%m%d进行备份
-install_path=/usr/local/soft/
+install_path=/usr/local/soft
 time=`date +%Y%m%d`
 
 
@@ -103,7 +103,29 @@ function install_nginx() {
       echo -e "${red}安装失败${plain}" && exit 0
     fi
     [ ! -d "$download_path/nginx/" ] && echo "$download_path/nginx不存在，自动创建" && mkdir -p $download_path/nginx
-    wget -P $download_path/nginx/ $nginx_download_url
+    if [ `ls $download_path/nginx/ | wc -l` -ne 1 ];then
+      echo -e "${red}$download_path/nginx/中存在文件${plain}"
+      cd $download_path/nginx/
+          # 定义一个空数组用于存储符合条件的文件
+          files=()
+
+          # 获取目录下所有文件，并将符合条件的文件添加到数组中
+          for file in *; do
+            # 过滤文件的条件，可以根据您的需求进行修改
+            if [[ ! "$file" =~ ^\..* ]]; then
+              files+=("$file")
+            fi
+          done
+
+          # 对数组进行排序，并打印文件名和数字序号
+          IFS=$'\n' sorted_files=($(sort <<<"${files[*]}"))
+          for i in ${!sorted_files[@]}; do
+            echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
+          done
+      read -p  "文件夹中存在文件是否继续下载（y/n）：" download_select
+    fi
+    if [ "$download_select" == "y" ]; then
+      wget -P $download_path/nginx/ $nginx_download_url
     cd $download_path/nginx/
     # 定义一个空数组用于存储符合条件的文件
     files=()
@@ -121,6 +143,8 @@ function install_nginx() {
     for i in ${!sorted_files[@]}; do
       echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
     done
+    fi
+
     echo ""
     echo ""
     read -p "选择安装包序号：：" select
