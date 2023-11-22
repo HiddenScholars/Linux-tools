@@ -16,7 +16,7 @@ time=`date +%Y%m%d`
 
 #服务配置变量
 #Nginx start
-nginx_download_url=https://nginx.org/download/nginx-1.24.0.tar.gz
+nginx_download_url_1=https://nginx.org/download/nginx-1.24.0.tar.gz
 #程序用户，无法登陆
 nginx_user=nginx
 #END
@@ -127,7 +127,7 @@ function install_nginx() {
       read -p  "文件夹中存在文件是否继续下载（y/n）：" download_select
 
       if [ "$download_select" == "y" ]; then
-            wget -P $download_path/nginx/ $nginx_download_url
+            wget -P $download_path/nginx/ $nginx_download_url_1
             cd $download_path/nginx/
             # 定义一个空数组用于存储符合条件的文件
             files=()
@@ -153,7 +153,7 @@ function install_nginx() {
       fi
     fi
     if [ "$if_select" != 1 ] && [ "$if_select" != 0 ]; then
-      wget -P $download_path/nginx/ $nginx_download_url
+      wget -P $download_path/nginx/ $nginx_download_url_1
       cd $download_path/nginx/
       # 定义一个空数组用于存储符合条件的文件
       files=()
@@ -382,7 +382,7 @@ function show_Use() {
                             printf "\t\t**欢迎使用tools脚本菜单**\n"
     printf "****************************************************************************\n"
                             printf "\t\t${green}0. ${plain}退出脚本.\n"
-                            printf "\t\t${green}1. ${plain}软件安装.\n"
+                            printf "\t\t${green}1. ${plain}服务安装.\n"
                             printf "\t\t${green}2. ${plain}acme脚本(搭配cloudflare).\n"
     printf "****************************************************************************\n"
     read -p "输入序号【0-2】：" select
@@ -421,7 +421,7 @@ function show_soft() {
     printf "****************************************************************************\n"
                         printf "\t\t${green}0. ${plain}返回主页面.\n"
                         printf "\t\t${green}1. ${plain}配置信息查看.\n"
-                        printf "\t\t${green}2. ${plain}Nginx.\n"
+                        printf "\t\t${green}2. ${plain}Nginx1.24.0.\n"
     printf "****************************************************************************\n"
     read -p   "输入序号【0-1】：" select
     case $select in
@@ -440,7 +440,7 @@ function show_soft() {
       printf "*****************************************************************************\n"
       printf "\t\t**服务配置信息**\n"
       printf "*****************************************************************************\n"
-      printf "${green}Nginx服务包下载路径：${plain}$nginx_download_url\n"
+      printf "${green}Nginx服务包下载路径：${plain}$nginx_download_url_1\n"
       printf "${green}Nginx程序用户：${plain}$nginx_user\n"
       printf "*****************************************************************************\n"
       read -p "按回车键返回主菜单："
