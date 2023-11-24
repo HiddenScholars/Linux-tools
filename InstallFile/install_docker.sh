@@ -1,49 +1,46 @@
 function install() {
-    if [ -f /usr/lib/systemd/system/docker.service  ];then
-    rm -rf /usr/lib/systemd/system/docker.service
-    fi
-    tar zxf ${i} -C /opt/
-    chown -R root:root /opt/docker/
-    ln -s /opt/docker/* /usr/bin/
-    echo "[Unit]
-    Description=Docker Application Container Engine
-    Documentation=https://docs.docker.com
-    After=network-online.target firewalld.service
-    Wants=network-online.target
+tar -xf $download_path/${sorted_files[$select]}
+cp $download_path/docker/* /usr/bin
 
-    [Service]
-    Type=notify
-    ExecStart=/usr/bin/dockerd
-    ExecReload=/bin/kill -s HUP $MAINPID
-    LimitNOFILE=infinity
-    LimitNPROC=infinity
-    TimeoutStartSec=0
-    Delegate=yes
-    KillMode=process
-    Restart=on-failure
-    StartLimitBurst=3
-    StartLimitInterval=60s
+## 创建配置文件
+mkdir /etc/docker
 
-    [Install]
-    WantedBy=multi-user.target
-    " >>/usr/lib/systemd/system/docker.service
-    systemctl daemon-reload
-    systemctl start docker
-    systemctl enable docker
-    }
-    function dameon() {
-
-    sudo mkdir -p /etc/docker
-sudo tee /etc/docker/daemon.json <<-'EOF'
+## 配置国内的镜像源，加速镜像拉取
+cat > /etc/docker/daemon.json << EOF
 {
-  "registry-mirrors": [
-    "https://ung2thfc.mirror.aliyuncs.com",
-    "https://registry.docker-cn.com",
-    "http://hub-mirror.c.163.com",
-    "https://docker.mirrors.ustc.edu.cn"
-  ]
+  "registry-mirrors": ["https://b9pmyelo.mirror.aliyuncs.com"]
 }
 EOF
+
+## 生成systemd配置文件
+cat > /usr/lib/systemd/system/docker.service << EOF
+[Unit]
+Description=Docker Application Container Engine
+Documentation=https://docs.docker.com
+After=network-online.target firewalld.service
+Wants=network-online.target
+[Service]
+Type=notify
+ExecStart=/usr/bin/dockerd
+ExecReload=/bin/kill -s HUP $MAINPID
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+TimeoutStartSec=0
+Delegate=yes
+KillMode=process
+Restart=on-failure
+StartLimitBurst=3
+StartLimitInterval=60s
+[Install]
+WantedBy=multi-user.target
+EOF
+
+## 启动并设置开启自启
+systemctl daemon-reload
+systemctl start docker
+systemctl enable docker
+docker --version
     sudo systemctl daemon-reload
     sudo systemctl start docker
     if [ $? -eq 0 ];then
@@ -81,26 +78,18 @@ EOF
     fi
 
     }
-    function ps() {
+    function check_install_status() {
 
     docker ps -a &>/dev/null
     if [ $? -eq 0 ];then
-    echo "服务安装成功"
+    echo -e "${green}服务安装成功 ${plain}"
     else
-    echo "服务安装失败"
+    echo  -e "${green}服务安装失败 ${plain}"
     fi
     }
 
-    for i in $1
-    do
-    if [ ! -f ${DIR}/${i} ];then
     remove_old_docker
-    echo "${i} file does not exist"
-    else
     install
-    dameon
-    ps
-    fi
-    done
+    check_install_status
     systemctl status docker.service
 read -p "按回车键返回主菜单："
