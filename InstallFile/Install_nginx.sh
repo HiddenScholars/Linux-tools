@@ -1,3 +1,4 @@
+source /tools/config.sh
 select=''
     [ ! -f $download_path/nginx/${sorted_files[$select]} ] && echo -e "${red}文件不存在${plain}" && exit 0
     echo $release
