@@ -83,6 +83,8 @@ function manage_download() {
                     for i in ${!sorted_files[@]}; do
                       echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
                     done
+                echo
+                echo
                 read -p  "文件夹中存在文件是否继续下载（y/n）(default：n)：" download_select
 
                 if [ "$download_select" == "y" ]; then
@@ -132,8 +134,6 @@ function manage_download() {
                 done
               fi
 
-              echo ""
-              echo ""
               read -p "选择安装包序号：" select
               if [ -z $select ]; then
                   echo -e "${red}未选择安装包，退出脚本${plain}"
@@ -166,7 +166,12 @@ function check_install_system() {
                 if [ `ps -ef|grep $pro |grep -v "grep"|wc -l` -ne 0 ]
                 then
                     echo "$pro有残余进程，删除后再次执行脚本检测安装环境"
-    				exit 1
+    				countinue=''
+                      read -p "是否继续安装，继续安装可能会无法启动（y/n）:" countinue
+                        if [ "$countinue" != "y" ]; then
+                        exit 1
+                        fi
+    				return
                     let  u=$u+1
                 fi
             done
@@ -179,9 +184,9 @@ function check_install_system() {
                 fi
             done
         else
-          select=''
-          read -p "是否继续安装，继续安装可能会无法启动（y/n）:" select
-            if [ "$select" != "y" ]; then
+          countinue=''
+          read -p "是否继续安装，继续安装可能会无法启动（y/n）:" countinue
+            if [ "$countinue" != "y" ]; then
             exit 1
             fi
         fi
@@ -321,6 +326,7 @@ function show_soft() {
      install_nginx
       ;;
     3)
+      echo
       printf "\t\t${green}1. ${plain}Docker${docker_download_url_1##*/docker-}\n"
       read -p "Enther Your choice（1）:" select
       install_docker
