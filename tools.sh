@@ -230,12 +230,12 @@ function install_docker() {
         #manager_download_END
   echo "开始安装Docker--链接github获取Docker安装脚本"
   #写入临时变量
-  echo "export download_path=$download_path" >$download_path/config_docker
-  echo "export docker_file=${sorted_files[$select]}" >$download_path/config_docker
+  echo "export download_path=$download_path" >>$download_path/config
+  echo "export docker_file=${sorted_files[$select]}" >>$download_path/config
 
   bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_docker.sh)
-  read -p "按回车键返回主菜单：
-  rm -rf $download_path/config_docker"
+  read -p "按回车键返回主菜单："
+  rm -rf $download_path/config
 }
 
 select=''

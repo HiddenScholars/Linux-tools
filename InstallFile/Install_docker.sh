@@ -1,4 +1,4 @@
-source /tools/config_docker
+source /tools/soft/config_docker
 echo 11111
 function install() {
 echo $download_path
