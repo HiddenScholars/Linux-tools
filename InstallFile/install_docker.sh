@@ -102,3 +102,5 @@ EOF
     ps
     fi
     done
+    systemctl status docker.service
+read -p "按回车键返回主菜单："
