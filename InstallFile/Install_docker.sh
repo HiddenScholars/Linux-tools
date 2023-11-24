@@ -1,4 +1,4 @@
-source /tools/soft/config
+source /tools/config.sh
 function install() {
 
 cd $download_path/docker/&& tar -xf $docker_file
@@ -14,7 +14,7 @@ cat > /etc/docker/daemon.json << EOF
   "registry-mirrors": ["https://b9pmyelo.mirror.aliyuncs.com"]
 }
 EOF
-if [ `cat /etc/docker_daemon.json | wc -l` -ne 0 ];then
+if [ `cat /etc/docker/daemon.json | wc -l` -ne 0 ];then
     echo "加速镜像写入完成"
     else
     echo "加速镜像写入失败"
