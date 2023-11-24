@@ -225,8 +225,9 @@ function install_docker() {
         download_url=$docker_download_url
         manage_download
         #manager_download_END
+        filename=$(basename $docker_download_url)
   echo "开始安装Docker--链接github获取Docker安装脚本"
-  bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_docker.sh)
+  bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_docker.sh) $filename
   read -p "按回车键返回主菜单："
 }
 

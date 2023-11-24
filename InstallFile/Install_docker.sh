@@ -1,7 +1,7 @@
 source /tools/config.sh
 function install() {
-
-cd $download_path/docker/&& tar -xf $docker_file
+filename=(name )
+cd $download_path/docker/&& tar -xf $1
 cp -r $download_path/docker/docker/* /usr/bin
 rm -rf $download_path/docker/docker
 ## 创建配置文件
@@ -81,5 +81,5 @@ docker --version
     }
 
     remove_old_docker
-    install
+    install $1
     check_install_status
