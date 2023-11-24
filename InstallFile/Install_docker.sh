@@ -3,8 +3,8 @@ echo 11111
 function install() {
 echo $download_path
 echo $docker_file
-cd $download_path/docker && tar -xf $docker_file
-cp -r $download_path/docker/docker/* /usr/bin
+cd $download_path&& tar -xf $docker_file
+cp -r $download_path/docker/* /usr/bin
 
 ## 创建配置文件
 mkdir /etc/docker
