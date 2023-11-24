@@ -92,4 +92,3 @@ docker --version
     install
     check_install_status
     systemctl status docker.service
-read -p "按回车键返回主菜单："
