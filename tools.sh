@@ -5,41 +5,44 @@ green='\033[32m'
 yellow='\033[33m'
 plain='\033[0m'
 
-#统一配置变量，不清楚原理保持默认
-#安装包下载路径，例如下载nginx，nginx安装包路径：$download_path/nginx/
-download_path=/tools/soft
-#注：这里为所有安装软件的统一路径，任何软件都会以软件名在这个路径下创建路径安装，路径重复根据date +%Y%m%d进行备份
-install_path=/usr/local/soft
-time=`date +%Y%m%d`
-#获取当前文件所在路径
-DIR=`cd "$(dirname "$0")" && pwd`
-
-
-#服务配置变量
-#Nginx start
 nginx_download_url=
-nginx_download_url_1=https://nginx.org/download/nginx-1.24.0.tar.gz
-#程序用户，无法登陆
-nginx_user=nginx
-#Docker
 docker_download_url=
-docker_download_url_1=https://download.docker.com/linux/static/stable/x86_64/docker-23.0.6.tgz
+
+
+
+
+if [ ! -f /tools/config ];then
+  [ ! -d /tools/ ] && mkdir /tools/
+  echo -e "${red}config文件不存在，开始下载...${plain}"
+  wget
+  [ ! -f /tools/config ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
+fi
+
+
+
 
 #check systemctl version
 if [[ -f /etc/redhat-release ]]; then
     release="centos"
+    yum -y install wget curl
 elif cat /etc/issue | grep -Eqi "debian"; then
     release="debian"
+    apt install -y wget curl
 elif cat /etc/issue | grep -Eqi "ubuntu"; then
     release="ubuntu"
+    apt install -y wget curl
 elif cat /etc/issue | grep -Eqi "centos|red hat|redhat"; then
     release="centos"
+    yum -y install wget curl
 elif cat /proc/version | grep -Eqi "debian"; then
     release="debian"
+    apt install -y wget curl
 elif cat /proc/version | grep -Eqi "ubuntu"; then
     release="ubuntu"
+    apt install -y wget curl
 elif cat /proc/version | grep -Eqi "centos|red hat|redhat"; then
     release="centos"
+    apt install -y wget curl
 else
     echo -e  "${red}未检测到系统版本，请联系脚本作者！\n${plain}" && exit 1
 fi
@@ -282,9 +285,8 @@ function show_soft() {
                         printf "\t\t**欢迎使用tools软件安装脚本菜单**\n"
     printf "****************************************************************************\n"
                         printf "\t\t${green}0. ${plain}返回主页面.\n"
-                        printf "\t\t${green}1. ${plain}配置信息查看.\n"
-                        printf "\t\t${green}2. ${plain}Nginx.\n"
-                        printf "\t\t${green}3. ${plain}Docker.\n"
+                        printf "\t\t${green}1. ${plain}Nginx.\n"
+                        printf "\t\t${green}2. ${plain}Docker.\n"
     printf "****************************************************************************\n"
     read -p   "输入序号【0-1】：" select
     case $select in
@@ -292,23 +294,6 @@ function show_soft() {
      return
       ;;
     1)
-      clear
-      printf "*****************************************************************************\n"
-      printf "${green}现在时间：${plain}$time\n"
-      printf "*****************************************************************************\n"
-      printf "\t\t**全局配置信息**\n"
-      printf "*****************************************************************************\n"
-      printf "${green}安装包下载路径：${plain}$download_path\n"
-      printf "${green}软件安装路径：${plain}$install_path\n"
-      printf "*****************************************************************************\n"
-      printf "\t\t**服务配置信息**\n"
-      printf "*****************************************************************************\n"
-      printf "${green}Nginx服务包下载路径：${plain}$nginx_download_url\n"
-      printf "${green}Nginx程序用户：${plain}$nginx_user\n"
-      printf "*****************************************************************************\n"
-      read -p "按回车键返回主菜单："
-      ;;
-    2)
     printf "\t\t${green}1. ${plain}Nginx${nginx_download_url_1##*/nginx-}\n"
     read -p "Enther Your choice（1）:" select
     case $select in
@@ -326,7 +311,7 @@ function show_soft() {
      check_install_system
      install_nginx
       ;;
-    3)
+    2)
       echo
       printf "\t\t${green}1. ${plain}Docker${docker_download_url_1##*/docker-}\n"
       read -p "Enther Your choice（1）:" select
