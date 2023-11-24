@@ -1,6 +1,6 @@
 source /tools/config.sh
 select=''
-    [ ! -f $download_path/nginx/${sorted_files[$select]} ] && echo -e "${red}文件不存在${plain}" && exit 0
+    [ ! -f $download_path/nginx/$1 ] && echo -e "${red}文件不存在${plain}" && exit 0
     echo $release
     if [ "$release" == "centos" ]; then
         yum install -y gcc gcc-c++ pcre pcre-devel zlib zlib-devel openssl openssl-devel gd gd-devel

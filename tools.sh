@@ -195,7 +195,7 @@ server_name=nginx
 download_url=$nginx_download_url
 manage_download
 echo "开始安装Nginx--链接Github获取Nginx安装脚本"
-bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_nginx.sh)
+bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_nginx.sh) ${sorted_files[$select]}
 read -p "按回车键返回主菜单："
 } #install_nginx
 function setting_ssl() {
