@@ -55,7 +55,39 @@ docker --version
     function remove_old_docker() {
 
     # 移除掉旧的版本
+    distribution=$(lsb_release -si)
 
+    case "$distribution" in
+        Ubuntu)
+            # Ubuntu发行版
+            sudo apt-get remove docker-ce docker-ce-cli containerd.io
+            ;;
+
+        CentOS | RedHatEnterpriseServer | OracleServer)
+            # CentOS、Red Hat Enterprise Server、Oracle Linux发行版
+            sudo yum remove docker-ce docker-ce-cli containerd.io
+            ;;
+
+        Fedora)
+            # Fedora发行版
+            sudo dnf remove docker-ce docker-ce-cli containerd.io
+            ;;
+
+        Debian)
+            # Debian发行版
+            sudo apt-get remove docker-ce docker-ce-cli containerd.io
+            sudo apt-get autoremove -y --purge docker-ce docker-ce-cli containerd.io
+            ;;
+
+        FreeBSD)
+            # FreeBSD发行版
+            sudo pkg remove -y docker
+            ;;
+
+        *)
+            echo "无法确定当前Linux发行版本"
+            ;;
+    esac
     # 删除所有旧的数据
     sudo rm -rf /var/lib/docker
     sudo rm -rf /etc/docker/daemon.json
