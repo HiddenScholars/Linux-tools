@@ -1,5 +1,5 @@
 function install() {
-cd $download_path/ && tar -xf ${sorted_files[$select]}
+cd $download_path/ && tar -xf $docker_file
 cp -r $download_path/docker/* /usr/bin
 
 ## 创建配置文件
