@@ -234,7 +234,8 @@ function install_docker() {
   echo "export docker_file=${sorted_files[$select]}" >$download_path/config_docker
 
   bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_docker.sh)
-  read -p "按回车键返回主菜单："
+  read -p "按回车键返回主菜单：
+  rm -rf $download_path/config_docker"
 }
 
 select=''

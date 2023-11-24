@@ -1,3 +1,4 @@
+source /tools/config_docker
 function install() {
 echo $download_path
 echo $docker_file
