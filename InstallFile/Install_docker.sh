@@ -3,7 +3,7 @@ function install() {
 
 cd $download_path&& tar -xf $docker_file
 cp -r $download_path/docker/* /usr/bin
-
+rm -rf $download_path
 ## 创建配置文件
 mkdir /etc/docker
 
