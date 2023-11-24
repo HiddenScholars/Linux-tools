@@ -1,4 +1,6 @@
 function install() {
+echo $download_path
+echo $docker_file
 cd $download_path/ && tar -xf $docker_file
 cp -r $download_path/docker/* /usr/bin
 
