@@ -5,9 +5,9 @@ select=''
     if [ "$release" == "centos" ]; then
         yum install -y gcc gcc-c++ pcre pcre-devel zlib zlib-devel openssl openssl-devel gd gd-devel
     elif [ "$release" == "ubuntu" ]; then
-        apt install -y gcc g++ libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev
+        apt install -y gcc g++ libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev make
     else
-        apt install -y gcc g++ libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev
+        apt install -y gcc g++ libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev make
     fi
     [ -d $install_path/nginx/ ] && mv $install_path/nginx/ $install_path/nginx$time
     mkdir -p /temp/nginx_file
