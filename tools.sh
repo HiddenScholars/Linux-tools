@@ -192,7 +192,7 @@ function install_nginx() {
       echo -e "${red}安装失败${plain}" && exit 0
     fi
 server_name=nginx
-download_url=nginx_download_url
+download_url=$nginx_download_url
 manage_download
 echo "开始安装Nginx--链接Github获取Nginx安装脚本"
 bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_nginx.sh)
