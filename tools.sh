@@ -56,240 +56,6 @@ else
 fi
 
 
-function check_install_system() {
-    #test_server_port=() 检查此数组中的端口
-    netstat -ntpl|grep LISTEN|awk '{print $4}' >/opt/test_sys.txt
-    #process=(nginx) 检查此数组中的进程
-        num=0
-        for line in `cat /opt/test_sys.txt`
-        do
-            sys_port=${line##*:}
-            for i in ${test_server_port[*]}
-            do
-                if [ $sys_port -eq $i ];then
-                    echo -e "\033[31m $sys_port端口已存在，占用服务端口 \033[0m"
-                    let  num=$num+1
-                fi
-            done
-        done
-        u=0
-        if [ $num -eq 0 ]
-        then
-            for pro in ${process[@]}
-            do
-                if [ `ps -ef|grep $pro |grep -v "grep"|wc -l` -ne 0 ]
-                then
-                    echo "$pro有残余进程，删除后再次执行脚本检测安装环境"
-    				exit 1
-                    let  u=$u+1
-                fi
-            done
-            for pro in ${PRODUCT_ORDER[@]}
-            do
-                if [ `ps -ef|grep $pro |grep -v "grep"|wc -l` -ne 0 ]
-                then
-                    echo "服务有残余进程，删除后再次执行脚本检测安装环境"
-                    let  u=$u+1
-                fi
-            done
-        else
-          select=''
-          read -p "是否继续安装，继续安装可能会无法启动（y/n）:" select
-            if [ "$select" != "y" ]; then
-            exit 1
-            fi
-        fi
-} #check_install_nginx_system
-function install_nginx() {
-    select=''
-    download_select=''
-    if_select=''
-    $controls install -y wget curl net-tools
-    if [ $? -ne 0 ];then
-      echo -e "${red}安装失败${plain}" && exit 0
-    fi
-    [ ! -d "$download_path/nginx/" ] && echo "$download_path/nginx不存在，自动创建" && mkdir -p $download_path/nginx
-    if [ `ls $download_path/nginx/ | wc -l` -ne 0 ];then
-      echo -e "${red}$download_path/nginx/中存在文件${plain}"
-      cd $download_path/nginx/
-          # 定义一个空数组用于存储符合条件的文件
-          files=()
-
-          # 获取目录下所有文件，并将符合条件的文件添加到数组中
-          for file in *; do
-            # 过滤文件的条件，可以根据您的需求进行修改
-            if [[ ! "$file" =~ ^\..* ]]; then
-              files+=("$file")
-            fi
-          done
-
-          # 对数组进行排序，并打印文件名和数字序号
-          IFS=$'\n' sorted_files=($(sort <<<"${files[*]}"))
-          for i in ${!sorted_files[@]}; do
-            echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
-          done
-      read -p  "文件夹中存在文件是否继续下载（y/n）：" download_select
-
-      if [ "$download_select" == "y" ]; then
-            wget -P $download_path/nginx/ $nginx_download_url
-            cd $download_path/nginx/
-            # 定义一个空数组用于存储符合条件的文件
-            files=()
-
-            # 获取目录下所有文件，并将符合条件的文件添加到数组中
-            for file in *; do
-              # 过滤文件的条件，可以根据您的需求进行修改
-              if [[ ! "$file" =~ ^\..* ]]; then
-                files+=("$file")
-              fi
-            done
-
-            # 对数组进行排序，并打印文件名和数字序号
-            IFS=$'\n' sorted_files=($(sort <<<"${files[*]}"))
-            for i in ${!sorted_files[@]}; do
-              echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
-            done
-            #标记执行过下载安装包命令
-            if_select=0
-      else
-            #标记不执行
-            if_select=1
-      fi
-    fi
-    if [ "$if_select" != 1 ] && [ "$if_select" != 0 ]; then
-      wget -P $download_path/nginx/ $nginx_download_url
-      cd $download_path/nginx/
-      # 定义一个空数组用于存储符合条件的文件
-      files=()
-
-      # 获取目录下所有文件，并将符合条件的文件添加到数组中
-      for file in *; do
-        # 过滤文件的条件，可以根据您的需求进行修改
-        if [[ ! "$file" =~ ^\..* ]]; then
-          files+=("$file")
-        fi
-      done
-
-      # 对数组进行排序，并打印文件名和数字序号
-      IFS=$'\n' sorted_files=($(sort <<<"${files[*]}"))
-      for i in ${!sorted_files[@]}; do
-        echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
-      done
-    fi
-
-    echo ""
-    echo ""
-    read -p "选择安装包序号：" select
-    if [ -z $select ]; then
-        echo -e "${red}未选择安装包，退出脚本${plain}"
-        exit 0
-    fi
-    [ ! -f $download_path/nginx/${sorted_files[$select]} ] && echo -e "${red}文件不存在${plain}" && exit 0
-    echo $release
-    if [ "$release" == "centos" ]; then
-        yum install -y gcc gcc-c++ pcre pcre-devel zlib zlib-devel openssl openssl-devel gd gd-devel
-    elif [ "$release" == "ubuntu" ]; then
-        apt install -y gcc g++ libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev
-    else
-        apt install -y gcc g++ libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev
-    fi
-    [ -d $install_path/nginx/ ] && mv $install_path/nginx/ $install_path/nginx$time
-    mkdir -p /temp/nginx_file
-    tar xvf $download_path/nginx/${sorted_files[$select]} -C /temp/nginx_file/ --strip-components 1
-    cd /temp/nginx_file/ && ./configure --prefix=${install_path}/nginx/ \
-                                                --with-pcre \
-                                                --with-http_ssl_module \
-                                                --with-http_v2_module \
-                                                --with-http_realip_module \
-                                                --with-http_addition_module \
-                                                --with-http_sub_module \
-                                                --with-http_dav_module \
-                                                --with-http_flv_module \
-                                                --with-http_mp4_module \
-                                                --with-http_gunzip_module \
-                                                --with-http_gzip_static_module \
-                                                --with-http_random_index_module \
-                                                --with-http_secure_link_module \
-                                                --with-http_stub_status_module \
-                                                --with-http_auth_request_module \
-                                                --with-http_image_filter_module \
-                                                --with-http_slice_module \
-                                                --with-mail \
-                                                --with-threads \
-                                                --with-file-aio \
-                                                --with-stream \
-                                                --with-mail_ssl_module \
-                                                --with-stream_ssl_module && make && make install
-    source /etc/profile
-    if [ -z $NGINX_HOME ];then
-    echo "export NGINX_HOME=$install_path/nginx/" >>/etc/profile
-    source /etc/profile
-    fi
-    if [ ! -z $nginx_user ]; then
-    id $nginx_user &>/dev/null
-    [ $? -ne 0 ] && useradd -s /sbin/nologin $nginx_user
-    chown -R $nginx_user:$nginx_user $NGINX_HOME
-    fi
-
-    if [ -f $NGINX_HOME/sbin/nginx ]; then
-        echo -e "${green}安装完成...${plain}"
-        cd /temp/  && rm -rf nginx_file
-        else
-        echo -e "${red}安装失败...${plain}"
-        exit 0
-    fi
-
-echo "[Unit]
-Description=The Nginx HTTP Server
-After=network.target remote-fs.target nss-lookup.target
-
-[Service]
-Type=forking
-PIDFile=$NGINX_HOME/logs/nginx.pid
-ExecStart=$NGINX_HOME/sbin/nginx
-ExecReload=$NGINX_HOME/sbin/nginx -s reload
-ExecStop=$NGINX_HOME/sbin/nginx -s stop
-PrivateTmp=true
-
-[Install]
-WantedBy=multi-user.target" > /usr/lib/systemd/system/nginx.service
-
-chmod +x /usr/lib/systemd/system/nginx.service
-systemctl daemon-reload
-systemctl start nginx.service
-systemctl enable nginx.service
-systemctl status nginx.service
-ps -ef | grep nginx &>/dev/null
-[ $? -ne 0 ] && exit 0
-
-echo -e "设置防火墙..."
-if [ ${release} == "centos" ]; then
-    if [ `ps -ef | grep firewalld | wc -l ` -ne 0 ];then
-        firewall-cmd --permanent --add-port=80/tcp
-        firewall-cmd --permanent --add-port=443/tcp
-        firewall-cmd --reload
-    else
-       [ "$(grep '<port protocol=\"tcp\" port=\"80\"/>' /etc/firewalld/zones/public.xml | wc -l)" -eq 0 ] && sed -i '$!N;$!P;$!D;$s|\(.*\)\n\(.*\)|\1\n<port protocol="tcp" port="80"/>\n\2|' /etc/firewalld/zones/public.xml
-       [ "$(grep '<port protocol=\"tcp\" port=\"443\"/>' /etc/firewalld/zones/public.xml | wc -l)" -eq 0 ] && sed -i '$!N;$!P;$!D;$s|\(.*\)\n\(.*\)|\1\n<port protocol="tcp" port="443"/>\n\2|' /etc/firewalld/zones/public.xml
-     fi
-elif [ ${release} == "ubuntu" ];then
-    if [ `dpkg --get-selections | grep ufw | wc -l` -ne 0 ]; then
-        ufw allow 80/tcp
-        ufw allow 443/tcp
-        ufw reload
-    else
-      echo -e "${red}未检出ufw进程，不进行更改${plain}"
-    fi
-else
-    echo -e "${red}无法识别的防火墙${plain}"
-fi
-read -p "按回车键返回主菜单："
-} #install_nginx
-
-function setting_ssl() {
-echo "111"
-}
-
 function manage_download() {
   #server_name下载服务名
   #download_url下载链接
@@ -374,6 +140,72 @@ function manage_download() {
                   exit 0
               fi
 }
+function check_install_system() {
+    [ -z $test_server_port ] && echo -e "$red test_server_port禁止为空使用 $plain"
+    [ -z $process ] && echo -e "$red process禁止为空使用 $plain"
+    #test_server_port=() 检查此数组中的端口
+    netstat -ntpl|grep LISTEN|awk '{print $4}' >/opt/test_sys.txt
+    #process=(nginx) 检查此数组中的进程
+        num=0
+        for line in `cat /opt/test_sys.txt`
+        do
+            sys_port=${line##*:}
+            for i in ${test_server_port[*]}
+            do
+                if [ $sys_port -eq $i ];then
+                    echo -e "\033[31m $sys_port端口已存在，占用服务端口 \033[0m"
+                    let  num=$num+1
+                fi
+            done
+        done
+        u=0
+        if [ $num -eq 0 ]
+        then
+            for pro in ${process[@]}
+            do
+                if [ `ps -ef|grep $pro |grep -v "grep"|wc -l` -ne 0 ]
+                then
+                    echo "$pro有残余进程，删除后再次执行脚本检测安装环境"
+    				exit 1
+                    let  u=$u+1
+                fi
+            done
+            for pro in ${PRODUCT_ORDER[@]}
+            do
+                if [ `ps -ef|grep $pro |grep -v "grep"|wc -l` -ne 0 ]
+                then
+                    echo "服务有残余进程，删除后再次执行脚本检测安装环境"
+                    let  u=$u+1
+                fi
+            done
+        else
+          select=''
+          read -p "是否继续安装，继续安装可能会无法启动（y/n）:" select
+            if [ "$select" != "y" ]; then
+            exit 1
+            fi
+        fi
+} #check_install_nginx_system
+function install_nginx() {
+    download_select=''
+    if_select=''
+    $controls install -y wget curl net-tools
+    if [ $? -ne 0 ];then
+      echo -e "${red}安装失败${plain}" && exit 0
+    fi
+server_name=nginx
+download_url=nginx_download_url
+manage_download
+echo "开始安装Nginx--链接Github获取Nginx安装脚本"
+bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_nginx.sh)
+read -p "按回车键返回主菜单："
+} #install_nginx
+
+function setting_ssl() {
+echo "开始安装证书--链接Github获取证书安装脚本"
+bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_ssl_acme.sh)
+}
+
 function install_docker() {
   case $select in
         1)
@@ -390,7 +222,7 @@ function install_docker() {
         manage_download
         #manager_download_END
   echo "开始安装Docker--链接github获取Docker安装脚本"
-  bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/install_docker.sh)
+  bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_docker.sh)
   read -p "按回车键返回主菜单："
 }
 

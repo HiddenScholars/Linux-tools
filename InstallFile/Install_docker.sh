@@ -1,6 +1,6 @@
 function install() {
-tar -xf $download_path/${sorted_files[$select]}
-cp $download_path/docker/* /usr/bin
+cd $download_path/ && tar -xf ${sorted_files[$select]}
+cp -r $download_path/docker/* /usr/bin
 
 ## 创建配置文件
 mkdir /etc/docker
@@ -11,6 +11,11 @@ cat > /etc/docker/daemon.json << EOF
   "registry-mirrors": ["https://b9pmyelo.mirror.aliyuncs.com"]
 }
 EOF
+if [ `cat /etc/docker_daemon.json | wc -l` -ne 0 ];then
+    echo "加速镜像写入完成"
+    else
+    echo "加速镜像写入失败"
+fi
 
 ## 生成systemd配置文件
 cat > /usr/lib/systemd/system/docker.service << EOF
@@ -41,27 +46,11 @@ systemctl daemon-reload
 systemctl start docker
 systemctl enable docker
 docker --version
-    sudo systemctl daemon-reload
-    sudo systemctl start docker
-    if [ $? -eq 0 ];then
-    echo "加速镜像写入完成"
-    else
-    echo "加速镜像写入失败"
-    fi
-    systemctl daemon-reload
-    systemctl restart docker
-    }
+}
 
     function remove_old_docker() {
 
     # 移除掉旧的版本
-    rm -rf DOCKEROLD
-    rpm -qa | grep docker > DOCKEROLD
-    for i in `cat ./DOCKEROLD`
-    do
-    rpm -e $i --nodeps
-    done
-    rm -rf DOCKEROLD
 
     # 删除所有旧的数据
     sudo rm -rf /var/lib/docker
@@ -91,4 +80,3 @@ docker --version
     remove_old_docker
     install
     check_install_status
-    systemctl status docker.service
