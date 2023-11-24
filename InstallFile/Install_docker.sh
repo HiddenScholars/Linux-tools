@@ -1,8 +1,6 @@
 source /tools/soft/config
-echo 11111
 function install() {
-echo $download_path
-echo $docker_file
+
 cd $download_path&& tar -xf $docker_file
 cp -r $download_path/docker/* /usr/bin
 
@@ -10,6 +8,7 @@ cp -r $download_path/docker/* /usr/bin
 mkdir /etc/docker
 
 ## 配置国内的镜像源，加速镜像拉取
+mkdir -p /etc/docker/daemon.json
 cat > /etc/docker/daemon.json << EOF
 {
   "registry-mirrors": ["https://b9pmyelo.mirror.aliyuncs.com"]
