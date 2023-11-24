@@ -11,15 +11,19 @@ download_path=/tools/soft
 #注：这里为所有安装软件的统一路径，任何软件都会以软件名在这个路径下创建路径安装，路径重复根据date +%Y%m%d进行备份
 install_path=/usr/local/soft
 time=`date +%Y%m%d`
-
+#获取当前文件所在路径
+DIR=`cd "$(dirname "$0")" && pwd`
 
 
 #服务配置变量
 #Nginx start
+nginx_download_url=
 nginx_download_url_1=https://nginx.org/download/nginx-1.24.0.tar.gz
 #程序用户，无法登陆
 nginx_user=nginx
-#END
+#Docker
+docker_download_url=
+docker_download_url_1=https://download.docker.com/linux/static/stable/x86_64/docker-23.0.6.tgz
 
 #check systemctl version
 if [[ -f /etc/redhat-release ]]; then
@@ -127,7 +131,7 @@ function install_nginx() {
       read -p  "文件夹中存在文件是否继续下载（y/n）：" download_select
 
       if [ "$download_select" == "y" ]; then
-            wget -P $download_path/nginx/ $nginx_download_url_1
+            wget -P $download_path/nginx/ $nginx_download_url
             cd $download_path/nginx/
             # 定义一个空数组用于存储符合条件的文件
             files=()
@@ -153,7 +157,7 @@ function install_nginx() {
       fi
     fi
     if [ "$if_select" != 1 ] && [ "$if_select" != 0 ]; then
-      wget -P $download_path/nginx/ $nginx_download_url_1
+      wget -P $download_path/nginx/ $nginx_download_url
       cd $download_path/nginx/
       # 定义一个空数组用于存储符合条件的文件
       files=()
@@ -283,95 +287,111 @@ read -p "按回车键返回主菜单："
 } #install_nginx
 
 function setting_ssl() {
-  select=''
-    echo -E ""
-       echo "******使用说明******"
-       echo "该脚本将使用Acme脚本申请证书,使用时需保证:"
-       echo "1.知晓Cloudflare 注册邮箱"
-       echo "2.知晓Cloudflare Global API Key"
-       echo "3.域名已通过Cloudflare进行解析到当前服务器"
-       echo "4.该脚本申请证书默认安装路径为/root/cert目录"
-       read -p "我已确认以上内容[y/n] 默认：y：" select
-    [ -z $select ] && select=y
-       if [ $select == 'y' ]; then
-           cd ~
-           echo "安装Acme脚本"
-           curl https://get.acme.sh | sh
-           if [ $? -ne 0 ]; then
-               echo "安装acme脚本失败"
-               exit 1
-           fi
-           CF_Domain=""
-           CF_GlobalKey=""
-           CF_AccountEmail=""
-           certPath=""
-    	shellcmd=""
-    	if [ -z $certPath ];then
-    	read -p "请输入证书存储路径(默认：/root/cert)：" certPath
-    	fi
-    	[ -z $certPath ] && certPath=/root/cert
-    	echo "certPath=$certPath"
-           if [ ! -d "$certPath" ]; then
-               mkdir -p $certPath
-           else
-               rm -rf $certPath
-               mkdir -p $certPath
-           fi
-           echo "请设置域名:"
-           read -p "Input your domain here:" CF_Domain
-           echo "你的域名设置为:${CF_Domain}"
-           echo "请设置API密钥:"
-           read -p "Input your key here:" CF_GlobalKey
-           echo "你的API密钥为:${CF_GlobalKey}"
-           echo "请设置注册邮箱:"
-           read -p "Input your email here:" CF_AccountEmail
-           echo "你的注册邮箱为:${CF_AccountEmail}"
-           ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
-           if [ $? -ne 0 ]; then
-               echo "修改默认CA为Lets'Encrypt失败,脚本退出"
-               exit 1
-           fi
-           export CF_Key="${CF_GlobalKey}"
-           export CF_Email=${CF_AccountEmail}
-           ~/.acme.sh/acme.sh --issue --dns dns_cf -d ${CF_Domain} -d *.${CF_Domain} --log --force
-           if [ $? -ne 0 ]; then
-               echo "证书签发失败,脚本退出"
-               exit 1
-           else
-               echo "证书签发成功,安装中..."
-           fi
-    	read -p "请输入证书签发后执行命令，无执行命令直接回车：" shellcmd
-    	if [ -z "$shellcmd" ]; then
-           ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file $certPath/ca.cer \
-           --cert-file $certPath/${CF_Domain}.cer --key-file $certPath/${CF_Domain}.key \
-           --fullchain-file $certPath/fullchain.cer
-    	else
-    	~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file $certPath/ca.cer \
-           --cert-file $certPath/${CF_Domain}.cer --key-file $certPath/${CF_Domain}.key \
-           --fullchain-file $certPath/fullchain.cer --reloadcmd "$shellcmd"
-    	fi
+echo "111"
+}
 
-           if [ $? -ne 0 ]; then
-               echo "证书安装失败,脚本退出"
-               exit 1
-           else
-               echo "证书安装成功,开启自动更新..."
-           fi
-           ~/.acme.sh/acme.sh --upgrade --auto-upgrade
-           if [ $? -ne 0 ]; then
-               echo "自动更新设置失败,脚本退出"
-               ls -lah $certPath
-               chmod 755 $certPath
-               exit 1
-           else
-               echo "证书已安装且已开启自动更新,具体信息如下"
-               ls -lah $certPath
-               chmod 755 $certPath
-           fi
+function manage_download() {
+  #server_name下载服务名
+  #download_url下载链接
+  [ -z $server_name ] && echo -e "$red 禁止server_name为空使用 $plain" && exit
+  [ -z $download_url ] && echo -e "$red 禁止download_url为使用 $plain" && exit
+  [ ! -d $download_path/docker ] &&  mkdir $download_path/docker
+          if [ `ls $download_path/$server_name/ | wc -l` -ne 0 ];then
+                echo -e "${red}$download_path/$server_name/中存在文件${plain}"
+                echo
+                echo
+               cd $download_path/$server_name/
+                    # 定义一个空数组用于存储符合条件的文件
+                    files=()
 
-    else
-    exit 0
-    fi
+                    # 获取目录下所有文件，并将符合条件的文件添加到数组中
+                    for file in *; do
+                      # 过滤文件的条件，可以根据需求进行修改
+                      if [[ ! "$file" =~ ^\..* ]]; then
+                        files+=("$file")
+                      fi
+                    done
+
+                    # 对数组进行排序，并打印文件名和数字序号
+                    IFS=$'\n' sorted_files=($(sort <<<"${files[*]}"))
+                    for i in ${!sorted_files[@]}; do
+                      echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
+                    done
+                read -p  "文件夹中存在文件是否继续下载（y/n）(default：n)：" download_select
+
+                if [ "$download_select" == "y" ]; then
+                      wget -P $download_path/docker/ $download_url
+                      cd $download_path/$server_name/
+                      # 定义一个空数组用于存储符合条件的文件
+                      files=()
+
+                      # 获取目录下所有文件，并将符合条件的文件添加到数组中
+                      for file in *; do
+                        # 过滤文件的条件，可以根据您的需求进行修改
+                        if [[ ! "$file" =~ ^\..* ]]; then
+                          files+=("$file")
+                        fi
+                      done
+
+                      # 对数组进行排序，并打印文件名和数字序号
+                      IFS=$'\n' sorted_files=($(sort <<<"${files[*]}"))
+                      for i in ${!sorted_files[@]}; do
+                        echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
+                      done
+                      #标记执行过下载安装包命令
+                      if_select=0
+                else
+                      #标记不执行
+                      if_select=1
+                fi
+              fi
+              if [ "$if_select" != 1 ] && [ "$if_select" != 0 ]; then
+                wget -P $download_path/$server_name/ $download_url
+                cd $download_path/$server_name/
+                # 定义一个空数组用于存储符合条件的文件
+                files=()
+
+                # 获取目录下所有文件，并将符合条件的文件添加到数组中
+                for file in *; do
+                  # 过滤文件的条件，可以根据您的需求进行修改
+                  if [[ ! "$file" =~ ^\..* ]]; then
+                    files+=("$file")
+                  fi
+                done
+
+                # 对数组进行排序，并打印文件名和数字序号
+                IFS=$'\n' sorted_files=($(sort <<<"${files[*]}"))
+                for i in ${!sorted_files[@]}; do
+                  echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
+                done
+              fi
+
+              echo ""
+              echo ""
+              read -p "选择安装包序号：" select
+              if [ -z $select ]; then
+                  echo -e "${red}未选择安装包，退出脚本${plain}"
+                  exit 0
+              fi
+}
+function install_docker() {
+  case $select in
+        1)
+        docker_download_url=$docker_download_url_1
+        ;;
+        *)
+          echo "暂无此版本."
+          exit 0
+        ;;
+  esac
+        #manager_download_END
+        server_name=docker
+        download_url=$docker_download_url
+        manage_download
+        #manager_download_END
+  echo "开始安装Docker--链接github获取Docker安装脚本"
+  bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/install_docker.sh)
+  read -p "按回车键返回主菜单："
 }
 
 select=''
@@ -412,8 +432,6 @@ function show_soft() {
     select=''
     if [ $? -eq 0 ];then
       echo -e "${green}变量初始化完成${plain}"
-      else
-      echo -e "${red}变量初始化失败${plain}"
     fi
     clear
     printf "****************************************************************************\n"
@@ -421,7 +439,8 @@ function show_soft() {
     printf "****************************************************************************\n"
                         printf "\t\t${green}0. ${plain}返回主页面.\n"
                         printf "\t\t${green}1. ${plain}配置信息查看.\n"
-                        printf "\t\t${green}2. ${plain}Nginx1.24.0.\n"
+                        printf "\t\t${green}2. ${plain}Nginx.\n"
+                        printf "\t\t${green}3. ${plain}Docker.\n"
     printf "****************************************************************************\n"
     read -p   "输入序号【0-1】：" select
     case $select in
@@ -440,21 +459,37 @@ function show_soft() {
       printf "*****************************************************************************\n"
       printf "\t\t**服务配置信息**\n"
       printf "*****************************************************************************\n"
-      printf "${green}Nginx服务包下载路径：${plain}$nginx_download_url_1\n"
+      printf "${green}Nginx服务包下载路径：${plain}$nginx_download_url\n"
       printf "${green}Nginx程序用户：${plain}$nginx_user\n"
       printf "*****************************************************************************\n"
       read -p "按回车键返回主菜单："
       ;;
     2)
+    printf "\t\t${green}1. ${plain}Nginx${nginx_download_url_1##*/nginx-}\n"
+    read -p "Enther Your choice（1）:" select
+    case $select in
+          1)
+          nginx_download_url=$nginx_download_url_1
+          ;;
+          *)
+            echo "暂无此版本."
+            exit 0
+            ;;
+          esac
+     echo $nginx_download_url
      process=(nginx)
      test_server_port=(80 443)
      check_install_system
      install_nginx
       ;;
+    3)
+      printf "\t\t${green}1. ${plain}Docker${docker_download_url_1##*/docker-}\n"
+      read -p "Enther Your choice（1）:" select
+      install_docker
+      ;;
     *)
-          echo "输入错误"
-          exit 1
-          ;;
+      echo "输入序号不存在"
+      ;;
     esac
 } #show_soft
 
