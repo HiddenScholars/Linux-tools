@@ -11,7 +11,7 @@ select=''
     fi
     [ -d $install_path/nginx/ ] && mv $install_path/nginx/ $install_path/nginx$time
     mkdir -p /temp/nginx_file
-    tar xvf $download_path/nginx/${sorted_files[$select]} -C /temp/nginx_file/ --strip-components 1
+    tar xvf $download_path/nginx/$1 -C /temp/nginx_file/ --strip-components 1
     cd /temp/nginx_file/ && ./configure --prefix=${install_path}/nginx/ \
                                                 --with-pcre \
                                                 --with-http_ssl_module \
