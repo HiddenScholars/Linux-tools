@@ -55,7 +55,7 @@ function manage_download() {
   #download_url下载链接
   [ -z $server_name ] && echo -e "$red 禁止server_name为空使用 $plain" && exit
   [ -z $download_url ] && echo -e "$red 禁止download_url为使用 $plain" && exit
-  [ ! -d $download_path/$server_name ] &&  mkdir $download_path/$server_name
+  [ ! -d $download_path/$server_name ] &&  mkdir -p $download_path/$server_name
           if [ `ls $download_path/$server_name/ | wc -l` -ne 0 ];then
                 echo -e "${red}$download_path/$server_name/中存在文件${plain}"
                 echo
