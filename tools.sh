@@ -7,20 +7,18 @@ plain='\033[0m'
 
 nginx_download_url=
 docker_download_url=
+config_path=/tools/
+config_file=/tools/config.sh
 
-
-
-
-if [ ! -f /tools/config ];then
-  [ ! -d /tools/ ] && mkdir /tools/
-  echo -e "${red}config文件不存在，开始下载...${plain}"
-  wget
-  [ ! -f /tools/config ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
-fi
-
-
-
-
+#======================================================================
+  if [ ! -f ${config_file} ];then
+    [ ! -d ${config_path} ] && mkdir ${config_path}
+    echo -e "${red}config文件不存在，开始下载...${plain}"
+    wget -P ${config_path} https://raw.githubusercontent.com/LGF-LGF/tools/main/config.sh
+    [ ! -f ${config_file} ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
+  fi
+source $config_file
+#=====================================================================
 #check systemctl version
 if [[ -f /etc/redhat-release ]]; then
     release="centos"
@@ -57,8 +55,6 @@ elif [ "$release" == "debian" ]; then
 else
   controls='apt'
 fi
-
-
 function manage_download() {
   #server_name下载服务名
   #download_url下载链接
@@ -143,7 +139,6 @@ function manage_download() {
                   exit 0
               fi
 }
-
 function check_install_system() {
     [ -z $test_server_port ] && [ -z $process ] && echo -e "$red test_server_port与process禁止为空使用 $plain" && exit
     #test_server_port=() 检查此数组中的端口
@@ -208,7 +203,6 @@ echo "开始安装Nginx--链接Github获取Nginx安装脚本"
 bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_nginx.sh)
 read -p "按回车键返回主菜单："
 } #install_nginx
-
 function setting_ssl() {
 echo "开始安装证书--链接Github获取证书安装脚本"
 bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_ssl_acme.sh)
@@ -232,13 +226,8 @@ function install_docker() {
         manage_download
         #manager_download_END
   echo "开始安装Docker--链接github获取Docker安装脚本"
-  #写入临时变量
-  echo "export download_path=$download_path/docker/" >>$download_path/config
-  echo "export docker_file=${sorted_files[$select]}" >>$download_path/config
-
   bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_docker.sh)
   read -p "按回车键返回主菜单："
-  rm -rf $download_path/config
 }
 
 select=''

@@ -1,14 +1,14 @@
 source /tools/soft/config
 function install() {
 
-cd $download_path&& tar -xf $docker_file
-cp -r $download_path/docker/* /usr/bin
-rm -rf $download_path
+cd $download_path/docker/&& tar -xf $docker_file
+cp -r $download_path/docker/docker/* /usr/bin
+rm -rf $download_path/docker/docker
 ## 创建配置文件
 mkdir /etc/docker
 
 ## 配置国内的镜像源，加速镜像拉取
-mkdir -p /etc/docker/daemon.json
+[ ! -f /etc/docker/daemon.json ] && mkdir -p /etc/docker/daemon.json
 cat > /etc/docker/daemon.json << EOF
 {
   "registry-mirrors": ["https://b9pmyelo.mirror.aliyuncs.com"]
