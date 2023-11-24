@@ -55,7 +55,7 @@ function manage_download() {
   #download_url下载链接
   [ -z $server_name ] && echo -e "$red 禁止server_name为空使用 $plain" && exit
   [ -z $download_url ] && echo -e "$red 禁止download_url为使用 $plain" && exit
-  [ ! -d $download_path/docker ] &&  mkdir $download_path/docker
+  [ ! -d $download_path/$server_name ] &&  mkdir $download_path/$server_name
           if [ `ls $download_path/$server_name/ | wc -l` -ne 0 ];then
                 echo -e "${red}$download_path/$server_name/中存在文件${plain}"
                 echo
@@ -82,7 +82,7 @@ function manage_download() {
                 read -p  "文件夹中存在文件是否继续下载（y/n）(default：n)：" download_select
 
                 if [ "$download_select" == "y" ]; then
-                      wget -P $download_path/docker/ $download_url
+                      wget -P $download_path/$server_name/ $download_url
                       cd $download_path/$server_name/
                       # 定义一个空数组用于存储符合条件的文件
                       files=()
