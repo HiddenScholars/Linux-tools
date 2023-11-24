@@ -140,9 +140,9 @@ function manage_download() {
                   exit 0
               fi
 }
+
 function check_install_system() {
-    [ -z $test_server_port ] && echo -e "$red test_server_port禁止为空使用 $plain"
-    [ -z $process ] && echo -e "$red process禁止为空使用 $plain"
+    [ -z $test_server_port ] && [ -z $process ] && echo -e "$red test_server_port与process禁止为空使用 $plain" && exit
     #test_server_port=() 检查此数组中的端口
     netstat -ntpl|grep LISTEN|awk '{print $4}' >/opt/test_sys.txt
     #process=(nginx) 检查此数组中的进程
@@ -207,6 +207,8 @@ bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/
 }
 
 function install_docker() {
+  process=(docker)
+  check_install_system
   case $select in
         1)
         docker_download_url=$docker_download_url_1
