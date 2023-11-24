@@ -185,6 +185,18 @@ function check_install_system() {
         fi
 } #check_install_nginx_system
 function install_nginx() {
+     process=(nginx)
+     test_server_port=(80 443)
+     check_install_system
+    case $select in
+          1)
+          nginx_download_url=$nginx_download_url_1
+          ;;
+          *)
+            echo "暂无此版本，敬请期待."
+            exit 0
+            ;;
+    esac
     download_select=''
     if_select=''
     $controls install -y wget curl net-tools
@@ -211,7 +223,7 @@ function install_docker() {
         docker_download_url=$docker_download_url_1
         ;;
         *)
-          echo "暂无此版本."
+          echo "暂无此版本，敬请期待."
           exit 0
         ;;
   esac
@@ -226,18 +238,25 @@ function install_docker() {
   read -p "按回车键返回主菜单："
 }
 
+
 select=''
 function show_Use() {
-    clear
+clear
+echo -e "${green}   _|                          _|${plain}"
+echo -e "${green}_|_|_|_|    _|_|      _|_|     _|    _|_|_|${plain}"
+echo -e "${green}   _|      _|    _|  _|    _|  _|  _|_|${plain}"
+echo -e "${green}   _|      _|    _|  _|    _|  _|      _|_|${plain}"
+echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
     select=''
     printf "****************************************************************************\n"
                             printf "\t\t**欢迎使用tools脚本菜单**\n"
     printf "****************************************************************************\n"
                             printf "\t\t${green}0. ${plain}退出脚本.\n"
                             printf "\t\t${green}1. ${plain}服务安装.\n"
-                            printf "\t\t${green}2. ${plain}acme脚本(搭配cloudflare).\n"
+                            printf "\t\t${green}2. ${plain}服务卸载.\n"
+                            printf "\t\t${green}3. ${plain}acme脚本(搭配cloudflare).\n"
     printf "****************************************************************************\n"
-    read -p "输入序号【0-2】：" select
+    read -p "输入序号【0-3】：" select
     case $select in
     0)
     exit 1
@@ -246,6 +265,9 @@ function show_Use() {
     show_soft
       ;;
     2)
+
+      ;;
+    3)
     setting_ssl
       ;;
     *)
@@ -273,33 +295,20 @@ function show_soft() {
                         printf "\t\t${green}1. ${plain}Nginx.\n"
                         printf "\t\t${green}2. ${plain}Docker.\n"
     printf "****************************************************************************\n"
-    read -p   "输入序号【0-1】：" select
+    read -p   "输入序号【0-2】：" select
     case $select in
     0)
      return
       ;;
     1)
-    printf "\t\t${green}1. ${plain}Nginx${nginx_download_url_1##*/nginx-}\n"
-    read -p "Enther Your choice（1）:" select
-    case $select in
-          1)
-          nginx_download_url=$nginx_download_url_1
-          ;;
-          *)
-            echo "暂无此版本."
-            exit 0
-            ;;
-          esac
-     echo $nginx_download_url
-     process=(nginx)
-     test_server_port=(80 443)
-     check_install_system
-     install_nginx
+      printf "\t\t${green}1. ${plain}Nginx${nginx_download_url_1##*/nginx-}\n"
+      read -p "Enther Your install service version choice（1）:" select
+      install_nginx
       ;;
     2)
       echo
       printf "\t\t${green}1. ${plain}Docker${docker_download_url_1##*/docker-}\n"
-      read -p "Enther Your choice（1）:" select
+      read -p "Enther Your install service version choice（1）:" select
       install_docker
       ;;
     *)
@@ -307,7 +316,24 @@ function show_soft() {
       ;;
     esac
 } #show_soft
-
+function soft_uninstall() {
+      select=''
+      printf "****************************************************************************\n"
+                              printf "\t\t**欢迎使用tools脚本菜单**\n"
+      printf "****************************************************************************\n"
+                              printf "\t\t${green}0. ${plain}返回主页面.\n"
+                              printf "\t\t${green}1. ${plain}Nginx卸载.\n"
+      printf "****************************************************************************\n"
+      read -p "输入序号【0-1】：" select
+      case $selet in
+      0)
+        return
+        ;;
+      1)
+        uninstall_nginx
+        ;;
+      esac
+}
 
 [ `whoami` != root ] && echo -e "${red}需要使用root权限${plain}" && exit 1
 while [ true ]; do
