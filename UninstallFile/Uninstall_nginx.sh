@@ -50,6 +50,10 @@ if [ `ps -ef | grep nginx | grep -v grep | awk '{print $2}' | wc -l ` != 0 ]; th
     [ -f /usr/lib/systemd/system/nginx.service ] && sudo rm -rf /usr/lib/systemd/system/nginx.service
     systemctl daemon-reload
     echo "卸载nginx完成"
+
+    else
+    echo "未获取到Nginx路径"
+
     fi
 else
     printf "获取Nginx安装路径："
@@ -81,5 +85,7 @@ else
     [ -f /usr/lib/systemd/system/nginx.service ] && sudo rm -rf /usr/lib/systemd/system/nginx.service
     systemctl daemon-reload
     echo "卸载nginx完成"
+    else
+        echo "未获取到Nginx路径"
     fi
 fi
