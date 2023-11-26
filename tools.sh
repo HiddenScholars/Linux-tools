@@ -237,7 +237,7 @@ echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
     show_soft
       ;;
     2)
-    uninstall_nginx
+    soft_uninstall
       ;;
     3)
     setting_ssl
