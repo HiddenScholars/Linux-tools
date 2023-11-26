@@ -304,6 +304,9 @@ function soft_uninstall() {
       1)
         uninstall_nginx
         ;;
+      *)
+        echo "序号输入错误"
+        ;;
       esac
 }
 
