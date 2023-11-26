@@ -136,14 +136,6 @@ function check_install_system() {
                     let  u=$u+1
                 fi
             done
-            for pro in ${PRODUCT_ORDER[@]}
-            do
-                if [ `ps -ef|grep $pro |grep -v "grep"|wc -l` -ne 0 ]
-                then
-                    echo "服务有残余进程，删除后再次执行脚本检测安装环境"
-                    let  u=$u+1
-                fi
-            done
         else
           countinue=''
           read -p "是否继续安装，继续安装可能会无法启动（y/n）:" countinue
