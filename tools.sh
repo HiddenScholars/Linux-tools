@@ -288,6 +288,7 @@ function show_soft() {
     esac
 } #show_soft
 function soft_uninstall() {
+      clear
       select=''
       printf "****************************************************************************\n"
                               printf "\t\t**欢迎使用tools脚本菜单**\n"
