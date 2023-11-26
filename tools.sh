@@ -208,7 +208,7 @@ function install_docker() {
 
 function uninstall_nginx() {
     echo "开始卸载Nginx--链接github获取Nginx卸载脚本"
-    bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Uninstall_nginx.sh)
+    bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/UninstallFile/Uninstall_nginx.sh)
     read -p "按回车键返回主菜单："
 }
 function show_Use() {
