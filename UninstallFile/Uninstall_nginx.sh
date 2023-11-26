@@ -7,7 +7,7 @@ read -p "回车后确认卸载："
 source /etc/profile
 source /tools/config.sh
 if [ `ps -ef | grep nginx | grep -v grep | awk '{print $2}' | wc -l ` != 0 ]; then
-    printf "检测到Nginx进程，进程ID："
+    echo "检测到Nginx进程，进程ID："
     ps -ef | grep nginx | grep -v grep | awk '{print $2}'
     killall_select=1
     while [ $killall_select -lt 4 ]; do
