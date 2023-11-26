@@ -4,7 +4,10 @@ nginx_download_url=
 docker_download_url=
 config_path=/tools/
 config_file=/tools/config.sh
+#tools start check ...
+[ `whoami` != root ] && echo -e "${red}需要使用root权限${plain}" && exit 1
 
+#config.sh check
 #======================================================================
   if [ ! -f ${config_file} ];then
     [ ! -d ${config_path} ] && mkdir ${config_path}
@@ -14,42 +17,7 @@ config_file=/tools/config.sh
   fi
 source $config_file
 #=====================================================================
-#check systemctl version
-if [[ -f /etc/redhat-release ]]; then
-    release="centos"
-    yum -y install wget curl
-elif cat /etc/issue | grep -Eqi "debian"; then
-    release="debian"
-    apt install -y wget curl
-elif cat /etc/issue | grep -Eqi "ubuntu"; then
-    release="ubuntu"
-    apt install -y wget curl
-elif cat /etc/issue | grep -Eqi "centos|red hat|redhat"; then
-    release="centos"
-    yum -y install wget curl
-elif cat /proc/version | grep -Eqi "debian"; then
-    release="debian"
-    apt install -y wget curl
-elif cat /proc/version | grep -Eqi "ubuntu"; then
-    release="ubuntu"
-    apt install -y wget curl
-elif cat /proc/version | grep -Eqi "centos|red hat|redhat"; then
-    release="centos"
-    apt install -y wget curl
-else
-    echo -e  "${red}未检测到系统版本，请联系脚本作者！\n${plain}" && exit 1
-fi
-# select erector
-controls=''
-if [ "$release" == "centos" ];then
-  controls='yum'
-elif [ "$release" == "ubuntu" ];then
-  controls='apt'
-elif [ "$release" == "debian" ]; then
-  controls='apt'
-else
-  controls='apt'
-fi
+
 function manage_download() {
   #server_name下载服务名
   #download_url下载链接
@@ -238,9 +206,13 @@ function install_docker() {
   read -p "按回车键返回主菜单："
 }
 
-
-select=''
+function uninstall_nginx() {
+    echo "开始卸载Nginx--链接github获取Nginx卸载脚本"
+    bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Uninstall_nginx.sh)
+    read -p "按回车键返回主菜单："
+}
 function show_Use() {
+select=''
 clear
 echo -e "${green}   _|                          _|${plain}"
 echo -e "${green}_|_|_|_|    _|_|      _|_|     _|    _|_|_|${plain}"
@@ -276,7 +248,6 @@ echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
       ;;
     esac
 }
-
 function show_soft() {
 #安装软件进程和端口检查，调用函数check_install_system,调用前设置
 #    #process=() 检查此数组中的进程
@@ -335,7 +306,23 @@ function soft_uninstall() {
       esac
 }
 
-[ `whoami` != root ] && echo -e "${red}需要使用root权限${plain}" && exit 1
-while [ true ]; do
-show_Use
-done
+
+
+case $1 in
+-d)
+  case $2 in
+  config.sh)
+          wget -P ${config_path} https://raw.githubusercontent.com/LGF-LGF/tools/main/config.sh
+          [ ! -f ${config_file} ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
+          ;;
+  *)
+  echo -e "${red}参数错误${plain}"
+    ;;
+  esac
+;;
+*)
+  while [ true ]; do
+  show_Use
+  done
+  ;;
+esac

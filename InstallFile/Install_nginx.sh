@@ -39,6 +39,7 @@ select=''
     source /etc/profile
     if [ -z $NGINX_HOME ];then
     echo "export NGINX_HOME=$install_path/nginx/" >>/etc/profile
+    echo "export PATH=$PATH:$NGINX_HOME/sbin/" >>/etc/profile
     source /etc/profile
     fi
     if [ ! -z $nginx_user ]; then
