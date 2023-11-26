@@ -289,7 +289,7 @@ function soft_uninstall() {
                               printf "\t\t${green}1. ${plain}Nginx卸载.\n"
       printf "****************************************************************************\n"
       read -p "输入序号【0-1】：" select
-      case $selet in
+      case $select in
       0)
         return
         ;;
