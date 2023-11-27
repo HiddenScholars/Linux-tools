@@ -1,8 +1,7 @@
 #!/bin/bash
 
-
-printf "回车后确认卸载："
-read
+echo
+read -p  "回车后确认卸载："
 
 source /etc/profile
 source /tools/config.sh
@@ -25,19 +24,21 @@ if [ `ps -ef | grep nginx | grep -v grep | awk '{print $2}' | wc -l ` != 0 ]; th
 printf "获取Nginx安装路径："
         if [ -z $NGINX_HOME ]; then
           source /etc/profile
-          command -v nginx
+            command -v nginx
            if [ "$(command -v nginx)" == "/usr/sbin/nginx" ];then
             $controls remove -y nginx
             $controls autoremove -y nginx
             source /etc/profile
-           elif [ -h $(command -v nginx) ]; then
+          elif [ -h $(command -v nginx) ]; then
               temp_command=$(command -v nginx)
-              [ ! -z $temp_command ] && link_path=`readlink -f $temp_command`
+             if [ ! -z $temp_command ];then
+                link_path=`readlink -f $temp_command`
               echo "$(command -v nginx)为软连接"
               echo "获取源路径为：$link_path"
               rm -rf $link_path
               rm -rf $(command -v nginx)
               source /etc/profile
+             fi
           fi
         [ -f /etc/init.d/nginx ] && sudo rm -f /etc/init.d/nginx
         systemctl disable nginx.service &>/dev/null
@@ -59,12 +60,14 @@ printf "获取Nginx安装路径："
             source /etc/profile
         elif [ -h $(command -v nginx) ]; then
             temp_command=$(command -v nginx)
-            [ ! -z $temp_command ] && link_path=`readlink -f $temp_command`
+            if [ ! -z $temp_command ];then
+            link_path=`readlink -f $temp_command`
             echo "$(command -v nginx)为软连接"
             echo "获取源路径为：$link_path"
             rm -rf $link_path
             rm -rf $(command -v nginx)
             source /etc/profile
+            fi
         fi
         [ -f /etc/init.d/nginx ] && sudo rm -f /etc/init.d/nginx
         systemctl disable nginx.service &>/dev/null
@@ -84,12 +87,14 @@ elif [ ! -z $NGINX_HOME ] || [  "$(command -v nginx)" != " " ]; then
             source /etc/profile
           elif [ -h $(command -v nginx) ]; then
               temp_command=$(command -v nginx)
-              [ ! -z $temp_command ] && link_path=`readlink -f $temp_command`
+             if [ ! -z $temp_command ];then
+                link_path=`readlink -f $temp_command`
               echo "$(command -v nginx)为软连接"
               echo "获取源路径为：$link_path"
               rm -rf $link_path
               rm -rf $(command -v nginx)
               source /etc/profile
+             fi
           fi
         [ -f /etc/init.d/nginx ] && sudo rm -f /etc/init.d/nginx
         systemctl disable nginx.service &>/dev/null
@@ -111,12 +116,14 @@ elif [ ! -z $NGINX_HOME ] || [  "$(command -v nginx)" != " " ]; then
             source /etc/profile
         elif [ -h $(command -v nginx) ]; then
             temp_command=$(command -v nginx)
-            [ ! -z $temp_command ] && link_path=`readlink -f $temp_command`
+            if [ ! -z $temp_command ];then
+            link_path=`readlink -f $temp_command`
             echo "$(command -v nginx)为软连接"
             echo "获取源路径为：$link_path"
             rm -rf $link_path
             rm -rf $(command -v nginx)
             source /etc/profile
+            fi
         fi
         [ -f /etc/init.d/nginx ] && sudo rm -f /etc/init.d/nginx
         systemctl disable nginx.service &>/dev/null
