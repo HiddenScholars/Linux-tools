@@ -18,7 +18,7 @@ case $(uname -m) in
 x86_64)
   case $1 in
   2.23.3)
-  wget -P /usr/local/bin/ $docker_compose_downlaod_url_1
+  wget -P /usr/local/bin/ $docker_compose_download_urls
   cd /usr/local/bin/  && mv docker-compose-linux-x86_64 docker-compose && chmod +x docker-compose
   command -v docker-compose &>/dev/null
   [ $? -ne 0 ] && echo "export PATH=$PATH:/usr/local/bin/" >>/etc/profile

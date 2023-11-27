@@ -200,18 +200,20 @@ function install_docker() {
 function install_docker_compose() {
 regex="v([0-9]+\.[0-9]+\.[0-9]+)"
 docker_compose_download_urls_select=0
+temp_number=()
 for url in "${docker_compose_download_urls[@]}"
 do
     if [[ $url =~ $regex ]]; then
         version="${BASH_REMATCH[1]}"
         echo -e "${green}$docker_compose_download_urls_select：$version${plain}"
+        temp_number+=($version)
     fi
 let docker_compose_download_urls_select=$docker_compose_download_urls_select+1
 done
 select=''
       read -p "Enther Your install service version choice（0）:" select
       [ -z ${docker_compose_download_urls[$select]} ] && echo -e "${red}暂不支持的版本号${plain}" && exit 0
-bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_docker-compose.sh) ${version}
+bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_docker-compose.sh) ${temp_number[$select]}
 }
 
 function uninstall_nginx() {
