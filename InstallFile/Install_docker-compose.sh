@@ -22,6 +22,12 @@ x86_64)
   cd /usr/local/bin/  && mv docker-compose-linux-x86_64 docker-compose && chmod +x docker-compose
   command -v docker-compose &>/dev/null
   [ $? -ne 0 ] && echo "export PATH=$PATH:/usr/local/bin/" >>/etc/profile
+  docker-compose -v &>/dev/null
+  if [ $? -eq 0 ];then
+  echo -e "${green}安装完成${plain}"
+  else
+  echo -e "${red}安装失败${plain}"
+  fi
   ;;
   *)
     echo "暂时不支持的版本"
