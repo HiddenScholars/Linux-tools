@@ -204,13 +204,14 @@ for url in "${docker_compose_download_urls[@]}"
 do
     if [[ $url =~ $regex ]]; then
         version="${BASH_REMATCH[1]}"
-        echo "${green}$docker_compose_download_urls_select：$version${plain}"
+        echo -e "${green}$docker_compose_download_urls_select：$version${plain}"
     fi
 let docker_compose_download_urls_select=$docker_compose_download_urls_select+1
 done
 select=''
       read -p "Enther Your install service version choice（1）:" select
-bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_docker-compose.sh) ${version}
+      [ -z ${docker_compose_download_urls[$select]} ] && echo -e "${red}暂不支持的版本号${plain}"
+bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_docker-compose.sh) ${docker_compose_download_urls[$select]}
 }
 
 function uninstall_nginx() {
