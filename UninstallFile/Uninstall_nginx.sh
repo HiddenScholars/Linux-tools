@@ -45,6 +45,7 @@ printf "获取Nginx安装路径："
         [ -f /usr/lib/systemd/system/nginx.service ] && sudo rm -rf /usr/lib/systemd/system/nginx.service
         [ -f /etc/systemd/system/nginx.service ] && sudo rm -rf /etc/systemd/system/nginx.service
         systemctl daemon-reload
+        echo
         echo "卸载nginx完成"
 
         elif [ ! -z $NGINX_HOME ];then
@@ -74,6 +75,7 @@ printf "获取Nginx安装路径："
         [ -f /usr/lib/systemd/system/nginx.service ] && sudo rm -rf /usr/lib/systemd/system/nginx.service
         [ -f /etc/systemd/system/nginx.service ] && sudo rm -rf /etc/systemd/system/nginx.service
         systemctl daemon-reload
+        echo
         echo "卸载nginx完成"
         fi
 elif [ ! -z $NGINX_HOME ] || [  "$(command -v nginx)" != " " ]; then
@@ -101,6 +103,7 @@ elif [ ! -z $NGINX_HOME ] || [  "$(command -v nginx)" != " " ]; then
         [ -f /usr/lib/systemd/system/nginx.service ] && sudo rm -rf /usr/lib/systemd/system/nginx.service
         [ -f /etc/systemd/system/nginx.service ] && sudo rm -rf /etc/systemd/system/nginx.service
         systemctl daemon-reload
+        echo
         echo "卸载nginx完成"
 
         elif [ ! -z $NGINX_HOME ];then
@@ -130,6 +133,7 @@ elif [ ! -z $NGINX_HOME ] || [  "$(command -v nginx)" != " " ]; then
         [ -f /usr/lib/systemd/system/nginx.service ] && sudo rm -rf /usr/lib/systemd/system/nginx.service
         [ -f /etc/systemd/system/nginx.service ] && sudo rm -rf /etc/systemd/system/nginx.service
         systemctl daemon-reload
+        echo
         echo "卸载nginx完成"
         fi
 else
