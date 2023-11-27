@@ -3,7 +3,13 @@ select=''
     [ ! -f $download_path/nginx/$1 ] && echo -e "${red}文件不存在${plain}" && exit 0
     echo $release
 
-    $controls install -y gcc gcc-c++ pcre pcre-devel zlib zlib-devel openssl openssl-devel gd gd-devel
+    if [ "$release" == "centos" ]; then
+            $controls install -y gcc gcc-c++ pcre pcre-devel zlib zlib-devel openssl openssl-devel gd gd-devel
+    elif [ "$release" == "ubuntu" ]; then
+            $controls install -y gcc g++ libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev make
+    else
+            $controls install -y gcc g++ libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev make
+    fi
     [ -d $install_path/nginx/ ] && mv $install_path/nginx/ $install_path/nginx$time
     mkdir -p /tools/unpack_file/
     tar xvf $download_path/nginx/$1 -C /tools/unpack_file/ --strip-components 1
