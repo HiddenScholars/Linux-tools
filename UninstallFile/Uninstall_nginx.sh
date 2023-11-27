@@ -1,7 +1,6 @@
 #!/bin/bash
 
-echo
-read -p  "回车后确认卸载："
+read -p "回车后确认卸载："
 
 source /etc/profile
 source /tools/config.sh
@@ -46,7 +45,7 @@ printf "获取Nginx安装路径："
         [ -f /etc/systemd/system/nginx.service ] && sudo rm -rf /etc/systemd/system/nginx.service
         systemctl daemon-reload
         echo
-        echo "卸载nginx完成"
+        echo "卸载Nginx完成"
 
         elif [ ! -z $NGINX_HOME ];then
         source /etc/profile
@@ -76,7 +75,7 @@ printf "获取Nginx安装路径："
         [ -f /etc/systemd/system/nginx.service ] && sudo rm -rf /etc/systemd/system/nginx.service
         systemctl daemon-reload
         echo
-        echo "卸载nginx完成"
+        echo "卸载Nginx完成"
         fi
 elif [ ! -z $NGINX_HOME ] || [  "$(command -v nginx)" != " " ]; then
     printf "获取Nginx安装路径："
@@ -104,7 +103,7 @@ elif [ ! -z $NGINX_HOME ] || [  "$(command -v nginx)" != " " ]; then
         [ -f /etc/systemd/system/nginx.service ] && sudo rm -rf /etc/systemd/system/nginx.service
         systemctl daemon-reload
         echo
-        echo "卸载nginx完成"
+        echo "卸载Nginx完成"
 
         elif [ ! -z $NGINX_HOME ];then
         source /etc/profile
@@ -134,7 +133,7 @@ elif [ ! -z $NGINX_HOME ] || [  "$(command -v nginx)" != " " ]; then
         [ -f /etc/systemd/system/nginx.service ] && sudo rm -rf /etc/systemd/system/nginx.service
         systemctl daemon-reload
         echo
-        echo "卸载nginx完成"
+        echo "卸载Nginx完成"
         fi
 else
   echo "未检测到Nginx安装信息"
