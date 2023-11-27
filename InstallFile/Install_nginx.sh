@@ -2,13 +2,8 @@ source /tools/config.sh
 select=''
     [ ! -f $download_path/nginx/$1 ] && echo -e "${red}文件不存在${plain}" && exit 0
     echo $release
-    if [ "$release" == "centos" ]; then
-        yum install -y gcc gcc-c++ pcre pcre-devel zlib zlib-devel openssl openssl-devel gd gd-devel
-    elif [ "$release" == "ubuntu" ]; then
-        apt install -y gcc g++ libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev make
-    else
-        apt install -y gcc g++ libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev make
-    fi
+
+    $controls install -y gcc gcc-c++ pcre pcre-devel zlib zlib-devel openssl openssl-devel gd gd-devel
     [ -d $install_path/nginx/ ] && mv $install_path/nginx/ $install_path/nginx$time
     mkdir -p /tools/unpack_file/
     tar xvf $download_path/nginx/$1 -C /tools/unpack_file/ --strip-components 1
@@ -75,8 +70,7 @@ chmod +x /usr/lib/systemd/system/nginx.service
 systemctl daemon-reload
 systemctl start nginx.service
 systemctl enable nginx.service
-systemctl status nginx.service
-ps -ef | grep nginx &>/dev/null
+ps -ef | grep nginx
 [ $? -ne 0 ] && exit 0
 
 echo -e "设置防火墙..."

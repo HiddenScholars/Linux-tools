@@ -45,11 +45,14 @@ elif command -v yum &> /dev/null; then
     echo "已安装：yum (CentOS/RHEL)"
     controls='yum'
 elif command -v dnf &> /dev/null; then
-    echo "已安装：dnf (Fedora) && echo "未适配的软件管理器" && exit 0"
+    echo "已安装：dnf (Fedora)"
+    controls='dnf'
 elif command -v zypper &> /dev/null; then
-    echo "已安装：zypper (openSUSE) && echo "未适配的软件管理器" && exit 0"
+    echo "已安装：zypper (openSUSE)"
+    controls='zypper'
 elif command -v pacman &> /dev/null; then
-    echo "已安装：pacman (Arch Linux) && echo "未适配的软件管理器" && exit 0"
+    echo "已安装：pacman (Arch Linux)"
+    controls='pacman'
 else
     echo "未知的软件包管理器"
     exit 0
