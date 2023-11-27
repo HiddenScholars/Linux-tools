@@ -197,6 +197,21 @@ function install_docker() {
   bash <(curl -L https://raw.Githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_docker.sh) $filename
   read -p "按回车键返回主菜单："
 }
+function install_docker_compose() {
+regex="v([0-9]+\.[0-9]+\.[0-9]+)"
+docker_compose_download_urls_select=0
+for url in "${docker_compose_download_urls[@]}"
+do
+    if [[ $url =~ $regex ]]; then
+        version="${BASH_REMATCH[1]}"
+        echo "${green}$docker_compose_download_urls_select：$version${plain}"
+    fi
+let docker_compose_download_urls_select=$docker_compose_download_urls_select+1
+done
+select=''
+      read -p "Enther Your install service version choice（1）:" select
+bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_docker-compose.sh) ${version}
+}
 
 function uninstall_nginx() {
     echo "开始卸载Nginx--链接Github获取Nginx卸载脚本"
@@ -257,6 +272,7 @@ function show_soft() {
                         printf "\t\t${green}0. ${plain}返回主页面.\n"
                         printf "\t\t${green}1. ${plain}Nginx.\n"
                         printf "\t\t${green}2. ${plain}Docker.\n"
+                        printf "\t\t${green}3. ${plain}docker-compose.\n"
     printf "****************************************************************************\n"
     read -p   "输入序号【0-2】：" select
     case $select in
@@ -264,6 +280,7 @@ function show_soft() {
      return
       ;;
     1)
+      echo
       printf "\t\t${green}1. ${plain}Nginx${nginx_download_url_1##*/nginx-}\n"
       read -p "Enther Your install service version choice（1）:" select
       install_nginx
@@ -273,6 +290,9 @@ function show_soft() {
       printf "\t\t${green}1. ${plain}Docker${docker_download_url_1##*/docker-}\n"
       read -p "Enther Your install service version choice（1）:" select
       install_docker
+      ;;
+    3)
+      install_docker_compose
       ;;
     *)
       echo "输入序号不存在"

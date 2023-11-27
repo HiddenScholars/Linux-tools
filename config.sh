@@ -12,8 +12,9 @@ time=`date +%Y%m%d`
 nginx_download_url_1=https://nginx.org/download/nginx-1.24.0.tar.gz
 nginx_user=nginx
 docker_download_url_1=https://download.docker.com/linux/static/stable/x86_64/docker-23.0.6.tgz
-
-
+docker_compose_downlaod_urls=(
+"https://github.com/docker/compose/releases/download/v2.23.3/docker-compose-linux-x86_64"
+)
 
 #输出颜色
 red='\033[31m'
