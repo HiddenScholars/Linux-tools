@@ -194,12 +194,12 @@ function install_docker() {
         #manager_download_END
         filename=$(basename $docker_download_url)
   echo "开始安装Docker--链接github获取Docker安装脚本"
-  bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_docker.sh) $filename
+  bash <(curl -L https://raw.Githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_docker.sh) $filename
   read -p "按回车键返回主菜单："
 }
 
 function uninstall_nginx() {
-    echo "开始卸载Nginx--链接github获取Nginx卸载脚本"
+    echo "开始卸载Nginx--链接Github获取Nginx卸载脚本"
     bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/UninstallFile/Uninstall_nginx.sh)
     read -p "按回车键返回主菜单："
 }

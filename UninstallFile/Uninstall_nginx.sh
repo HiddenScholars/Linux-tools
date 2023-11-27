@@ -23,47 +23,21 @@ if [ `ps -ef | grep nginx | grep -v grep | awk '{print $2}' | wc -l ` != 0 ]; th
     done
     [ `ps -ef | grep nginx | grep -v grep | awk '{print $2}' | wc -l ` != 0 ] && echo "Nginx进程杀死失败，退出..." && exit 0
 printf "获取Nginx安装路径："
-    if [ -z $NGINX_HOME ]; then
-        command -v nginx
-       if [ "$(command -v nginx)" == "/usr/sbin/nginx" ];then
-        $controls remove -y nginx
-        $controls autoremove -y nginx
-        source /etc/profile
-       fi
-    [ -f /etc/init.d/nginx ] && sudo rm -f /etc/init.d/nginx
-    systemctl disable nginx.service &>/dev/null
-    [ -f /usr/lib/systemd/system/nginx.service ] && sudo rm -rf /usr/lib/systemd/system/nginx.service
-    [ -f /etc/systemd/system/nginx.service ] && sudo rm -rf /etc/systemd/system/nginx.service
-    systemctl daemon-reload
-    echo "卸载nginx完成"
-
-    elif [ ! -z $NGINX_HOME ];then
-    echo $NGINX_HOME
-    rm -rf $NGINX_HOME
-    sed -i "/NGINX/d" /etc/profile
-    sed -i "/nginx/d" /etc/profile
-    source /etc/profile
-    if [ "$(command -v nginx)" == "/usr/sbin/nginx" ]; then
-        $controls remove -y nginx
-        $controls autoremove -y nginx
-        source /etc/profile
-    fi
-    [ -f /etc/init.d/nginx ] && sudo rm -f /etc/init.d/nginx
-    systemctl disable nginx.service &>/dev/null
-    [ -f /usr/lib/systemd/system/nginx.service ] && sudo rm -rf /usr/lib/systemd/system/nginx.service
-    [ -f /etc/systemd/system/nginx.service ] && sudo rm -rf /etc/systemd/system/nginx.service
-    systemctl daemon-reload
-    echo "卸载nginx完成"
-    fi
-elif [ ! -z $NGINX_HOME ] || [ ! -z $(command -v nginx) ]; then
-    printf "获取Nginx安装路径："
         if [ -z $NGINX_HOME ]; then
+          source /etc/profile
             command -v nginx
            if [ "$(command -v nginx)" == "/usr/sbin/nginx" ];then
             $controls remove -y nginx
             $controls autoremove -y nginx
             source /etc/profile
-           fi
+          elif [ -h $(command -v nginx) ]; then
+              link_path=`readlink -f $(command -v nginx)`
+              echo "$(command -v nginx)为软连接"
+              echo "获取源路径为：$link_path"
+              rm -rf $link_path
+              rm -rf $(command -v nginx)
+              source /etc/profile
+          fi
         [ -f /etc/init.d/nginx ] && sudo rm -f /etc/init.d/nginx
         systemctl disable nginx.service &>/dev/null
         [ -f /usr/lib/systemd/system/nginx.service ] && sudo rm -rf /usr/lib/systemd/system/nginx.service
@@ -72,6 +46,7 @@ elif [ ! -z $NGINX_HOME ] || [ ! -z $(command -v nginx) ]; then
         echo "卸载nginx完成"
 
         elif [ ! -z $NGINX_HOME ];then
+        source /etc/profile
         echo $NGINX_HOME
         rm -rf $NGINX_HOME
         sed -i "/NGINX/d" /etc/profile
@@ -80,6 +55,63 @@ elif [ ! -z $NGINX_HOME ] || [ ! -z $(command -v nginx) ]; then
         if [ "$(command -v nginx)" == "/usr/sbin/nginx" ]; then
             $controls remove -y nginx
             $controls autoremove -y nginx
+            source /etc/profile
+        elif [ -h $(command -v nginx) ]; then
+            link_path=`readlink -f $(command -v nginx)`
+            echo "$(command -v nginx)为软连接"
+            echo "获取源路径为：$link_path"
+            rm -rf $link_path
+            rm -rf $(command -v nginx)
+            source /etc/profile
+        fi
+        [ -f /etc/init.d/nginx ] && sudo rm -f /etc/init.d/nginx
+        systemctl disable nginx.service &>/dev/null
+        [ -f /usr/lib/systemd/system/nginx.service ] && sudo rm -rf /usr/lib/systemd/system/nginx.service
+        [ -f /etc/systemd/system/nginx.service ] && sudo rm -rf /etc/systemd/system/nginx.service
+        systemctl daemon-reload
+        echo "卸载nginx完成"
+        fi
+elif [ ! -z $NGINX_HOME ] || [  "$(command -v nginx)" != " " ]; then
+    printf "获取Nginx安装路径："
+        if [ -z $NGINX_HOME ]; then
+          source /etc/profile
+            command -v nginx
+           if [ "$(command -v nginx)" == "/usr/sbin/nginx" ];then
+            $controls remove -y nginx
+            $controls autoremove -y nginx
+            source /etc/profile
+          elif [ -h $(command -v nginx) ]; then
+              link_path=`readlink -f $(command -v nginx)`
+              echo "$(command -v nginx)为软连接"
+              echo "获取源路径为：$link_path"
+              rm -rf $link_path
+              rm -rf $(command -v nginx)
+              source /etc/profile
+          fi
+        [ -f /etc/init.d/nginx ] && sudo rm -f /etc/init.d/nginx
+        systemctl disable nginx.service &>/dev/null
+        [ -f /usr/lib/systemd/system/nginx.service ] && sudo rm -rf /usr/lib/systemd/system/nginx.service
+        [ -f /etc/systemd/system/nginx.service ] && sudo rm -rf /etc/systemd/system/nginx.service
+        systemctl daemon-reload
+        echo "卸载nginx完成"
+
+        elif [ ! -z $NGINX_HOME ];then
+        source /etc/profile
+        echo $NGINX_HOME
+        rm -rf $NGINX_HOME
+        sed -i "/NGINX/d" /etc/profile
+        sed -i "/nginx/d" /etc/profile
+        source /etc/profile
+        if [ "$(command -v nginx)" == "/usr/sbin/nginx" ]; then
+            $controls remove -y nginx
+            $controls autoremove -y nginx
+            source /etc/profile
+        elif [ -h $(command -v nginx) ]; then
+            link_path=`readlink -f $(command -v nginx)`
+            echo "$(command -v nginx)为软连接"
+            echo "获取源路径为：$link_path"
+            rm -rf $link_path
+            rm -rf $(command -v nginx)
             source /etc/profile
         fi
         [ -f /etc/init.d/nginx ] && sudo rm -f /etc/init.d/nginx
