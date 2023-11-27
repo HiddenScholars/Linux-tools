@@ -176,8 +176,6 @@ bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/
 read -p "按回车键返回主菜单："
 }
 function install_docker() {
-  process=(docker)
-  check_install_system
   case $select in
         1)
         docker_download_url=$docker_download_url_1
@@ -187,6 +185,8 @@ function install_docker() {
           exit 0
         ;;
   esac
+  process=(docker)
+  check_install_system
         #manager_download_END
         server_name=docker
         download_url=$docker_download_url
