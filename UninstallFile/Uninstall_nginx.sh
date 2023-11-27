@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-read -p "回车后确认卸载："
-
+printf "回车后确认卸载："
+read
 
 source /etc/profile
 source /tools/config.sh
@@ -25,13 +25,14 @@ if [ `ps -ef | grep nginx | grep -v grep | awk '{print $2}' | wc -l ` != 0 ]; th
 printf "获取Nginx安装路径："
         if [ -z $NGINX_HOME ]; then
           source /etc/profile
-            command -v nginx
+          command -v nginx
            if [ "$(command -v nginx)" == "/usr/sbin/nginx" ];then
             $controls remove -y nginx
             $controls autoremove -y nginx
             source /etc/profile
-          elif [ -h $(command -v nginx) ]; then
-              link_path=`readlink -f $(command -v nginx)`
+           elif [ -h $(command -v nginx) ]; then
+              temp_command=$(command -v nginx)
+              [ ! -z $temp_command ] && link_path=`readlink -f $temp_command`
               echo "$(command -v nginx)为软连接"
               echo "获取源路径为：$link_path"
               rm -rf $link_path
@@ -57,7 +58,8 @@ printf "获取Nginx安装路径："
             $controls autoremove -y nginx
             source /etc/profile
         elif [ -h $(command -v nginx) ]; then
-            link_path=`readlink -f $(command -v nginx)`
+            temp_command=$(command -v nginx)
+            [ ! -z $temp_command ] && link_path=`readlink -f $temp_command`
             echo "$(command -v nginx)为软连接"
             echo "获取源路径为：$link_path"
             rm -rf $link_path
@@ -81,7 +83,8 @@ elif [ ! -z $NGINX_HOME ] || [  "$(command -v nginx)" != " " ]; then
             $controls autoremove -y nginx
             source /etc/profile
           elif [ -h $(command -v nginx) ]; then
-              link_path=`readlink -f $(command -v nginx)`
+              temp_command=$(command -v nginx)
+              [ ! -z $temp_command ] && link_path=`readlink -f $temp_command`
               echo "$(command -v nginx)为软连接"
               echo "获取源路径为：$link_path"
               rm -rf $link_path
@@ -107,7 +110,8 @@ elif [ ! -z $NGINX_HOME ] || [  "$(command -v nginx)" != " " ]; then
             $controls autoremove -y nginx
             source /etc/profile
         elif [ -h $(command -v nginx) ]; then
-            link_path=`readlink -f $(command -v nginx)`
+            temp_command=$(command -v nginx)
+            [ ! -z $temp_command ] && link_path=`readlink -f $temp_command`
             echo "$(command -v nginx)为软连接"
             echo "获取源路径为：$link_path"
             rm -rf $link_path
