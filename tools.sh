@@ -218,6 +218,7 @@ function uninstall_nginx() {
     bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/UninstallFile/Uninstall_nginx.sh)
     read -p "按回车键返回主菜单："
 }
+}
 function show_Use() {
 select=''
 clear
