@@ -1,6 +1,5 @@
 source /tools/config.sh
 function install() {
-filename=(name )
 cd $download_path/docker/&& tar -xvf $1
 cp -r $download_path/docker/docker/* /usr/bin
 rm -rf $download_path/docker/docker
