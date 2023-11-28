@@ -277,7 +277,7 @@ function show_soft() {
                         printf "\t\t${green}2. ${plain}Docker.\n"
                         printf "\t\t${green}3. ${plain}docker-compose.\n"
     printf "****************************************************************************\n"
-    read -p   "输入序号【0-2】：" select
+    read -p   "输入序号【0-3】：" select
     case $select in
     0)
      return
