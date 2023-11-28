@@ -54,15 +54,15 @@ docker --version
     function remove_old_docker() {
 
     # 移除掉旧的版本
-    distribution=$(lsb_release -si)
+    distribution=$release
 
     case "$distribution" in
-        Ubuntu)
+        ubuntu)
             # Ubuntu发行版
             sudo apt-get remove docker-ce docker-ce-cli containerd.io
             ;;
 
-        CentOS | RedHatEnterpriseServer | OracleServer)
+        centos | RedHatEnterpriseServer | OracleServer)
             # CentOS、Red Hat Enterprise Server、Oracle Linux发行版
             sudo yum remove docker-ce docker-ce-cli containerd.io
             ;;
