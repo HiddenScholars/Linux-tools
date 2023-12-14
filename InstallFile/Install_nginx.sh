@@ -51,7 +51,6 @@ select=''
 
     if [ -f $NGINX_HOME/sbin/nginx ]; then
         echo -e "${green}安装完成...${plain}"
-        cd /temp/  && rm -rf nginx_file
         else
         echo -e "${red}安装失败...${plain}"
         exit 0
