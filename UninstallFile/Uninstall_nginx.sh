@@ -39,10 +39,10 @@ printf "获取Nginx安装路径："
               source /etc/profile
              fi
           fi
-        [ -f /etc/init.d/nginx ] && sudo rm -f /etc/init.d/nginx
+        [ -f /etc/init.d/nginx ] &&  rm -f /etc/init.d/nginx
         systemctl disable nginx.service &>/dev/null
-        [ -f /usr/lib/systemd/system/nginx.service ] && sudo rm -rf /usr/lib/systemd/system/nginx.service
-        [ -f /etc/systemd/system/nginx.service ] && sudo rm -rf /etc/systemd/system/nginx.service
+        [ -f /usr/lib/systemd/system/nginx.service ] &&  rm -rf /usr/lib/systemd/system/nginx.service
+        [ -f /etc/systemd/system/nginx.service ] &&  rm -rf /etc/systemd/system/nginx.service
         systemctl daemon-reload
         echo
         echo "卸载Nginx完成"
@@ -69,10 +69,10 @@ printf "获取Nginx安装路径："
             source /etc/profile
             fi
         fi
-        [ -f /etc/init.d/nginx ] && sudo rm -f /etc/init.d/nginx
+        [ -f /etc/init.d/nginx ] &&  rm -f /etc/init.d/nginx
         systemctl disable nginx.service &>/dev/null
-        [ -f /usr/lib/systemd/system/nginx.service ] && sudo rm -rf /usr/lib/systemd/system/nginx.service
-        [ -f /etc/systemd/system/nginx.service ] && sudo rm -rf /etc/systemd/system/nginx.service
+        [ -f /usr/lib/systemd/system/nginx.service ] &&  rm -rf /usr/lib/systemd/system/nginx.service
+        [ -f /etc/systemd/system/nginx.service ] &&  rm -rf /etc/systemd/system/nginx.service
         systemctl daemon-reload
         echo
         echo "卸载Nginx完成"
@@ -97,10 +97,10 @@ elif [ ! -z $NGINX_HOME ] || [  "$(command -v nginx)" != " " ]; then
               source /etc/profile
              fi
           fi
-        [ -f /etc/init.d/nginx ] && sudo rm -f /etc/init.d/nginx
+        [ -f /etc/init.d/nginx ] && rm -f /etc/init.d/nginx
         systemctl disable nginx.service &>/dev/null
-        [ -f /usr/lib/systemd/system/nginx.service ] && sudo rm -rf /usr/lib/systemd/system/nginx.service
-        [ -f /etc/systemd/system/nginx.service ] && sudo rm -rf /etc/systemd/system/nginx.service
+        [ -f /usr/lib/systemd/system/nginx.service ] &&  rm -rf /usr/lib/systemd/system/nginx.service
+        [ -f /etc/systemd/system/nginx.service ] && rm -rf /etc/systemd/system/nginx.service
         systemctl daemon-reload
         echo
         echo "卸载Nginx完成"
@@ -127,10 +127,10 @@ elif [ ! -z $NGINX_HOME ] || [  "$(command -v nginx)" != " " ]; then
             source /etc/profile
             fi
         fi
-        [ -f /etc/init.d/nginx ] && sudo rm -f /etc/init.d/nginx
+        [ -f /etc/init.d/nginx ] && rm -f /etc/init.d/nginx
         systemctl disable nginx.service &>/dev/null
-        [ -f /usr/lib/systemd/system/nginx.service ] && sudo rm -rf /usr/lib/systemd/system/nginx.service
-        [ -f /etc/systemd/system/nginx.service ] && sudo rm -rf /etc/systemd/system/nginx.service
+        [ -f /usr/lib/systemd/system/nginx.service ] && rm -rf /usr/lib/systemd/system/nginx.service
+        [ -f /etc/systemd/system/nginx.service ] &&  rm -rf /etc/systemd/system/nginx.service
         systemctl daemon-reload
         echo
         echo "卸载Nginx完成"
