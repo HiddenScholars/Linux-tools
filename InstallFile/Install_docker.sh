@@ -72,7 +72,7 @@ docker --version
              dnf remove docker-ce docker-ce-cli containerd.io
             ;;
 
-        Debian)
+        debian)
             # Debian发行版
              apt-get remove docker-ce docker-ce-cli containerd.io
              apt-get autoremove -y --purge docker-ce docker-ce-cli containerd.io
