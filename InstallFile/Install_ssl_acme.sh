@@ -66,7 +66,7 @@ select=''
            --fullchain-file $certPath/fullchain.cer --reloadcmd "$shellcmd"
     	fi
 
-           if [ $? -ne 0 ]; then
+           if [ `ls -l $certPath` -le 1 ]; then
                echo "证书安装失败,脚本退出"
                exit 1
            else
@@ -86,12 +86,11 @@ select=''
            select_pem=''
            read -p "是否生成pem证书(y/n) default:n：" select_pem
            if [ ! -z $select_pem ];then
-           acme.sh --install-cert -d ${CF_Domain} --key-file /$certPath/privkey.pem --fullchain-file //$certPath/fullchain.pem
+           acme.sh --install-cert -d ${CF_Domain} --key-file /privkey.pem --fullchain-file //$certPath/fullchain.pem
            crontab -l | grep ".acme.sh" | awk '{print $1,$2,$3,$4,$5}' | awk "NR==1" acme.sh --install-cert -d ${CF_Domain} --key-file /$certPath/privkey.pem --fullchain-file //$certPath/fullchain.pem >>/var/spool/cron/crontabs/root
            service cron restart
            echo "证书生成完成,具体信息如下："
            ls -lah $certPath
-
            fi
 
     else
