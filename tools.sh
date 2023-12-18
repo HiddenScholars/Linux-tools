@@ -176,23 +176,6 @@ bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/
 read -p "按回车键返回主菜单："
 }
 function install_docker() {
-  case $select in
-        1)
-        docker_download_url=$docker_download_url_1
-        ;;
-        *)
-          echo "暂无此版本，敬请期待."
-          exit 0
-        ;;
-  esac
-  process=(docker)
-  check_install_system
-        #manager_download_END
-        server_name=docker
-        download_url=$docker_download_url
-        manage_download
-        #manager_download_END
-        filename=$(basename $docker_download_url)
   echo "开始安装Docker--链接github获取Docker安装脚本"
   bash <(curl -L https://raw.Githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_docker.sh) $filename
   read -p "按回车键返回主菜单："
@@ -221,6 +204,12 @@ function uninstall_nginx() {
     bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/UninstallFile/Uninstall_nginx.sh)
     read -p "按回车键返回主菜单："
 }
+function uninstall_docker() {
+    echo "开始安装Docker--链接github获取Docker卸载脚本"
+    bash <(curl -L https://raw.Githubusercontent.com/LGF-LGF/tools/main/UninstallFile/Uninstall_docker.sh)
+    read -p "按回车键返回主菜单："
+}
+
 function show_Use() {
 select=''
 clear
@@ -284,8 +273,6 @@ function show_soft() {
       ;;
     1)
       echo
-      printf "\t\t${green}1. ${plain}Nginx${nginx_download_url_1##*/nginx-}\n"
-      read -p "Enther Your install service version choice（1）:" select
       install_nginx
       ;;
     2)
@@ -310,6 +297,7 @@ function soft_uninstall() {
       printf "****************************************************************************\n"
                               printf "\t\t${green}0. ${plain}返回主页面.\n"
                               printf "\t\t${green}1. ${plain}Nginx卸载.\n"
+                              printf "\t\t${green}2. ${plain}Docker卸载.\n"
       printf "****************************************************************************\n"
       read -p "输入序号【0-1】：" select
       case $select in
@@ -318,6 +306,9 @@ function soft_uninstall() {
         ;;
       1)
         uninstall_nginx
+        ;;
+      1)
+        uninstall_docker
         ;;
       *)
         echo "序号输入错误"
