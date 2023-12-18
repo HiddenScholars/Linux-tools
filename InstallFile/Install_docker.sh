@@ -104,7 +104,7 @@ docker --version
     }
     function check_install_status() {
 
-    docker ps -a &>/dev/null
+    docker info &>/dev/null
     if [ $? -eq 0 ];then
     echo -e "${green}服务安装成功 ${plain}"
     else
