@@ -59,28 +59,28 @@ docker --version
     case "$distribution" in
         ubuntu)
             # Ubuntu发行版
-            sudo apt-get remove docker-ce docker-ce-cli containerd.io
+             apt-get remove docker-ce docker-ce-cli containerd.io
             ;;
 
         centos | RedHatEnterpriseServer | OracleServer)
             # CentOS、Red Hat Enterprise Server、Oracle Linux发行版
-            sudo yum remove docker-ce docker-ce-cli containerd.io
+             yum remove docker-ce docker-ce-cli containerd.io
             ;;
 
         Fedora)
             # Fedora发行版
-            sudo dnf remove docker-ce docker-ce-cli containerd.io
+             dnf remove docker-ce docker-ce-cli containerd.io
             ;;
 
         Debian)
             # Debian发行版
-            sudo apt-get remove docker-ce docker-ce-cli containerd.io
-            sudo apt-get autoremove -y --purge docker-ce docker-ce-cli containerd.io
+             apt-get remove docker-ce docker-ce-cli containerd.io
+             apt-get autoremove -y --purge docker-ce docker-ce-cli containerd.io
             ;;
 
         FreeBSD)
             # FreeBSD发行版
-            sudo pkg remove -y docker
+             pkg remove -y docker
             ;;
 
         *)
@@ -88,8 +88,8 @@ docker --version
             ;;
     esac
     # 删除所有旧的数据
-    sudo rm -rf /var/lib/docker
-    sudo rm -rf /etc/docker/daemon.json
+     rm -rf /var/lib/docker
+     rm -rf /etc/docker/daemon.json
 
     if [ -d /etc/docker/ ];then
     rm -rf /etc/docker/
