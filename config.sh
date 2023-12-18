@@ -30,6 +30,8 @@ if [  "$serverVersion" == '"CentOS Linux"' ];then
 release="centos"
 elif [ "$serverVersion" == '"Ubuntu"' ];then
 release="ubuntu"
+elif [ "$serverVersion" == '"Debian GNU/Linux"' ];then
+release="debian"
 else
 echo -e  "${red}警告：暂时未适配$serverVersion，自行决定是否安装！！！\n${plain}"
 read -p "回车后继续安装："
