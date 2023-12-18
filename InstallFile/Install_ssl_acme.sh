@@ -85,9 +85,13 @@ select=''
            fi
            select_pem=''
            read -p "是否生成pem证书(y/n) default:n：" select_pem
-           if [ ! -z $select_pem ];then
-           acme.sh --install-cert -d ${CF_Domain} --key-file /privkey.pem --fullchain-file //$certPath/fullchain.pem
-           crontab -l | grep ".acme.sh" | awk '{print $1,$2,$3,$4,$5}' | awk "NR==1" acme.sh --install-cert -d ${CF_Domain} --key-file /$certPath/privkey.pem --fullchain-file //$certPath/fullchain.pem >>/var/spool/cron/crontabs/root
+           if [ "$select_pem" == "y" ];then
+           pem_path=''
+           pem_domain=''
+           read -p "输入生成路径：" pem_path
+           read -p "输入域名：" pem_domain
+           acme.sh --install-cert -d ${pem_domain} --key-file /$pem_path/privkey.pem --fullchain-file /$pem_path/fullchain.pem
+           crontab -l | grep ".acme.sh" | awk '{print $1,$2,$3,$4,$5}' | awk "NR==1" acme.sh --install-cert -d ${pem_domain} --key-file /$pem_path/privkey.pem --fullchain-file /$pem_path/fullchain.pem >>/var/spool/cron/crontabs/root
            service cron restart
            echo "证书生成完成,具体信息如下："
            ls -lah $certPath
