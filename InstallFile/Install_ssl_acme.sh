@@ -76,12 +76,22 @@ select=''
            if [ $? -ne 0 ]; then
                echo "自动更新设置失败,脚本退出"
                ls -lah $certPath
-               chmod 755 $certPath
+               chmod 700 $certPath
                exit 1
            else
                echo "证书已安装且已开启自动更新,具体信息如下"
                ls -lah $certPath
-               chmod 755 $certPath
+               chmod 700 $certPath
+           fi
+           select_pem=''
+           read -p "是否生成pem证书(y/n) default:n：" select_pem
+           if [ ! -z $select_pem ];then
+           acme.sh --install-cert -d ${CF_Domain} --key-file /$certPath/privkey.pem --fullchain-file //$certPath/fullchain.pem
+           crontab -l | grep ".acme.sh" | awk '{print $1,$2,$3,$4,$5}' | awk "NR==1" acme.sh --install-cert -d ${CF_Domain} --key-file /$certPath/privkey.pem --fullchain-file //$certPath/fullchain.pem >>/var/spool/cron/crontabs/root
+           service cron restart
+           echo "证书生成完成,具体信息如下："
+           ls -lah $certPath
+
            fi
 
     else
