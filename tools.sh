@@ -148,9 +148,12 @@ function install_nginx() {
      process=(nginx)
      test_server_port=(80 443)
      check_install_system
-    case $select in
+     case $select in
           1)
           nginx_download_url=$nginx_download_url_1
+          ;;
+          2)
+          nginx_download_url=$nginx_download_url_2
           ;;
           *)
             echo "暂无此版本，敬请期待."
