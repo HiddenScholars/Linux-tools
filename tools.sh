@@ -14,12 +14,12 @@ config_file=/tools/config.sh
     echo -e "${red}config文件不存在，开始下载...${plain}"
     wget -P ${config_path} https://raw.githubusercontent.com/LGF-LGF/tools/main/config.sh
     [ ! -f ${config_file} ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
-  else
-    [ `curl -s https://raw.githubusercontent.com/LGF-LGF/tools/main/config.sh | wc -l` -ne `cat $config_file | wc -l ` ]
+
+  elif  [ `curl -s https://raw.githubusercontent.com/LGF-LGF/tools/main/config.sh | wc -l` -ne `cat $config_file | wc -l ` ];then
       config_select=''
       read -p "config.sh文件有变化，是否重新下载？（y/n）" config_select
       if [ "$config_select" == "y" ];then
-        mv $config_file $config_paht$time
+        mv $config_file $config_path/config_bak$time
         wget -P ${config_path} https://raw.githubusercontent.com/LGF-LGF/tools/main/config.sh
         [ ! -f ${config_file} ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
       fi
@@ -160,7 +160,7 @@ function install_nginx() {
      test_server_port=(80 443)
      check_install_system
      #check END
-regex="v([0-9]+\.[0-9]+\.[0-9]+)"
+regex="nginx-([0-9]+\.[0-9]+\.[0-9]+)"
 nginx_download_urls_select=0
 temp_number=()
 for url in "${nginx_download_urls[@]}"
@@ -173,7 +173,7 @@ do
 let nginx_download_urls_select=$nginx_download_urls_select+1
 done
 select=''
-      read -p "Enther Your install service version choice（0）:" select
+      read -p "Enther Your install service version choice(0 ...):" select
       [ -z ${nginx_download_urls[$select]} ] && echo -e "${red}暂不支持的版本号${plain}" && exit 0
 
     download_select=''
