@@ -19,10 +19,12 @@ config_file=/tools/config.sh
       config_select=''
       read -p "config.sh文件有变化，是否重新下载？（y/n）" config_select
       if [ "$config_select" == "y" ];then
+        mv $config_file $config_paht$time
         wget -P ${config_path} https://raw.githubusercontent.com/LGF-LGF/tools/main/config.sh
         [ ! -f ${config_file} ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
       fi
   fi
+echo "初始化中..."
 source $config_file
 #=====================================================================
 
