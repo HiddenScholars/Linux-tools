@@ -81,16 +81,15 @@ ps -ef | grep nginx
 
 echo -e "设置防火墙..."
 if [ "${release}" == "centos" ]; then
-    if [ `ps -ef | grep firewalld | wc -l ` -ne 0 ];then
+    if [ `ps -ef | grep firewalld | wc -l ` -gt 1 ];then
         firewall-cmd --permanent --add-port=80/tcp
         firewall-cmd --permanent --add-port=443/tcp
         firewall-cmd --reload
     else
-       [ "$(grep '<port protocol=\"tcp\" port=\"80\"/>' /etc/firewalld/zones/public.xml | wc -l)" -eq 0 ] && sed -i '$!N;$!P;$!D;$s|\(.*\)\n\(.*\)|\1\n<port protocol="tcp" port="80"/>\n\2|' /etc/firewalld/zones/public.xml
-       [ "$(grep '<port protocol=\"tcp\" port=\"443\"/>' /etc/firewalld/zones/public.xml | wc -l)" -eq 0 ] && sed -i '$!N;$!P;$!D;$s|\(.*\)\n\(.*\)|\1\n<port protocol="tcp" port="443"/>\n\2|' /etc/firewalld/zones/public.xml
+    echo -e "${red}未检出firewalld进程，不进行更改${plain}"
      fi
 elif [ "${release}" == "ubuntu" ];then
-    if [ `dpkg --get-selections | grep ufw | wc -l` -ne 0 ]; then
+    if [ `ps -ef  | grep ufw | wc -l` -gt 1 ]; then
         ufw allow 80/tcp
         ufw allow 443/tcp
         ufw reload
