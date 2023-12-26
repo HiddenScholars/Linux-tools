@@ -80,22 +80,15 @@ ps -ef | grep nginx
 [ $? -ne 0 ] && exit 0
 
 echo -e "设置防火墙..."
-if [ "${release}" == "centos" ]; then
+
     if [ `ps -ef | grep firewalld | wc -l ` -gt 1 ];then
         firewall-cmd --permanent --add-port=80/tcp
         firewall-cmd --permanent --add-port=443/tcp
         firewall-cmd --reload
-    else
-    echo -e "${red}未检出firewalld进程，不进行更改${plain}"
-     fi
-elif [ "${release}" == "ubuntu" ];then
-    if [ `ps -ef  | grep ufw | wc -l` -gt 1 ]; then
+    elif [ `ps -ef  | grep ufw | wc -l` -gt 1 ]; then
         ufw allow 80/tcp
         ufw allow 443/tcp
         ufw reload
     else
-      echo -e "${red}未检出ufw进程，不进行更改${plain}"
-    fi
-else
-    echo -e "${red}无法识别的防火墙${plain}"
+    echo -e "${red}未检测到防火墙进程，不做更改${plain}"
 fi
