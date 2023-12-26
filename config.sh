@@ -9,8 +9,9 @@ install_path=/usr/local/soft
 time=`date +%Y%m%d`
 
 #服务安装配置
-nginx_download_url_1=https://nginx.org/download/nginx-1.24.0.tar.gz
-nginx_download_url_2=https://nginx.org/download/nginx-1.22.1.tar.gz
+nginx_download_urls=(
+"https://nginx.org/download/nginx-1.24.0.tar.gz"
+"https://nginx.org/download/nginx-1.22.1.tar.gz")
 nginx_user=nginx
 docker_download_url_1=https://download.docker.com/linux/static/stable/x86_64/docker-23.0.6.tgz
 docker_compose_download_urls=(

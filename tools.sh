@@ -14,6 +14,14 @@ config_file=/tools/config.sh
     echo -e "${red}config文件不存在，开始下载...${plain}"
     wget -P ${config_path} https://raw.githubusercontent.com/LGF-LGF/tools/main/config.sh
     [ ! -f ${config_file} ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
+  else
+    [ `curl -s https://raw.githubusercontent.com/LGF-LGF/tools/main/config.sh | wc -l` -ne `cat $config_file | wc -l ` ];then
+      config_select=''
+      read -p "config.sh文件有变化，是否重新下载？（y/n）" config_select
+      if [ "$config_select" == "y" ];then
+        wget -P ${config_path} https://raw.githubusercontent.com/LGF-LGF/tools/main/config.sh
+        [ ! -f ${config_file} ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
+      fi
   fi
 source $config_file
 #=====================================================================
@@ -145,30 +153,36 @@ function check_install_system() {
         fi
 } #check_install_nginx_system
 function install_nginx() {
+     #check pid port
      process=(nginx)
      test_server_port=(80 443)
      check_install_system
-     case $select in
-          1)
-          nginx_download_url=$nginx_download_url_1
-          ;;
-          2)
-          nginx_download_url=$nginx_download_url_2
-          ;;
-          *)
-            echo "暂无此版本，敬请期待."
-            exit 0
-            ;;
-    esac
+     #check END
+regex="v([0-9]+\.[0-9]+\.[0-9]+)"
+nginx_download_urls_select=0
+temp_number=()
+for url in "${nginx_download_urls[@]}"
+do
+    if [[ $url =~ $regex ]]; then
+        version="${BASH_REMATCH[1]}"
+        echo -e "${green}$nginx_download_urls_select：$version${plain}"
+        temp_number+=($version)
+    fi
+let nginx_download_urls_select=$nginx_download_urls_select+1
+done
+select=''
+      read -p "Enther Your install service version choice（0）:" select
+      [ -z ${nginx_download_urls[$select]} ] && echo -e "${red}暂不支持的版本号${plain}" && exit 0
+
     download_select=''
     if_select=''
     $controls install -y wget curl net-tools
     if [ $? -ne 0 ];then
       echo -e "${red}安装失败${plain}" && exit 0
     fi
-server_name=nginx
-download_url=$nginx_download_url
-manage_download
+    server_name=nginx
+    download_url=${nginx_download_urls[$select]}
+    manage_download
 echo "开始安装Nginx--链接Github获取Nginx安装脚本"
 bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_nginx.sh) ${sorted_files[$select]}
 read -p "按回车键返回主菜单："
