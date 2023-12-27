@@ -301,8 +301,6 @@ function show_soft() {
       ;;
     2)
       echo
-      printf "\t\t${green}1. ${plain}Docker${docker_download_url_1##*/docker-}\n"
-      read -p "Enther Your install service version choice（1）:" select
       install_docker
       ;;
     3)
@@ -323,7 +321,7 @@ function soft_uninstall() {
                               printf "\t\t${green}1. ${plain}Nginx卸载.\n"
                               printf "\t\t${green}2. ${plain}Docker卸载.\n"
       printf "****************************************************************************\n"
-      read -p "输入序号【0-1】：" select
+      read -p "输入序号【0-2】：" select
       case $select in
       0)
         return
