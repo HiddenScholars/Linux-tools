@@ -2,6 +2,7 @@
 
 nginx_download_url=
 docker_download_url=
+select_download_version=
 config_path=/tools/
 config_file=/tools/config.sh
 #tools start check ...
@@ -31,11 +32,12 @@ source $config_file
 function manage_download() {
   #server_name下载服务名
   #download_url下载链接
+  #select_download_version下载版本搜索
   [ -z $server_name ] && echo -e "$red 禁止server_name为空使用 $plain" && exit
   [ -z $download_url ] && echo -e "$red 禁止download_url为使用 $plain" && exit
   [ ! -d $download_path/$server_name ] &&  mkdir -p $download_path/$server_name
-          if [ `ls $download_path/$server_name/ | wc -l` -ne 0 ];then
-                echo -e "${red}$download_path/$server_name/中存在文件${plain}"
+          if [ `ls $download_path/$server_name/ | grep $select_download_version | wc -l` -ne 0 ];then
+                echo -e "${red}$download_path/$server_name/中存在该版本安装包${plain}"
                 echo
                 echo
                cd $download_path/$server_name/
@@ -45,7 +47,7 @@ function manage_download() {
                     # 获取目录下所有文件，并将符合条件的文件添加到数组中
                     for file in *; do
                       # 过滤文件的条件，可以根据需求进行修改
-                      if [[ ! "$file" =~ ^\..* ]]; then
+                      if [[  "$file" =~ .*${select_download_version}.*  ]]; then
                         files+=("$file")
                       fi
                     done
@@ -93,8 +95,8 @@ function manage_download() {
 
                 # 获取目录下所有文件，并将符合条件的文件添加到数组中
                 for file in *; do
-                  # 过滤文件的条件，可以根据您的需求进行修改
-                  if [[ ! "$file" =~ ^\..* ]]; then
+                  # 过滤文件的条件，可以根据需求进行修改
+                  if [[ ! "$file" =~ .*${select_download_version}.* ]]; then
                     files+=("$file")
                   fi
                 done
@@ -163,6 +165,7 @@ function install_nginx() {
 regex="nginx-([0-9]+\.[0-9]+\.[0-9]+)"
 nginx_download_urls_select=0
 temp_number=()
+url=''
 for url in "${nginx_download_urls[@]}"
 do
     if [[ $url =~ $regex ]]; then
@@ -184,6 +187,7 @@ select=''
     fi
     server_name=nginx
     download_url=${nginx_download_urls[$select]}
+    select_download_version=${temp_number[$select]}
     manage_download
 echo "开始安装Nginx--链接Github获取Nginx安装脚本"
 bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_nginx.sh) ${sorted_files[$select]}
@@ -203,6 +207,7 @@ function install_docker_compose() {
 regex="v([0-9]+\.[0-9]+\.[0-9]+)"
 docker_compose_download_urls_select=0
 temp_number=()
+url=''
 for url in "${docker_compose_download_urls[@]}"
 do
     if [[ $url =~ $regex ]]; then
