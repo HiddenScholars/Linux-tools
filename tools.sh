@@ -70,7 +70,7 @@ function manage_download() {
                       # 获取目录下所有文件，并将符合条件的文件添加到数组中
                       for file in *; do
                         # 过滤文件的条件，可以根据您的需求进行修改
-                        if [[ ! "$file" =~ ^\..* ]]; then
+                        if [[  "$file" =~ .*${select_download_version}.*  ]]; then
                           files+=("$file")
                         fi
                       done
@@ -96,7 +96,7 @@ function manage_download() {
                 # 获取目录下所有文件，并将符合条件的文件添加到数组中
                 for file in *; do
                   # 过滤文件的条件，可以根据需求进行修改
-                  if [[ ! "$file" =~ .*${select_download_version}.* ]]; then
+                  if [[  "$file" =~ .*${select_download_version}.*  ]]; then
                     files+=("$file")
                   fi
                 done

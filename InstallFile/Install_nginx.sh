@@ -41,7 +41,7 @@ select=''
     if [ -z $NGINX_HOME ];then
     echo "export NGINX_HOME=$install_path/nginx/" >>/etc/profile
     echo "export PATH=$PATH:$NGINX_HOME/sbin/" >>/etc/profile
-    sed -i 's/#user  nobody/user $nginx_user/g' $install_path/nginx/conf/nginx.conf
+    sed -i "s/#user  nobody/user $nginx_user/g" $install_path/nginx/conf/nginx.conf
     source /etc/profile
     fi
     if [ ! -z $nginx_user ]; then
