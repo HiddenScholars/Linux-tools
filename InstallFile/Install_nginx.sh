@@ -11,9 +11,9 @@ select=''
             $controls install -y gcc g++ libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev make
     fi
     [ -d $install_path/nginx/ ] && mv $install_path/nginx/ $install_path/nginx$time
-    mkdir -p /tools/unpack_file/
-    tar xvf $download_path/nginx/$1 -C /tools/unpack_file/ --strip-components 1
-    cd /tools/unpack_file/ && ./configure --prefix=${install_path}/nginx/ \
+
+    tar xvf $download_path/nginx/$1 -C /tools/unpack_file/$2 --strip-components 1
+    cd /tools/unpack_file/$2 && ./configure --prefix=${install_path}/nginx/ \
                                                 --with-pcre \
                                                 --with-http_ssl_module \
                                                 --with-http_v2_module \

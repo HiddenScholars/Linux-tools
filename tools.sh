@@ -25,7 +25,6 @@ config_file=/tools/config.sh
         [ ! -f ${config_file} ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
       fi
   fi
-echo "初始化中..."
 source $config_file
 #=====================================================================
 
@@ -156,6 +155,27 @@ function check_install_system() {
             fi
         fi
 } #check_install_nginx_system
+function check_unpack_file_path() {
+    [ ! -d $config_path/unpack_file ] && mkdir -p $config_path/unpack_file
+    if [ `ls -l $config_path/unpack_file/ | wc -l` -gt  11 ];then
+      cd $config_path/ && tar cvf unpack_file_bak$(date +F-%M).tar.gz unpack_file/*
+      rm -rf unpack_file/*
+      mv $config_path/unpack_file_bak* unpack_file/
+    fi
+    # 存放不存在的目录的变量
+    missing_dirs=""
+    # 检测并创建目录
+    for ((i=1; i<=100; i++)); do
+        dir=$i
+        if [ ! -d "$config_path/unpack_file/$dir" ]; then
+            mkdir "$config_path/unpack_file/$dir"
+            missing_dirs=$dir
+            let i+=100
+        fi
+    done
+}
+
+
 function install_nginx() {
      #check pid port
      process=(nginx)
@@ -189,8 +209,9 @@ select=''
     download_url=${nginx_download_urls[$select]}
     select_download_version=${temp_number[$select]}
     manage_download
+    check_unpack_file_path
 echo "开始安装Nginx--链接Github获取Nginx安装脚本"
-bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_nginx.sh) ${sorted_files[$select]}
+bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_nginx.sh) ${sorted_files[$select]} $missing_dirs
 read -p "按回车键返回主菜单："
 } #install_nginx
 function setting_ssl() {
@@ -223,6 +244,41 @@ select=''
 bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_docker-compose.sh) ${temp_number[$select]} ${select}
 }
 
+
+function upgrade_smooth_nginx() {
+    regex="nginx-([0-9]+\.[0-9]+\.[0-9]+)"
+    nginx_download_urls_select=0
+    temp_number=()
+    url=''
+    for url in "${nginx_download_urls[@]}"
+    do
+        if [[ $url =~ $regex ]]; then
+            version="${BASH_REMATCH[1]}"
+            echo -e "${green}$nginx_download_urls_select：$version${plain}"
+            temp_number+=($version)
+        fi
+    let nginx_download_urls_select=$nginx_download_urls_select+1
+    done
+    select=''
+          read -p "Enther Your install service version choice(0 ...):" select
+          [ -z ${nginx_download_urls[$select]} ] && echo -e "${red}序号输入错误${plain}" && exit 0
+
+        download_select=''
+        if_select=''
+        $controls install -y wget curl net-tools
+        if [ $? -ne 0 ];then
+          echo -e "${red}安装失败${plain}" && exit 0
+        fi
+        server_name=nginx
+        download_url=${nginx_download_urls[$select]}
+        select_download_version=${temp_number[$select]}
+        manage_download
+        check_unpack_file_path
+    echo "开始升级Nginx--链接Github获取Nginx升级脚本"
+    bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/Upgrade/Upgrade_smooth_nginx.sh) ${sorted_files[$select]} $missing_dirs
+    read -p "按回车键返回主菜单："
+}
+
 function uninstall_nginx() {
     echo "开始卸载Nginx--链接Github获取Nginx卸载脚本"
     bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/UninstallFile/Uninstall_nginx.sh)
@@ -249,9 +305,10 @@ echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
                             printf "\t\t${green}0. ${plain}退出脚本.\n"
                             printf "\t\t${green}1. ${plain}服务安装.\n"
                             printf "\t\t${green}2. ${plain}服务卸载.\n"
-                            printf "\t\t${green}3. ${plain}acme脚本(搭配cloudflare).\n"
+                            printf "\t\t${green}3. ${plain}服务升级.\n"
+                            printf "\t\t${green}4. ${plain}acme脚本(搭配cloudflare).\n"
     printf "****************************************************************************\n"
-    read -p "输入序号【0-3】：" select
+    read -p "输入序号【0-4】：" select
     case $select in
     0)
     exit 1
@@ -263,6 +320,9 @@ echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
     soft_uninstall
       ;;
     3)
+    soft_upgrade
+      ;;
+    4)
     setting_ssl
       ;;
     *)
@@ -337,7 +397,27 @@ function soft_uninstall() {
         ;;
       esac
 }
-
+function soft_upgrade() {
+    clear
+    printf "****************************************************************************\n"
+                                printf "\t\t**欢迎使用tools脚本菜单**\n"
+        printf "****************************************************************************\n"
+                                printf "\t\t${green}0. ${plain}返回主菜单.\n"
+                                printf "\t\t${green}1. ${plain}Nginx平滑升级.\n"
+        printf "****************************************************************************\n"
+        read -p "输入序号【0-1】：" select
+        case $select in
+        0)
+        return
+          ;;
+        1)
+        upgrade_smooth_nginx
+          ;;
+        *)
+          echo "输入错误"
+          ;;
+        esac
+}
 
 
 case $1 in
