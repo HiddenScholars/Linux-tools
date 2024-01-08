@@ -40,7 +40,7 @@ echo "解压中...."
 tar xf $download_path/nginx/$1 -C /tools/unpack_file/$2 --strip-components 1
 echo "解压完成，开始编译"
 read -p "是否增加编译参数，增加编译参数直接将编译模块写到后面，无编译参数直接回车：" select_cofigure
-cd /tools/unpack_file/$2 && ./configure $(${sbin_nginx} -V > /tmp/1.txt 2>&1  | cat /tmp/1.txt |   grep prefix | awk '{print substr($0, index($0,$3))}')  "${select_cofigure}" && make && rm -rf /tmp/1.txt
+cd /tools/unpack_file/$2 && ./configure $(${sbin_nginx} -V > /tmp/1.txt 2>&1  | cat /tmp/1.txt |   grep prefix | awk '{print substr($0, index($0,$3))}')  ${select_cofigure} && make && rm -rf /tmp/1.txt
 [ $? -ne 0 ] && echo -e "${red}编译失败${plain}" && exit 0
 if [ -f /tools/unpack_file/$2/objs/nginx ]; then
  cp -r /tools/unpack_file/$2/objs/nginx $(dirname ${sbin_nginx})
