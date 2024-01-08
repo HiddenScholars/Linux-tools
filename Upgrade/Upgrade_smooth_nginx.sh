@@ -29,7 +29,7 @@ $sbin_nginx -V
 $sbin_nginx -t
 if [ $? -eq 0 ];then
   echo "开始备份"
-cd $(dirname ${sbin_nginx}) && mv nginx nginx$(date +F-%M)
+cd $(dirname ${sbin_nginx}) && mv nginx nginx$(date +%F-%M)
   echo "备份完成"
 else
   echo "升级前检测不通过" && exit 0
@@ -39,14 +39,24 @@ echo -e "${green}=================升级前检测====================${plain}"
 echo "解压中...."
 tar xf $download_path/nginx/$1 -C /tools/unpack_file/$2 --strip-components 1
 echo "解压完成，开始编译"
-cd /tools/unpack_file/$2 && ./configure $(${sbin_nginx} -V > /tmp/1.txt 2>&1  | cat /tmp/1.txt |   grep prefix | awk '{print substr($0, index($0,$3))}') && make && rm -rf /tmp/1.txt
+read -p "是否增加编译参数，增加编译参数直接将编译模块写到后面，无编译参数直接回车：" select_cofigure
+cd /tools/unpack_file/$2 && ./configure $(${sbin_nginx} -V > /tmp/1.txt 2>&1  | cat /tmp/1.txt |   grep prefix | awk '{print substr($0, index($0,$3))}')  "${select_cofigure}" && make && rm -rf /tmp/1.txt
 [ $? -ne 0 ] && echo -e "${red}编译失败${plain}" && exit 0
 if [ -f /tools/unpack_file/$2/objs/nginx ]; then
  cp -r /tools/unpack_file/$2/objs/nginx $(dirname ${sbin_nginx})
- kill -USR2 $($(dirname ${sbin_nginx})/logs/nginx.pid)
- kill -WINCH $($(dirname ${sbin_nginx})/logs/nginx.pid.oldbin)
- kill -QUIT $($(dirname ${sbin_nginx})/logs/nginx.pid.oldbin)
- [ `ps -ef | grep nginx | wc -l ` -gt 1 ] && echo -e "${green}升级成功${plain}"
+ kill -USR2 $($(dirname ${sbin_nginx})../logs/nginx.pid)
+ kill -WINCH $($(dirname ${sbin_nginx})../logs/nginx.pid.oldbin)
+ kill -QUIT $($(dirname ${sbin_nginx})../logs/nginx.pid.oldbin)
+ echo -e "${green}=================升级后检测====================${plain}"
+ $sbin_nginx -v
+ $sbin_nginx -V
+ $sbin_nginx -t
+ if [ $? -eq 0 ] && [ `ps -ef | grep nginx | wc -l ` -gt 1 ];then
+   echo -e "${green}升级成功${plain}"
+ else
+   echo -e "${red}升级失败${plain}"
+ fi
+ echo -e "${green}=================升级后检测====================${plain}"
 fi
 
 else
