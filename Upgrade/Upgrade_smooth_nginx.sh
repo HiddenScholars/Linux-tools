@@ -14,14 +14,14 @@ if [ `ps -ef | grep nginx | grep -v grep | awk '{print $2}' | wc -l ` != 0 ]; th
   else
     read -p  "自动识别Nginx路径失败，手动输入nginx程序所在路径，例如：/usr/local/soft/nginx/sbin/nginx ：" select
     for (( i = 0; i < 2; i++ )); do
-        if [ -f $select  ]; then
+        if [ ! -z $select ] && [ -f $select  ]; then
             sbin_nginx=$select
             let i++
         fi
         select=''
         read -p "nginx程序不存在重新输入：" select
     done
-    [ ! -f $select ] && echo "${red}路径不存在${plain}" && exit 0
+     [ -z $select ] || [ ! -f $select ] && echo "${red}文件不存在${plain}" && exit 0
   fi
 echo -e "${green}=================升级前检测====================${plain}"
 $sbin_nginx -v
