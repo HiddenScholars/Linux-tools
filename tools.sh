@@ -158,7 +158,7 @@ function check_install_system() {
 function check_unpack_file_path() {
     [ ! -d $config_path/unpack_file ] && mkdir -p $config_path/unpack_file
     if [ `ls -l $config_path/unpack_file/ | wc -l` -gt  11 ];then
-      cd $config_path/ && tar cvf unpack_file_bak$(date +F-%M).tar.gz unpack_file/*
+      cd $config_path/ && tar cvf unpack_file_bak$(date +%F-%M).tar.gz unpack_file/*
       rm -rf unpack_file/*
       mv $config_path/unpack_file_bak* unpack_file/
     fi

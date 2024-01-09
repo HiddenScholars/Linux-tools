@@ -16,7 +16,7 @@ if [ `ps -ef | grep nginx | grep -v grep | awk '{print $2}' | wc -l ` != 0 ]; th
     for (( i = 0; i < 2; i++ )); do
         if [ -f $select  ]; then
             sbin_nginx=$select
-            select++
+            let i++
         fi
         select=''
         read -p "nginx程序不存在重新输入：" select
