@@ -21,7 +21,7 @@ if [ `ps -ef | grep nginx | grep -v grep | awk '{print $2}' | wc -l ` != 0 ]; th
         select=''
         read -p "nginx程序不存在重新输入：" select
     done
-     [ -z $select ] || [ ! -f $select ] && echo "${red}文件不存在${plain}" && exit 0
+     [ -z $select ] || [ ! -f $select ] && echo -e "${red}文件不存在${plain}" && exit 0
   fi
 echo -e "${green}=================升级前检测====================${plain}"
 $sbin_nginx -v
