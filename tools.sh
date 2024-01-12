@@ -3,9 +3,9 @@
 nginx_download_url=
 docker_download_url=
 select_download_version=
-config_path=/tools/
-config_file=/tools/config.sh
-#tools start check ...
+config_path=/Linux-tools/
+config_file=/Linux-tools/config.sh
+#Linux-tools start check ...
 [ `whoami` != root ] && echo -e "${red}需要使用root权限${plain}" && exit 1
 
 #config.sh check
@@ -13,20 +13,24 @@ config_file=/tools/config.sh
   if [ ! -f ${config_file} ];then
     [ ! -d ${config_path} ] && mkdir ${config_path}
     echo -e "${red}config文件不存在，开始下载...${plain}"
-    wget -P ${config_path} https://raw.githubusercontent.com/LGF-LGF/tools/main/config.sh
+    wget -P ${config_path} https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/config.sh
     [ ! -f ${config_file} ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
 
-  elif  [ `curl -s https://raw.githubusercontent.com/LGF-LGF/tools/main/config.sh | wc -l` -ne `cat $config_file | wc -l ` ];then
+  elif  [ `curl -s https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/config.sh | wc -l` -gt `cat $config_file | wc -l ` ];then
       config_select=''
       read -p "config.sh文件有变化，是否重新下载？（y/n）" config_select
       if [ "$config_select" == "y" ];then
         mv $config_file $config_path/config_bak$time
-        wget -P ${config_path} https://raw.githubusercontent.com/LGF-LGF/tools/main/config.sh
+        wget -P ${config_path} https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/config.sh
         [ ! -f ${config_file} ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
       fi
   fi
 source $config_file
-#=====================================================================
+#======================================================================
+# install link localhost
+bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/Link_localhost/install.sh)
+#======================================================================
+
 
 function manage_download() {
   #server_name下载服务名
@@ -201,7 +205,7 @@ select=''
 
     download_select=''
     if_select=''
-    $controls install -y wget curl net-tools
+    $controls install -y wget curl net-Linux-tools
     if [ $? -ne 0 ];then
       echo -e "${red}安装失败${plain}" && exit 0
     fi
@@ -211,17 +215,17 @@ select=''
     manage_download
     check_unpack_file_path
 echo "开始安装Nginx--链接Github获取Nginx安装脚本"
-bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_nginx.sh) ${sorted_files[$select]} $missing_dirs
+bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/InstallFile/Install_nginx.sh) ${sorted_files[$select]} $missing_dirs
 read -p "按回车键返回主菜单："
 } #install_nginx
 function setting_ssl() {
 echo "开始安装证书--链接Github获取证书安装脚本"
-bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_ssl_acme.sh)
+bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/InstallFile/Install_ssl_acme.sh)
 read -p "按回车键返回主菜单："
 }
 function install_docker() {
   echo "开始安装Docker--链接github获取Docker安装脚本"
-  bash <(curl -L https://raw.Githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_docker.sh) $filename
+  bash <(curl -L https://raw.Githubusercontent.com/HiddenScholars/Linux-tools/main/InstallFile/Install_docker.sh) $filename
   read -p "按回车键返回主菜单："
 }
 function install_docker_compose() {
@@ -241,7 +245,7 @@ done
 select=''
       read -p "Enther Your install service version choice（0）:" select
       [ -z ${docker_compose_download_urls[$select]} ] && echo -e "${red}暂不支持的版本号${plain}" && exit 0
-bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/InstallFile/Install_docker-compose.sh) ${temp_number[$select]} ${select}
+bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/InstallFile/Install_docker-compose.sh) ${temp_number[$select]} ${select}
 }
 
 
@@ -265,7 +269,7 @@ function upgrade_smooth_nginx() {
 
         download_select=''
         if_select=''
-        $controls install -y wget curl net-tools
+        $controls install -y wget curl net-Linux-tools
         if [ $? -ne 0 ];then
           echo -e "${red}安装失败${plain}" && exit 0
         fi
@@ -275,18 +279,18 @@ function upgrade_smooth_nginx() {
         manage_download
         check_unpack_file_path
     echo "开始升级Nginx--链接Github获取Nginx升级脚本"
-    bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/Upgrade/Upgrade_smooth_nginx.sh) ${sorted_files[$select]} $missing_dirs
+    bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/Upgrade/Upgrade_smooth_nginx.sh) ${sorted_files[$select]} $missing_dirs
     read -p "按回车键返回主菜单："
 }
 
 function uninstall_nginx() {
     echo "开始卸载Nginx--链接Github获取Nginx卸载脚本"
-    bash <(curl -L https://raw.githubusercontent.com/LGF-LGF/tools/main/UninstallFile/Uninstall_nginx.sh)
+    bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/UninstallFile/Uninstall_nginx.sh)
     read -p "按回车键返回主菜单："
 }
 function uninstall_docker() {
     echo "开始安装Docker--链接github获取Docker卸载脚本"
-    bash <(curl -L https://raw.Githubusercontent.com/LGF-LGF/tools/main/UninstallFile/Uninstall_docker.sh)
+    bash <(curl -L https://raw.Githubusercontent.com/HiddenScholars/Linux-tools/main/UninstallFile/Uninstall_docker.sh)
     read -p "按回车键返回主菜单："
 }
 
@@ -300,7 +304,7 @@ echo -e "${green}   _|      _|    _|  _|    _|  _|      _|_|${plain}"
 echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
     select=''
     printf "****************************************************************************\n"
-                            printf "\t\t**欢迎使用tools脚本菜单**\n"
+                            printf "\t\t**欢迎使用Linux-tools脚本菜单**\n"
     printf "****************************************************************************\n"
                             printf "\t\t${green}0. ${plain}退出脚本.\n"
                             printf "\t\t${green}1. ${plain}服务安装.\n"
@@ -343,7 +347,7 @@ function show_soft() {
     fi
     clear
     printf "****************************************************************************\n"
-                        printf "\t\t**欢迎使用tools软件安装脚本菜单**\n"
+                        printf "\t\t**欢迎使用Linux-tools软件安装脚本菜单**\n"
     printf "****************************************************************************\n"
                         printf "\t\t${green}0. ${plain}返回主页面.\n"
                         printf "\t\t${green}1. ${plain}Nginx.\n"
@@ -375,7 +379,7 @@ function soft_uninstall() {
       clear
       select=''
       printf "****************************************************************************\n"
-                              printf "\t\t**欢迎使用tools脚本菜单**\n"
+                              printf "\t\t**欢迎使用Linux-tools脚本菜单**\n"
       printf "****************************************************************************\n"
                               printf "\t\t${green}0. ${plain}返回主页面.\n"
                               printf "\t\t${green}1. ${plain}Nginx卸载.\n"
@@ -400,7 +404,7 @@ function soft_uninstall() {
 function soft_upgrade() {
     clear
     printf "****************************************************************************\n"
-                                printf "\t\t**欢迎使用tools脚本菜单**\n"
+                                printf "\t\t**欢迎使用Linux-tools脚本菜单**\n"
         printf "****************************************************************************\n"
                                 printf "\t\t${green}0. ${plain}返回主菜单.\n"
                                 printf "\t\t${green}1. ${plain}Nginx平滑升级.\n"
@@ -424,7 +428,7 @@ case $1 in
 -d)
   case $2 in
   config.sh)
-          wget -P ${config_path} https://raw.githubusercontent.com/LGF-LGF/tools/main/config.sh
+          wget -P ${config_path} https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/config.sh
           [ ! -f ${config_file} ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
           ;;
   *)
