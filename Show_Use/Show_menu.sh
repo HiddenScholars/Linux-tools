@@ -4,7 +4,7 @@ docker_download_url=
 select_download_version=
 config_path=/tools/
 config_file=/tools/config.sh
-
+source /tools/config.sh
 function manage_download() {
   #server_name下载服务名
   #download_url下载链接
