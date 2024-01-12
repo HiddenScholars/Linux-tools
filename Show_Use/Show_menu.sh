@@ -4,9 +4,7 @@ docker_download_url=
 select_download_version=
 config_path=/tools/
 config_file=/tools/config.sh
-source /tools/config.sh &>/dev/null
-branch_select_menu=$1
-
+source /tools/config.sh &>/dev/null 2>&1
 
 function manage_download() {
   #server_name下载服务名
@@ -259,7 +257,6 @@ function upgrade_smooth_nginx() {
 }
 
 function uninstall_nginx() {
-    echo "$branch_select_menu"
     echo "开始卸载Nginx--链接Github获取Nginx卸载脚本"
     bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$1/UninstallFile/Uninstall_nginx.sh)
     read -p "按回车键返回主菜单："
@@ -367,7 +364,7 @@ function soft_uninstall() {
         return
         ;;
       1)
-        uninstall_nginx
+        uninstall_nginx $1
         ;;
       1)
         uninstall_docker
@@ -402,6 +399,5 @@ function soft_upgrade() {
 
 
 while [ true ]; do
-    echo "$branch_select_menu"
     show_Use
 done
