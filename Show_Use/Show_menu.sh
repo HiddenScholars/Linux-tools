@@ -270,7 +270,7 @@ function uninstall_docker() {
 
 function uninstall_tool() {
     echo "卸载tool命令..."
-    bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch_menu/Link_localhost/uninstall.sh)
+    bash <(curl -sL https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch_menu/Link_localhost/uninstall.sh)
     read -p "按回车键返回主菜单："
 }
 
