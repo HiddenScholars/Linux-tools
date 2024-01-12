@@ -364,6 +364,7 @@ function soft_uninstall() {
         return
         ;;
       1)
+        echo $1
         test=$1
         uninstall_nginx
         ;;
