@@ -64,7 +64,7 @@ case $1 in
 ;;
 *)
   while [ true ]; do
-  bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh)
+  bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh) $con_branch
   done
   ;;
 esac
