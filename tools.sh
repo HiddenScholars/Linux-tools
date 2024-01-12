@@ -7,29 +7,45 @@ config_path=/tools/
 config_file=/tools/config.sh
 #Linux-tools start check ...
 [ `whoami` != root ] && echo -e "${red}需要使用root权限${plain}" && exit 1
+branch_select_num=0
+# 获取 Github 仓库分支列表
+branches=$(curl -s "https://api.github.com/repos/HiddenScholars/Linux-tools/branches" | grep '"name":' | sed -E 's/.*"name": "(.*)",/\1/')
+# 将分支列表存入数组
+branch_array=()
+while IFS= read -r branch; do
+  branch_array+=("$branch")
+done <<< "$branches"
 
+# 逐个读取数组元素
+for branch in "${branch_array[@]}"; do
+  echo -e "${green}$branch_select_num.$branch${plain}"
+  let branch_select_num++
+done
+
+   read -p "Enther Your branch num (0 ...):" branch_select_choice
+   [ -z ${branch_array[$branch_select_choice]} ] && echo -e "不存在的分支" && exit 0
+   con_branch=${branch_array[$branch_select_choice]}
 #config.sh check
 #======================================================================
   if [ ! -f ${config_file} ];then
     [ ! -d ${config_path} ] && mkdir ${config_path}
     echo -e "${red}config文件不存在，开始下载...${plain}"
-    wget -P ${config_path} https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/config.sh
+    wget -P ${config_path} https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch/config.sh
     [ ! -f ${config_file} ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
 
-  elif  [ `curl -s https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/config.sh | wc -l` -gt `cat $config_file | wc -l ` ];then
+  elif  [ `curl -s https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch/config.sh | wc -l` -gt `cat $config_file | wc -l ` ];then
       config_select=''
       read -p "config.sh文件有变化，是否重新下载？（y/n）" config_select
       if [ "$config_select" == "y" ];then
         mv $config_file $config_path/config_bak$time
-        wget -P ${config_path} https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/config.sh
+        wget -P ${config_path} https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch/config.sh
         [ ! -f ${config_file} ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
       fi
   fi
 source $config_file
 #======================================================================
 # install link localhost
-read -p "是否添加本地软连接，后面可以直接通过tool命令直接调用菜单（y/n）：" link_select
-[ "$link_select" == "y" ] && bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/Link_localhost/install.sh)
+bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch/Link_localhost/install.sh)
 #======================================================================
 
 
@@ -216,17 +232,17 @@ select=''
     manage_download
     check_unpack_file_path
 echo "开始安装Nginx--链接Github获取Nginx安装脚本"
-bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/InstallFile/Install_nginx.sh) ${sorted_files[$select]} $missing_dirs
+bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch/InstallFile/Install_nginx.sh) ${sorted_files[$select]} $missing_dirs
 read -p "按回车键返回主菜单："
 } #install_nginx
 function setting_ssl() {
 echo "开始安装证书--链接Github获取证书安装脚本"
-bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/InstallFile/Install_ssl_acme.sh)
+bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch/InstallFile/Install_ssl_acme.sh)
 read -p "按回车键返回主菜单："
 }
 function install_docker() {
   echo "开始安装Docker--链接github获取Docker安装脚本"
-  bash <(curl -L https://raw.Githubusercontent.com/HiddenScholars/Linux-tools/main/InstallFile/Install_docker.sh) $filename
+  bash <(curl -L https://raw.Githubusercontent.com/HiddenScholars/Linux-tools/$con_branch/InstallFile/Install_docker.sh) $filename
   read -p "按回车键返回主菜单："
 }
 function install_docker_compose() {
@@ -246,7 +262,7 @@ done
 select=''
       read -p "Enther Your install service version choice（0）:" select
       [ -z ${docker_compose_download_urls[$select]} ] && echo -e "${red}暂不支持的版本号${plain}" && exit 0
-bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/InstallFile/Install_docker-compose.sh) ${temp_number[$select]} ${select}
+bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch/InstallFile/Install_docker-compose.sh) ${temp_number[$select]} ${select}
 }
 
 
@@ -280,18 +296,18 @@ function upgrade_smooth_nginx() {
         manage_download
         check_unpack_file_path
     echo "开始升级Nginx--链接Github获取Nginx升级脚本"
-    bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/Upgrade/Upgrade_smooth_nginx.sh) ${sorted_files[$select]} $missing_dirs
+    bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch/Upgrade/Upgrade_smooth_nginx.sh) ${sorted_files[$select]} $missing_dirs
     read -p "按回车键返回主菜单："
 }
 
 function uninstall_nginx() {
     echo "开始卸载Nginx--链接Github获取Nginx卸载脚本"
-    bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/UninstallFile/Uninstall_nginx.sh)
+    bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch/UninstallFile/Uninstall_nginx.sh)
     read -p "按回车键返回主菜单："
 }
 function uninstall_docker() {
     echo "开始安装Docker--链接github获取Docker卸载脚本"
-    bash <(curl -L https://raw.Githubusercontent.com/HiddenScholars/Linux-tools/main/UninstallFile/Uninstall_docker.sh)
+    bash <(curl -L https://raw.Githubusercontent.com/HiddenScholars/Linux-tools/$con_branch/UninstallFile/Uninstall_docker.sh)
     read -p "按回车键返回主菜单："
 }
 
@@ -429,7 +445,7 @@ case $1 in
 -d)
   case $2 in
   config.sh)
-          wget -P ${config_path} https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/config.sh
+          wget -P ${config_path} https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch/config.sh
           [ ! -f ${config_file} ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
           ;;
   *)

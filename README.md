@@ -15,13 +15,13 @@
 CentOS/Redhat
 
 ```shell
-yum -y install wget curl && bash <(curl -Ls https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/tools.sh)
+yum -y install wget curl net-tools && bash <(curl -Ls https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/tools.sh)
 ```
 
 Ubuntu/Debian
 
 ```
-apt -y install wget curl && bash <(curl -Ls https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/tools.sh)
+apt -y install wget curl  net-tools && bash <(curl -Ls https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/tools.sh)
 ```
 
 
@@ -31,13 +31,13 @@ config.sh下载
 CentOS/Redhat
 
 ```shell
-yum -y install wget curl && bash <(curl -Ls https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/tools.sh) -d config.sh
+yum -y install wget curl  net-tools && bash <(curl -Ls https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/tools.sh) -d config.sh
 ```
 
 Ubuntu/Debian
 
 ```
-apt -y install wget curl && bash <(curl -Ls https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/tools.sh) -d config.sh
+apt -y install wget curl  net-tools && bash <(curl -Ls https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/tools.sh) -d config.sh
 ```
 
 
