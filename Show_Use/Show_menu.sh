@@ -257,12 +257,13 @@ function upgrade_smooth_nginx() {
 }
 
 function uninstall_nginx() {
+    test=
     echo "开始卸载Nginx--链接Github获取Nginx卸载脚本"
-    bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$1/UninstallFile/Uninstall_nginx.sh)
+    bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$test/UninstallFile/Uninstall_nginx.sh)
     read -p "按回车键返回主菜单："
 }
 function uninstall_docker() {
-    echo "开始安装Docker--链接github获取Docker卸载脚本"
+    echo "开始安装Docker--链接Github获取Docker卸载脚本"
     bash <(curl -L https://raw.Githubusercontent.com/HiddenScholars/Linux-tools/$1/UninstallFile/Uninstall_docker.sh)
     read -p "按回车键返回主菜单："
 }
@@ -364,7 +365,8 @@ function soft_uninstall() {
         return
         ;;
       1)
-        uninstall_nginx "$1"
+        test=$1
+        uninstall_nginx
         ;;
       1)
         uninstall_docker
