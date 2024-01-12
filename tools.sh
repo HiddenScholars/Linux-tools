@@ -3,8 +3,8 @@
 nginx_download_url=
 docker_download_url=
 select_download_version=
-config_path=/Linux-tools/
-config_file=/Linux-tools/config.sh
+config_path=/tools/
+config_file=/tools/config.sh
 #Linux-tools start check ...
 [ `whoami` != root ] && echo -e "${red}需要使用root权限${plain}" && exit 1
 
