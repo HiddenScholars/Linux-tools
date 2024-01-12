@@ -270,7 +270,7 @@ function uninstall_docker() {
 
 function uninstall_tool() {
     echo "卸载tool命令..."
-    bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch/Link_localhost/uninstall.sh)
+    bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch_menu/Link_localhost/uninstall.sh)
     read -p "按回车键返回主菜单："
 }
 
@@ -366,7 +366,7 @@ function soft_uninstall() {
                               printf "\t\t${green}2. ${plain}Docker卸载.\n"
                               printf "\t\t${green}3. ${plain}tool命令卸载.\n"
       printf "****************************************************************************\n"
-      read -p "输入序号【0-2】：" select
+      read -p "输入序号【0-3】：" select
       case $select in
       0)
         return
