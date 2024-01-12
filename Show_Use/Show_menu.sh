@@ -268,6 +268,12 @@ function uninstall_docker() {
     read -p "按回车键返回主菜单："
 }
 
+function uninstall_tool() {
+    echo "卸载tool命令..."
+    bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch/Link_localhost/uninstall.sh)
+    read -p "按回车键返回主菜单："
+}
+
 function show_Use() {
 select=''
 clear
@@ -358,6 +364,7 @@ function soft_uninstall() {
                               printf "\t\t${green}0. ${plain}返回主页面.\n"
                               printf "\t\t${green}1. ${plain}Nginx卸载.\n"
                               printf "\t\t${green}2. ${plain}Docker卸载.\n"
+                              printf "\t\t${green}3. ${plain}tool命令卸载.\n"
       printf "****************************************************************************\n"
       read -p "输入序号【0-2】：" select
       case $select in
@@ -365,12 +372,13 @@ function soft_uninstall() {
         return
         ;;
       1)
-        echo $a1
-        test=$a1
         uninstall_nginx
         ;;
-      1)
+      2)
         uninstall_docker
+        ;;
+      3)
+        uninstall_tool
         ;;
       *)
         echo "序号输入错误"
