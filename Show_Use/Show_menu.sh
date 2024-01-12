@@ -5,7 +5,7 @@ select_download_version=
 config_path=/tools/
 config_file=/tools/config.sh
 source /tools/config.sh &>/dev/null 2>&1
-
+test=
 function manage_download() {
   #server_name下载服务名
   #download_url下载链接
@@ -257,7 +257,6 @@ function upgrade_smooth_nginx() {
 }
 
 function uninstall_nginx() {
-    test=
     echo "开始卸载Nginx--链接Github获取Nginx卸载脚本"
     bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$test/UninstallFile/Uninstall_nginx.sh)
     read -p "按回车键返回主菜单："
