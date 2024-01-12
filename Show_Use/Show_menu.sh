@@ -364,7 +364,7 @@ function soft_uninstall() {
         return
         ;;
       1)
-        uninstall_nginx $1
+        uninstall_nginx "$1"
         ;;
       1)
         uninstall_docker
