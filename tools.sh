@@ -28,7 +28,8 @@ config_file=/Linux-tools/config.sh
 source $config_file
 #======================================================================
 # install link localhost
-bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/Link_localhost/install.sh)
+read -p "是否添加本地软连接，后面可以直接通过tool命令直接调用菜单（y/n）：" link_select
+[ "$link_select" == "y" ] && bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/Link_localhost/install.sh)
 #======================================================================
 
 
