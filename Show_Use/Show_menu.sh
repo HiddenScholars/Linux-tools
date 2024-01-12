@@ -7,6 +7,7 @@ config_file=/tools/config.sh
 source /tools/config.sh &>/dev/null 2>&1
 test=
 a1=$1
+echo $1
 function manage_download() {
   #server_name下载服务名
   #download_url下载链接
