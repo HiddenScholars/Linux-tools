@@ -4,8 +4,8 @@ docker_download_url=
 select_download_version=
 config_path=/tools/
 config_file=/tools/config.sh
-source /tools/config.sh
-echo $1
+source /tools/config.sh &>/dev/null
+
 function manage_download() {
   #server_name下载服务名
   #download_url下载链接
@@ -401,5 +401,6 @@ function soft_upgrade() {
 
 
 while [ true ]; do
+    echo $1
     show_Use
 done
