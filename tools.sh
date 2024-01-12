@@ -16,7 +16,6 @@ while IFS= read -r branch; do
   branch_array+=("$branch")
 done <<< "$branches"
 clear
-echo
 echo -e "选择项目分支，main为主节点，其余为测试节点会有新功能但并不保证稳定"
 # 逐个读取数组元素
 for branch in "${branch_array[@]}"; do
