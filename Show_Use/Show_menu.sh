@@ -4,10 +4,9 @@ docker_download_url=
 select_download_version=
 config_path=/tools/
 config_file=/tools/config.sh
-source /tools/config.sh &>/dev/null 2>&1
-test=
-a1=$1
-echo $1
+source /tools/config.sh
+con_branch_menu=$1
+
 function manage_download() {
   #server_name下载服务名
   #download_url下载链接
@@ -189,17 +188,17 @@ select=''
     manage_download
     check_unpack_file_path
 echo "开始安装Nginx--链接Github获取Nginx安装脚本"
-bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$1/InstallFile/Install_nginx.sh) ${sorted_files[$select]} $missing_dirs
+bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch_menu/InstallFile/Install_nginx.sh) ${sorted_files[$select]} $missing_dirs
 read -p "按回车键返回主菜单："
 }
 function setting_ssl() {
 echo "开始安装证书--链接Github获取证书安装脚本"
-bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$1/InstallFile/Install_ssl_acme.sh)
+bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch_menu/InstallFile/Install_ssl_acme.sh)
 read -p "按回车键返回主菜单："
 }
 function install_docker() {
   echo "开始安装Docker--链接github获取Docker安装脚本"
-  bash <(curl -L https://raw.Githubusercontent.com/HiddenScholars/Linux-tools/$1/InstallFile/Install_docker.sh) $filename
+  bash <(curl -L https://raw.Githubusercontent.com/HiddenScholars/Linux-tools/$con_branch_menu/InstallFile/Install_docker.sh) $filename
   read -p "按回车键返回主菜单："
 }
 function install_docker_compose() {
@@ -219,7 +218,7 @@ done
 select=''
       read -p "Enther Your install service version choice（0）:" select
       [ -z ${docker_compose_download_urls[$select]} ] && echo -e "${red}暂不支持的版本号${plain}" && exit 0
-bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$1/InstallFile/Install_docker-compose.sh) ${temp_number[$select]} ${select}
+bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch_menu/InstallFile/Install_docker-compose.sh) ${temp_number[$select]} ${select}
 }
 
 
@@ -253,19 +252,19 @@ function upgrade_smooth_nginx() {
         manage_download
         check_unpack_file_path
     echo "开始升级Nginx--链接Github获取Nginx升级脚本"
-    bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$1/Upgrade/Upgrade_smooth_nginx.sh) ${sorted_files[$select]} $missing_dirs
+    bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch_menu/Upgrade/Upgrade_smooth_nginx.sh) ${sorted_files[$select]} $missing_dirs
     read -p "按回车键返回主菜单："
 }
 
 function uninstall_nginx() {
     echo $test
     echo "开始卸载Nginx--链接Github获取Nginx卸载脚本"
-    bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$test/UninstallFile/Uninstall_nginx.sh)
+    bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch_menu/UninstallFile/Uninstall_nginx.sh)
     read -p "按回车键返回主菜单："
 }
 function uninstall_docker() {
     echo "开始安装Docker--链接Github获取Docker卸载脚本"
-    bash <(curl -L https://raw.Githubusercontent.com/HiddenScholars/Linux-tools/$1/UninstallFile/Uninstall_docker.sh)
+    bash <(curl -L https://raw.Githubusercontent.com/HiddenScholars/Linux-tools/$con_branch_menu/UninstallFile/Uninstall_docker.sh)
     read -p "按回车键返回主菜单："
 }
 
