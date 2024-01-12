@@ -6,6 +6,7 @@ config_path=/tools/
 config_file=/tools/config.sh
 source /tools/config.sh &>/dev/null 2>&1
 test=
+a1=$1
 function manage_download() {
   #server_name下载服务名
   #download_url下载链接
@@ -364,8 +365,8 @@ function soft_uninstall() {
         return
         ;;
       1)
-        echo $1
-        test=$1
+        echo $a1
+        test=$a1
         uninstall_nginx
         ;;
       1)
