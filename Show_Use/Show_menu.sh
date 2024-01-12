@@ -258,6 +258,7 @@ function upgrade_smooth_nginx() {
 
 function uninstall_nginx() {
     echo "开始卸载Nginx--链接Github获取Nginx卸载脚本"
+    echo $1
     bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$1/UninstallFile/Uninstall_nginx.sh)
     read -p "按回车键返回主菜单："
 }
