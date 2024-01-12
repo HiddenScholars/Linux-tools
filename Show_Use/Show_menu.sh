@@ -16,7 +16,6 @@ function manage_download() {
           if [ `ls $download_path/$server_name/ | grep $select_download_version | wc -l` -ne 0 ];then
                 echo -e "${red}$download_path/$server_name/中存在该版本安装包${plain}"
                 echo
-                echo
                cd $download_path/$server_name/
                     # 定义一个空数组用于存储符合条件的文件
                     files=()
@@ -257,6 +256,7 @@ function upgrade_smooth_nginx() {
 }
 
 function uninstall_nginx() {
+    echo $test
     echo "开始卸载Nginx--链接Github获取Nginx卸载脚本"
     bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$test/UninstallFile/Uninstall_nginx.sh)
     read -p "按回车键返回主菜单："
