@@ -7,6 +7,8 @@ download_path=/tools/soft
 #注：这里为所有安装软件的统一路径，任何软件都会以软件名在这个路径下创建路径安装，路径重复根据软件情况通过date +%Y%m%d进行备份
 install_path=/usr/local/soft
 time=`date +%Y%m%d`
+#境内github无法访问时替换该参数，例如：raw.yzuu.cf，等镜像站
+url_address=raw.githubusercontent.com
 
 #服务安装配置
 nginx_download_urls=(
@@ -15,6 +17,8 @@ nginx_download_urls=(
 nginx_user=nginx
 docker_compose_download_urls=(
 "https://github.com/docker/compose/releases/download/v2.23.3/docker-compose-linux-x86_64")
+
+
 
 #输出颜色
 red='\033[31m'

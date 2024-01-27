@@ -26,20 +26,21 @@ done
    read -p "Enther Your branch num (0 ...):" branch_select_choice
    [ -z $branch_select_choice ] && echo -e "${red}不存在的分支${plain}" && exit 0
    con_branch=${branch_array[$branch_select_choice]}
+
 #config.sh check
 #======================================================================
   if [ ! -f ${config_file} ];then
     [ ! -d ${config_path} ] && mkdir ${config_path}
     echo -e "${red}config文件不存在，开始下载...${plain}"
-    wget -P ${config_path} https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch/config.sh
+    wget -P ${config_path} https://$url_address/HiddenScholars/Linux-tools/$con_branch/config.sh
     [ ! -f ${config_file} ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
 
-  elif  [ `curl -s https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch/config.sh | wc -l` -gt `cat $config_file | wc -l ` ];then
+  elif  [ `curl -s https://$url_address/HiddenScholars/Linux-tools/$con_branch/config.sh | wc -l` -gt `cat $config_file | wc -l ` ];then
       config_select=''
       read -p "config.sh文件有变化，是否重新下载？（y/n）" config_select
       if [ "$config_select" == "y" ];then
         mv $config_file $config_path/config_bak$time
-        wget -P ${config_path} https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch/config.sh
+        wget -P ${config_path} https://$url_address/HiddenScholars/Linux-tools/$con_branch/config.sh
         [ ! -f ${config_file} ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
       fi
   fi
@@ -47,14 +48,14 @@ source $config_file
 #======================================================================
 # install link localhost
 #======================================================================
-bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch/Link_localhost/install.sh)
+bash <(curl -L https://$url_address/HiddenScholars/Linux-tools/$con_branch/Link_localhost/install.sh)
 #======================================================================
 
 case $1 in
 -d)
   case $2 in
   config.sh)
-          wget -P ${config_path} https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch/config.sh
+          wget -P ${config_path} https://$url_address/HiddenScholars/Linux-tools/$con_branch/config.sh
           [ ! -f ${config_file} ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
           ;;
   *)
@@ -64,7 +65,7 @@ case $1 in
 ;;
 *)
   while [ true ]; do
-  bash <(curl -L https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh) $con_branch
+  bash <(curl -L https://$url_address/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh) $con_branch
   done
   ;;
 esac
