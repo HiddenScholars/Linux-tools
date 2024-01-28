@@ -295,7 +295,7 @@ echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
     printf "****************************************************************************\n"
     read -p "输入序号【0-`"${#show_use[@]}"`】：" select
     if [ ! -z ${show_use[select]} ]; then
-        ${show_use[select]}
+        ${show_use[$select]}
     fi
 }
 function show_soft() {
