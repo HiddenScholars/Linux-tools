@@ -4,7 +4,7 @@ docker_download_url=
 select_download_version=
 config_path=/tools/
 config_file=/tools/config.sh
-source /tools/config.sh
+source $config_file
 con_branch_menu=$1
 
 function manage_download() {
@@ -132,7 +132,7 @@ function check_install_system() {
             exit 1
             fi
         fi
-} #check_install_nginx_system
+}
 function check_unpack_file_path() {
     [ ! -d $config_path/unpack_file ] && mkdir -p $config_path/unpack_file
     if [ `ls -l $config_path/unpack_file/ | wc -l` -gt  11 ];then
