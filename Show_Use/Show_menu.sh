@@ -299,7 +299,7 @@ echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
                             printf "\t\t${green}${i}. ${plain}${show_use[$i]}.\n"
                             done
     printf "****************************************************************************\n"
-    read -p "输入序号【0-"${#show_use[@]}"】：" select
+    read -p "输入序号【0-"$((${#show_use[@]}-1))"】：" select
     if [ ! -z ${show_use_function[$select]} ]; then
        eval  "${show_use_function[$select]}"
     else
@@ -318,7 +318,7 @@ function show_Soft() {
                             printf "\t\t${green}${i}. ${plain}${show_soft[$i]}.\n"
                             done
     printf "****************************************************************************\n"
-    read -p   "输入序号【0-"${#show_soft[@]}"】：" select
+    read -p   "输入序号【0-"$((${#show_soft[@]}-1))"】：" select
     if [ ! -z ${show_soft_function[$select]} ]; then
        eval  "${show_soft_function[$select]}"
     else
@@ -338,7 +338,7 @@ function soft_Uninstall() {
                             printf "\t\t${green}${i}. ${plain}${soft_uninstall[$i]}.\n"
                             done
       printf "****************************************************************************\n"
-      read -p "输入序号【0-"${#soft_uninstall[@]}"】：" select
+      read -p "输入序号【0-"$((${#soft_uninstall[@]}-1))"】：" select
     if [ ! -z ${soft_uninstall_function[$select]} ]; then
        eval  "${soft_uninstall_function[$select]}"
     else
@@ -357,7 +357,7 @@ function soft_Upgrade() {
                             printf "\t\t${green}${i}. ${plain}${soft_upgrade[$i]}.\n"
                             done
         printf "****************************************************************************\n"
-        read -p "输入序号【0-"${#soft_upgrade[@]}"】：" select
+        read -p "输入序号【0-"$((${#soft_upgrade[@]}-1))"】：" select
     if [ ! -z ${soft_upgrade_function[$select]} ]; then
        eval  "${soft_upgrade_function[$select]}"
     else
