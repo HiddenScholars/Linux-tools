@@ -5,6 +5,8 @@ docker_download_url=
 select_download_version=
 config_path=/tools/
 config_file=/tools/config.sh
+source $config_file
+
 #Linux-tools start check ...
 [ `whoami` != root ] && echo -e "${red}需要使用root权限${plain}" && exit 1
 branch_select_num=0
