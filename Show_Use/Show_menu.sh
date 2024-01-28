@@ -293,9 +293,9 @@ echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
                             printf "\t\t${green}${i}. ${plain}${show_use[$i]}.\n"
                             done
     printf "****************************************************************************\n"
-    read -p "输入序号【0-`"${#show_use[@]}"`】：" select
-    if [ ! -z ${show_use[select]} ]; then
-        ${show_use[$select]}
+    read -p "输入序号【0-"${#show_use[@]}"】：" select
+    if [ ! -z ${show_use[$select]} ]; then
+       echo  "${show_use_function[$select]}"
     fi
 }
 function show_soft() {
