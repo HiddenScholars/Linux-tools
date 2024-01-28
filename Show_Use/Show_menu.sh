@@ -190,17 +190,14 @@ select=''
     check_unpack_file_path
 echo "开始安装Nginx--链接Github获取Nginx安装脚本"
 bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/InstallFile/Install_nginx.sh) ${sorted_files[$select]} $missing_dirs
-read -p "按回车键返回主菜单："
 }
 function setting_ssl() {
 echo "开始安装证书--链接Github获取证书安装脚本"
 bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/InstallFile/Install_ssl_acme.sh)
-read -p "按回车键返回主菜单："
 }
 function install_docker() {
   echo "开始安装Docker--链接github获取Docker安装脚本"
   bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/InstallFile/Install_docker.sh) $filename
-  read -p "按回车键返回主菜单："
 }
 function install_docker_compose() {
 regex="v([0-9]+\.[0-9]+\.[0-9]+)"
@@ -253,23 +250,20 @@ function upgrade_smooth_nginx() {
         check_unpack_file_path
     echo "开始升级Nginx--链接Github获取Nginx升级脚本"
     bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/Upgrade/Upgrade_smooth_nginx.sh) ${sorted_files[$select]} $missing_dirs
-    read -p "按回车键返回主菜单："
 }
 
 function uninstall_nginx() {
     echo "开始卸载Nginx--链接Github获取Nginx卸载脚本"
     bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/UninstallFile/Uninstall_nginx.sh)
-    read -p "按回车键返回主菜单："
 }
 function uninstall_docker() {
     echo "开始安装Docker--链接Github获取Docker卸载脚本"
     bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/UninstallFile/Uninstall_docker.sh)
-    read -p "按回车键返回主菜单："
 }
 function uninstall_tool() {
     echo "卸载tool命令..."
     bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/Link_localhost/uninstall.sh)
-    read -p "按回车键返回主菜单："
+
 }
 
 #菜单目录显示控制
@@ -279,10 +273,11 @@ show_soft=("返回主页面" "Nginx" "Docker" "ocker-compose")
 show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose")
 soft_uninstall=("返回主页面" "Nginx卸载" "Docker卸载" "tool命令卸载")
 soft_uninstall_function=("return" "uninstall_nginx" "uninstall_docker" "uninstall_tool")
-soft_upgrade=("返回主菜单" "Nginx平滑升级")
+soft_upgrade=("返回主菜单" "Nginx平滑升(降)级")
 soft_upgrade_function=("return" "upgrade_smooth_nginx")
 
 function show_Use() {
+read -p "按回车键返回主菜单："
 select=''
 clear
 echo -e "${green}   _|                          _|${plain}"
@@ -308,6 +303,7 @@ echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
     fi
 }
 function show_Soft() {
+read -p "按回车键返回主菜单："
     select=''
     clear
     printf "****************************************************************************\n"
@@ -328,6 +324,7 @@ function show_Soft() {
 
 }
 function soft_Uninstall() {
+read -p "按回车键返回主菜单："
       select=''
       clear
       printf "****************************************************************************\n"
@@ -347,6 +344,7 @@ function soft_Uninstall() {
     fi
 }
 function soft_Upgrade() {
+read -p "按回车键返回主菜单："
     select=''
     clear
     printf "****************************************************************************\n"

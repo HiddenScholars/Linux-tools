@@ -39,13 +39,22 @@ done
           read -p  "下载参数为空,请选择或手动输入下载地址：" url_address_select
           if [[ $url_address_select =~ ^[0-9]+$ ]]; then
               if [ ! -z ${url_address_number[$url_address_select]} ]; then
-                echo ${url_address_number[$url_address_select]}
                   url_address=${url_address_number[$url_address_select]}
+                  if [ -f $config_file ];then
+                     sed -i "s/url_address=.*/url_address=$url_address/g" $config_file
+                     source $config_file
+                     [ "$url_address" != "${url_address_number[$url_address_select]}" ] && echo "url_address=${url_address_number[$url_address_select]}" >> $config_file
+                  fi
               else
                   echo -e "${red}选择的地址不存在${plain}"
               fi
           else
               url_address=$url_address_select
+                  if [ -f $config_file ];then
+                     sed -i "s/url_address=.*/url_address=$url_address/g" $config_file
+                     source $config_file
+                     [ "$url_address" != "$url_address_select" ] && echo "url_address=$url_address_select" >> $config_file
+                  fi
           fi
   fi
   if [ ! -f ${config_file} ];then
@@ -53,7 +62,6 @@ done
     echo -e "${red}config文件不存在，开始下载...${plain}"
         wget -P ${config_path} https://$url_address/HiddenScholars/Linux-tools/$con_branch/config.sh
     [ ! -f ${config_file} ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
-
   elif  [ `curl -s https://$url_address/HiddenScholars/Linux-tools/$con_branch/config.sh | wc -l` -gt `cat $config_file | wc -l ` ];then
       config_select=''
       read -p "config.sh文件有变化，是否重新下载？（y/n）" config_select
