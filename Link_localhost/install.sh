@@ -6,7 +6,11 @@ read -p "回车确定安装，输入n不安装：" link_select
 [ "$link_select" == "n" ] && return
 cat > /etc/init.d/tool << 'EOF'
 source /tools/config.sh
+if [ ! -z $url_address ];then
 bash <(curl -Ls https://'$url_address'/HiddenScholars/Linux-tools/main/tools.sh)
+else
+echo "url_address不得为空请检查config.sh配置文件"
+fi
 EOF
 chmod +x /etc/init.d/tool
   if [ ! -L /etc/init.d/tool ]; then
