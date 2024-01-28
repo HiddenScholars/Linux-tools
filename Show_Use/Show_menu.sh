@@ -222,7 +222,6 @@ select=''
 bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/InstallFile/Install_docker-compose.sh) ${temp_number[$select]} ${select}
 }
 
-
 function upgrade_smooth_nginx() {
     regex="nginx-([0-9]+\.[0-9]+\.[0-9]+)"
     nginx_download_urls_select=0
@@ -273,11 +272,18 @@ function uninstall_tool() {
     read -p "按回车键返回主菜单："
 }
 
+#菜单目录显示控制
+show_use=("退出脚本" "服务安装" "服务卸载" "服务升级" "acme脚本(搭配cloudflare)")
+show_use_function=("exit 1" "show_Soft" "soft_Uninstall" "soft_Upgrade" "setting_ssl")
+show_soft=("返回主页面" "Nginx" "Docker" "ocker-compose")
+show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose")
+soft_uninstall=("返回主页面" "Nginx卸载" "Docker卸载" "tool命令卸载")
+soft_uninstall_function=("return" "uninstall_nginx" "uninstall_docker" "uninstall_tool")
+soft_upgrade=("返回主菜单" "Nginx平滑升级")
+soft_upgrade_function=("return" "upgrade_smooth_nginx")
+
 function show_Use() {
 select=''
-#show_Use菜单数组
-show_use=("退出脚本" "服务安装" "服务卸载" "服务升级" "acme脚本(搭配cloudflare)")
-show_use_function=("exit 1" "show_soft" "soft_uninstall" "soft_upgrade" "setting_ssl")
 clear
 echo -e "${green}   _|                          _|${plain}"
 echo -e "${green}_|_|_|_|    _|_|      _|_|     _|    _|_|_|${plain}"
@@ -294,95 +300,71 @@ echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
                             done
     printf "****************************************************************************\n"
     read -p "输入序号【0-"${#show_use[@]}"】：" select
-    if [ ! -z ${show_use[$select]} ]; then
-       echo  "${show_use_function[$select]}"
+    if [ ! -z ${show_use_function[$select]} ]; then
+       eval  "${show_use_function[$select]}"
+    else
+       echo "序号输入错误"
+       read -p "按回车键返回主菜单"
     fi
 }
-function show_soft() {
+function show_Soft() {
     select=''
     clear
     printf "****************************************************************************\n"
                         printf "\t\t**欢迎使用Linux-tools软件安装脚本菜单**\n"
     printf "****************************************************************************\n"
-                        printf "\t\t${green}0. ${plain}返回主页面.\n"
-                        printf "\t\t${green}1. ${plain}Nginx.\n"
-                        printf "\t\t${green}2. ${plain}Docker.\n"
-                        printf "\t\t${green}3. ${plain}docker-compose.\n"
+                            for i in "${!show_soft[@]}"
+                            do
+                            printf "\t\t${green}${i}. ${plain}${show_soft[$i]}.\n"
+                            done
     printf "****************************************************************************\n"
-    read -p   "输入序号【0-3】：" select
-    case $select in
-    0)
-     return
-      ;;
-    1)
-      echo
-      install_nginx
-      ;;
-    2)
-      echo
-      install_docker
-      ;;
-    3)
-      install_docker_compose
-      ;;
-    *)
-      echo "输入序号不存在"
-      ;;
-    esac
+    read -p   "输入序号【0-"${#show_soft[@]}"】：" select
+    if [ ! -z ${show_soft_function[$select]} ]; then
+       eval  "${show_soft_function[$select]}"
+    else
+       echo "序号输入错误"
+       read -p "按回车键返回主菜单"
+    fi
+
 }
-function soft_uninstall() {
-      clear
+function soft_Uninstall() {
       select=''
+      clear
       printf "****************************************************************************\n"
                               printf "\t\t**欢迎使用Linux-tools脚本菜单**\n"
       printf "****************************************************************************\n"
-                              printf "\t\t${green}0. ${plain}返回主页面.\n"
-                              printf "\t\t${green}1. ${plain}Nginx卸载.\n"
-                              printf "\t\t${green}2. ${plain}Docker卸载.\n"
-                              printf "\t\t${green}3. ${plain}tool命令卸载.\n"
+                            for i in "${!soft_uninstall[@]}"
+                            do
+                            printf "\t\t${green}${i}. ${plain}${soft_uninstall[$i]}.\n"
+                            done
       printf "****************************************************************************\n"
-      read -p "输入序号【0-3】：" select
-      case $select in
-      0)
-        return
-        ;;
-      1)
-        uninstall_nginx
-        ;;
-      2)
-        uninstall_docker
-        ;;
-      3)
-        uninstall_tool
-        ;;
-      *)
-        echo "序号输入错误"
-        ;;
-      esac
+      read -p "输入序号【0-"${#soft_uninstall[@]}"】：" select
+    if [ ! -z ${soft_uninstall_function[$select]} ]; then
+       eval  "${soft_uninstall_function[$select]}"
+    else
+       echo "序号输入错误"
+       read -p "按回车键返回主菜单"
+    fi
 }
-function soft_upgrade() {
+function soft_Upgrade() {
+    select=''
     clear
     printf "****************************************************************************\n"
                                 printf "\t\t**欢迎使用Linux-tools脚本菜单**\n"
         printf "****************************************************************************\n"
-                                printf "\t\t${green}0. ${plain}返回主菜单.\n"
-                                printf "\t\t${green}1. ${plain}Nginx平滑升级.\n"
+                            for i in "${!soft_upgrade[@]}"
+                            do
+                            printf "\t\t${green}${i}. ${plain}${soft_upgrade[$i]}.\n"
+                            done
         printf "****************************************************************************\n"
-        read -p "输入序号【0-1】：" select
-        case $select in
-        0)
-        return
-          ;;
-        1)
-        upgrade_smooth_nginx
-          ;;
-        *)
-          echo "输入错误"
-          ;;
-        esac
+        read -p "输入序号【0-"${#soft_upgrade[@]}"】：" select
+    if [ ! -z ${soft_upgrade_function[$select]} ]; then
+       eval  "${soft_upgrade_function[$select]}"
+    else
+       echo "序号输入错误"
+       read -p "按回车键返回主菜单"
+    fi
 }
-
-
 
 while [ true ]; do
     show_Use
