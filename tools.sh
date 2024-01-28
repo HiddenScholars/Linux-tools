@@ -47,7 +47,7 @@ done
           echo -e "${red}选择的地址不存在${plain}"
         fi
     else
-      url_address=url_address_select
+      url_address=$url_address_select
     fi
     wget -P ${config_path} https://$url_address/HiddenScholars/Linux-tools/$con_branch/config.sh
     fi
