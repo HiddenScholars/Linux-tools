@@ -4,7 +4,7 @@ docker_download_url=
 select_download_version=
 config_path=/tools/
 config_file=/tools/config.sh
-source $config_file
+source $config_file &>/dev/null
 con_branch_menu=$1
 
 function manage_download() {
@@ -276,9 +276,12 @@ soft_uninstall_function=("return" "uninstall_nginx" "uninstall_docker" "uninstal
 soft_upgrade=("返回主菜单" "Nginx平滑升(降)级")
 soft_upgrade_function=("return" "upgrade_smooth_nginx")
 
+
+
+#该参数请勿修改
+temp_return_select=0
 function show_Use() {
-temp_return_select=1
-[ $temp_return_select == 1 ] && read -p "按回车键返回主菜单：" && let temp_return_select--
+[ $temp_return_select == 1 ] && read -p "按回车键返回主菜单：" && let temp_return_select++
 select=''
 clear
 echo -e "${green}   _|                          _|${plain}"
