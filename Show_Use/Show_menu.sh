@@ -31,12 +31,13 @@ function manage_download() {
 
                     # 对数组进行排序，并打印文件名和数字序号
                     IFS=$'\n' sorted_files=($(sort <<<"${files[*]}"))
-                    for i in "${!sorted_files[@]}“; do
+                    for i in "${!sorted_files[@]}"
+                    do
                       echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
                     done
                 echo
                 echo
-                read -p  "文件夹中存在文件是否继续下载（y/n）(default：n)：" download_select
+                read -p  "文件夹中存在文件是否继续下载(y/n)(default:n):" download_select
 
                 if [ "$download_select" == "y" ]; then
                       wget -P $download_path/$server_name/ $download_url
@@ -274,7 +275,6 @@ function uninstall_tool() {
 
 function show_Use() {
 select=''
-for_number=0
 #show_Use菜单数组
 show_use=("退出脚本" "服务安装" "服务卸载" "服务升级" "acme脚本(搭配cloudflare)")
 show_use_function=("exit 1" "show_soft" "soft_uninstall" "soft_upgrade" "setting_ssl")
@@ -290,8 +290,10 @@ echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
     printf "****************************************************************************\n"
                           for i in "${show_use[@]}"
                           do
-                            printf "\t\t${green}${for_number}. ${plain}$i.\n"
-                          let for_number++
+                            for j in "${!show_use[@]}"
+                            do
+                            printf "\t\t${green}${j}. ${plain}$i.\n"
+                            done
                           done
     printf "****************************************************************************\n"
     read -p "输入序号【0-`"${#show_use[@]}"`】：" select
