@@ -20,7 +20,7 @@ yum -y install wget curl net-tools && bash <(curl -Ls https://raw.githubusercont
 
 Ubuntu/Debian
 
-```
+```shell
 apt -y install wget curl  net-tools && bash <(curl -Ls https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/tools.sh)
 ```
 
@@ -36,9 +36,32 @@ yum -y install wget curl  net-tools && bash <(curl -Ls https://raw.githubusercon
 
 Ubuntu/Debian
 
-```
+```shell
 apt -y install wget curl  net-tools && bash <(curl -Ls https://raw.githubusercontent.com/HiddenScholars/Linux-tools/main/tools.sh) -d config.sh
 ```
 
+当境内无法访问github时修改config.sh中url_address参数地址，并更改脚本执行命令，例如：
+CentOS/Redhat
 
+```shell
+yum -y install wget curl net-tools && bash <(curl -Ls https://raw.yzuu.cf/HiddenScholars/Linux-tools/main/tools.sh)
+```
 
+Ubuntu/Debian
+
+```shell
+apt -y install wget curl  net-tools && bash <(curl -Ls https://raw.yzuu.cf/HiddenScholars/Linux-tools/main/tools.sh)
+```
+config.sh下载
+
+CentOS/Redhat
+
+```shell
+yum -y install wget curl  net-tools && bash <(curl -Ls https://raw.yzuu.cf/HiddenScholars/Linux-tools/main/tools.sh) -d config.sh
+```
+
+Ubuntu/Debian
+
+```shell
+apt -y install wget curl  net-tools && bash <(curl -Ls https://raw.yzuu.cf/HiddenScholars/Linux-tools/main/tools.sh) -d config.sh
+```

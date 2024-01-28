@@ -188,17 +188,17 @@ select=''
     manage_download
     check_unpack_file_path
 echo "开始安装Nginx--链接Github获取Nginx安装脚本"
-bash <(curl -sL https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch_menu/InstallFile/Install_nginx.sh) ${sorted_files[$select]} $missing_dirs
+bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/InstallFile/Install_nginx.sh) ${sorted_files[$select]} $missing_dirs
 read -p "按回车键返回主菜单："
 }
 function setting_ssl() {
 echo "开始安装证书--链接Github获取证书安装脚本"
-bash <(curl -sL https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch_menu/InstallFile/Install_ssl_acme.sh)
+bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/InstallFile/Install_ssl_acme.sh)
 read -p "按回车键返回主菜单："
 }
 function install_docker() {
   echo "开始安装Docker--链接github获取Docker安装脚本"
-  bash <(curl -sL https://raw.Githubusercontent.com/HiddenScholars/Linux-tools/$con_branch_menu/InstallFile/Install_docker.sh) $filename
+  bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/InstallFile/Install_docker.sh) $filename
   read -p "按回车键返回主菜单："
 }
 function install_docker_compose() {
@@ -218,7 +218,7 @@ done
 select=''
       read -p "Enther Your install service version choice（0）:" select
       [ -z ${docker_compose_download_urls[$select]} ] && echo -e "${red}暂不支持的版本号${plain}" && exit 0
-bash <(curl -sL https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch_menu/InstallFile/Install_docker-compose.sh) ${temp_number[$select]} ${select}
+bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/InstallFile/Install_docker-compose.sh) ${temp_number[$select]} ${select}
 }
 
 
@@ -252,30 +252,32 @@ function upgrade_smooth_nginx() {
         manage_download
         check_unpack_file_path
     echo "开始升级Nginx--链接Github获取Nginx升级脚本"
-    bash <(curl -sL https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch_menu/Upgrade/Upgrade_smooth_nginx.sh) ${sorted_files[$select]} $missing_dirs
+    bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/Upgrade/Upgrade_smooth_nginx.sh) ${sorted_files[$select]} $missing_dirs
     read -p "按回车键返回主菜单："
 }
 
 function uninstall_nginx() {
     echo $test
     echo "开始卸载Nginx--链接Github获取Nginx卸载脚本"
-    bash <(curl -sL https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch_menu/UninstallFile/Uninstall_nginx.sh)
+    bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/UninstallFile/Uninstall_nginx.sh)
     read -p "按回车键返回主菜单："
 }
 function uninstall_docker() {
     echo "开始安装Docker--链接Github获取Docker卸载脚本"
-    bash <(curl -sL https://raw.Githubusercontent.com/HiddenScholars/Linux-tools/$con_branch_menu/UninstallFile/Uninstall_docker.sh)
+    bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/UninstallFile/Uninstall_docker.sh)
     read -p "按回车键返回主菜单："
 }
-
 function uninstall_tool() {
     echo "卸载tool命令..."
-    bash <(curl -sL https://raw.githubusercontent.com/HiddenScholars/Linux-tools/$con_branch_menu/Link_localhost/uninstall.sh)
+    bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/Link_localhost/uninstall.sh)
     read -p "按回车键返回主菜单："
 }
 
 function show_Use() {
 select=''
+#show_Use菜单数组
+show_use=("退出脚本","服务安装","服务卸载","服务升级","acme脚本(搭配cloudflare)")
+show_use_function=("exit 1","show_soft","soft_uninstall","soft_upgrade","setting_ssl")
 clear
 echo -e "${green}   _|                          _|${plain}"
 echo -e "${green}_|_|_|_|    _|_|      _|_|     _|    _|_|_|${plain}"
@@ -286,45 +288,19 @@ echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
     printf "****************************************************************************\n"
                             printf "\t\t**欢迎使用Linux-tools脚本菜单**\n"
     printf "****************************************************************************\n"
-                            printf "\t\t${green}0. ${plain}退出脚本.\n"
-                            printf "\t\t${green}1. ${plain}服务安装.\n"
-                            printf "\t\t${green}2. ${plain}服务卸载.\n"
-                            printf "\t\t${green}3. ${plain}服务升级.\n"
-                            printf "\t\t${green}4. ${plain}acme脚本(搭配cloudflare).\n"
+                          for i in "${show_use[@]}"
+                          do
+                            printf "\t\t${green}${for_number}. ${plain}$i.\n"
+                          let for_number++
+                          done
     printf "****************************************************************************\n"
-    read -p "输入序号【0-4】：" select
-    case $select in
-    0)
-    exit 1
-      ;;
-    1)
-    show_soft
-      ;;
-    2)
-    soft_uninstall
-      ;;
-    3)
-    soft_upgrade
-      ;;
-    4)
-    setting_ssl
-      ;;
-    *)
-      echo "输入错误"
-      exit 1
-      ;;
-    esac
+    read -p "输入序号【0-`"${show_use[@]}"`】：" select
+    if [ ! -z ${show_use[select]} ]; then
+        ${show_use[select]}
+    fi
 }
 function show_soft() {
-#安装软件进程和端口检查，调用函数check_install_system,调用前设置
-#    #process=() 检查此数组中的进程
-#    #test_server_port=() 检查此数组中的端口
-    process=()
-    test_server_port=()
     select=''
-    if [ $? -eq 0 ];then
-      echo -e "${green}变量初始化完成${plain}"
-    fi
     clear
     printf "****************************************************************************\n"
                         printf "\t\t**欢迎使用Linux-tools软件安装脚本菜单**\n"
