@@ -277,7 +277,8 @@ soft_upgrade=("返回主菜单" "Nginx平滑升(降)级")
 soft_upgrade_function=("return" "upgrade_smooth_nginx")
 
 function show_Use() {
-read -p "按回车键返回主菜单："
+temp_return_select=1
+[ $temp_return_select == 1 ] && read -p "按回车键返回主菜单：" && let temp_return_select--
 select=''
 clear
 echo -e "${green}   _|                          _|${plain}"
@@ -303,7 +304,6 @@ echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
     fi
 }
 function show_Soft() {
-read -p "按回车键返回主菜单："
     select=''
     clear
     printf "****************************************************************************\n"
@@ -324,7 +324,6 @@ read -p "按回车键返回主菜单："
 
 }
 function soft_Uninstall() {
-read -p "按回车键返回主菜单："
       select=''
       clear
       printf "****************************************************************************\n"
@@ -344,7 +343,6 @@ read -p "按回车键返回主菜单："
     fi
 }
 function soft_Upgrade() {
-read -p "按回车键返回主菜单："
     select=''
     clear
     printf "****************************************************************************\n"
