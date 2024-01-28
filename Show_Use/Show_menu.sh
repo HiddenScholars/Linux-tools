@@ -31,7 +31,7 @@ function manage_download() {
 
                     # 对数组进行排序，并打印文件名和数字序号
                     IFS=$'\n' sorted_files=($(sort <<<"${files[*]}"))
-                    for i in ${!sorted_files[@]}; do
+                    for i in "${!sorted_files[@]}“; do
                       echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
                     done
                 echo
@@ -257,7 +257,6 @@ function upgrade_smooth_nginx() {
 }
 
 function uninstall_nginx() {
-    echo $test
     echo "开始卸载Nginx--链接Github获取Nginx卸载脚本"
     bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/UninstallFile/Uninstall_nginx.sh)
     read -p "按回车键返回主菜单："
@@ -275,9 +274,10 @@ function uninstall_tool() {
 
 function show_Use() {
 select=''
+for_number=0
 #show_Use菜单数组
-show_use=("退出脚本","服务安装","服务卸载","服务升级","acme脚本(搭配cloudflare)")
-show_use_function=("exit 1","show_soft","soft_uninstall","soft_upgrade","setting_ssl")
+show_use=("退出脚本" "服务安装" "服务卸载" "服务升级" "acme脚本(搭配cloudflare)")
+show_use_function=("exit 1" "show_soft" "soft_uninstall" "soft_upgrade" "setting_ssl")
 clear
 echo -e "${green}   _|                          _|${plain}"
 echo -e "${green}_|_|_|_|    _|_|      _|_|     _|    _|_|_|${plain}"
@@ -294,7 +294,7 @@ echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
                           let for_number++
                           done
     printf "****************************************************************************\n"
-    read -p "输入序号【0-`"${show_use[@]}"`】：" select
+    read -p "输入序号【0-`"${#show_use[@]}"`】：" select
     if [ ! -z ${show_use[select]} ]; then
         ${show_use[select]}
     fi
