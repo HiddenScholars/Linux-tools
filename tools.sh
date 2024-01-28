@@ -35,12 +35,9 @@ done
     if [ -z $url_address ]; then
         url_address_number=("raw.githubusercontent.com" "raw.yzuu.cf")
 
-        for i in "${url_address_number[@]}"
+        for i in "${!url_address_number[@]}"
         do
-            for j in  "${!url_address_number[@]}"
-            do
-            echo "$j：$i"
-            done
+            echo "$i：${url_address_number[$i]}"
         done
         read -p  "下载参数为空,请选择或手动输入下载地址：" url_address_select
         if [[ $url_address_select =~ ^[0-9]+$ ]]; then

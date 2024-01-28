@@ -4,7 +4,7 @@ if [ -d /etc/init.d/ ] && [ ! -f /etc/init.d/tool ];then
 echo -e "${green}是否添加本地软连接，添加后可以直接通过tool命令直接调用菜单${plain}"
 read -p "回车确定安装，输入n不安装：" link_select
 [ "$link_select" == "n" ] && return
-cat >> /etc/init.d/tool << EOF
+cat > /etc/init.d/tool << 'EOF'
 source /tools/config.sh
 bash <(curl -Ls https://'$url_address'/HiddenScholars/Linux-tools/main/tools.sh)
 EOF

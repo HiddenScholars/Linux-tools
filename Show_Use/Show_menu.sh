@@ -55,7 +55,7 @@ function manage_download() {
 
                       # 对数组进行排序，并打印文件名和数字序号
                       IFS=$'\n' sorted_files=($(sort <<<"${files[*]}"))
-                      for i in ${!sorted_files[@]}; do
+                      for i in "${!sorted_files[@]}"; do
                         echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
                       done
                       #标记执行过下载安装包命令
@@ -81,7 +81,7 @@ function manage_download() {
 
                 # 对数组进行排序，并打印文件名和数字序号
                 IFS=$'\n' sorted_files=($(sort <<<"${files[*]}"))
-                for i in ${!sorted_files[@]}; do
+                for i in "${!sorted_files[@]}"; do
                   echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
                 done
               fi
@@ -112,7 +112,7 @@ function check_install_system() {
         u=0
         if [ $num -eq 0 ]
         then
-            for pro in ${process[@]}
+            for pro in "${process[@]}"
             do
                 if [ `ps -ef|grep $pro |grep -v "grep"|wc -l` -ne 0 ]
                 then
@@ -288,13 +288,10 @@ echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
     printf "****************************************************************************\n"
                             printf "\t\t**欢迎使用Linux-tools脚本菜单**\n"
     printf "****************************************************************************\n"
-                          for i in "${show_use[@]}"
-                          do
-                            for j in "${!show_use[@]}"
+                            for i in "${!show_use[@]}"
                             do
-                            printf "\t\t${green}${j}. ${plain}$i.\n"
+                            printf "\t\t${green}${i}. ${plain}${show_use[$i]}.\n"
                             done
-                          done
     printf "****************************************************************************\n"
     read -p "输入序号【0-`"${#show_use[@]}"`】：" select
     if [ ! -z ${show_use[select]} ]; then
