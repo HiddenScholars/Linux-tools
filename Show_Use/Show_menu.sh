@@ -281,7 +281,7 @@ soft_upgrade_function=("return" "upgrade_smooth_nginx")
 #该参数请勿修改
 temp_return_select=0
 function show_Use() {
-[ $temp_return_select == 0 ] && read -p "按回车键返回主菜单：" && let temp_return_select++
+[ $temp_return_select -ne 0 ] && read -p "按回车键返回主菜单：" && let temp_return_select++
 select=''
 clear
 echo -e "${green}   _|                          _|${plain}"
