@@ -39,7 +39,7 @@ done
           do
               echo "$i：${url_address_number[$i]}"
           done
-          read -p  "下载参数为空,请选择或手动输入下载地址：" url_address_select
+          read -p  "永久下载地址变量为空,请选择或手动输入下载地址：" url_address_select
           if [[ $url_address_select =~ ^[0-9]+$ ]]; then
               if [ ! -z ${url_address_number[$url_address_select]} ]; then
                   url_address=${url_address_number[$url_address_select]}
