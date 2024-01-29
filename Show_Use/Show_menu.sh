@@ -300,10 +300,10 @@ echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
                             done
     printf "****************************************************************************\n"
     read -p "输入序号【0-"$((${#show_use[@]}-1))"】：" select
-    if [ ! -z ${show_use_function[$select]} ]; then
+    if [ ! -z ${show_use_function[$select]} ] && [[ "$select" =~ ^[0-9]+$ ]] ; then
        eval  "${show_use_function[$select]}"
     else
-       echo "序号输入错误"
+       echo "输入错误"
        read -p "按回车键返回主菜单"
     fi
 }
@@ -319,10 +319,10 @@ function show_Soft() {
                             done
     printf "****************************************************************************\n"
     read -p   "输入序号【0-"$((${#show_soft[@]}-1))"】：" select
-    if [ ! -z ${show_soft_function[$select]} ]; then
+    if [ ! -z ${show_soft_function[$select]} ] && [[ "$select" =~ ^[0-9]+$ ]] ; then
        eval  "${show_soft_function[$select]}"
     else
-       echo "序号输入错误"
+       echo "输入错误"
        read -p "按回车键返回主菜单"
     fi
 
@@ -339,10 +339,10 @@ function soft_Uninstall() {
                             done
       printf "****************************************************************************\n"
       read -p "输入序号【0-"$((${#soft_uninstall[@]}-1))"】：" select
-    if [ ! -z ${soft_uninstall_function[$select]} ]; then
+    if [ ! -z ${soft_uninstall_function[$select]} ] && [[ "$select" =~ ^[0-9]+$ ]] ; then
        eval  "${soft_uninstall_function[$select]}"
     else
-       echo "序号输入错误"
+       echo "输入错误"
        read -p "按回车键返回主菜单"
     fi
 }
@@ -358,10 +358,10 @@ function soft_Upgrade() {
                             done
         printf "****************************************************************************\n"
         read -p "输入序号【0-"$((${#soft_upgrade[@]}-1))"】：" select
-    if [ ! -z ${soft_upgrade_function[$select]} ]; then
+    if [ ! -z ${soft_upgrade_function[$select]} ] && [[ "$select" =~ ^[0-9]+$ ]] ; then
        eval  "${soft_upgrade_function[$select]}"
     else
-       echo "序号输入错误"
+       echo "输入错误"
        read -p "按回车键返回主菜单"
     fi
 }
