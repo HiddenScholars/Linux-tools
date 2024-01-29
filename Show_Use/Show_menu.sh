@@ -267,7 +267,7 @@ function uninstall_tool() {
 }
 
 #菜单目录显示控制
-show_use=("退出脚本" "服务安装" "服务卸载" "服务升级" "acme脚本(搭配cloudflare)")
+show_use=("退出脚本" "安装" "卸载" "升级" "acme脚本(搭配cloudflare)")
 show_use_function=("exit 1" "show_Soft" "soft_Uninstall" "soft_Upgrade" "setting_ssl")
 show_soft=("返回主页面" "nginx" "docker" "docker-compose")
 show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose")
@@ -281,7 +281,7 @@ soft_upgrade_function=("return" "upgrade_smooth_nginx")
 #该参数请勿修改
 temp_return_select=0
 function show_Use() {
-[ $temp_return_select -ne 0 ] && read -p "按回车键返回主菜单："
+[ $temp_return_select -ne 0 ] && read -p "回车返回主菜单"
 let temp_return_select++
 select=''
 clear
@@ -300,11 +300,14 @@ echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
                             done
     printf "****************************************************************************\n"
     read -p "输入序号【0-"$((${#show_use[@]}-1))"】：" select
-    if [ ! -z ${show_use_function[$select]} ] && [[ "$select" =~ ^[0-9]+$ ]] ; then
-       eval  "${show_use_function[$select]}"
+    if [ ! -z $select ] ;then
+        if [[ "$select" =~ ^[0-9]+$ ]] && [ ! -z ${show_use_function[$select]} ]  ; then
+            eval  "${show_use_function[$select]}"
+        else
+           echo "不存在的功能"
+        fi
     else
-       echo "输入错误"
-       read -p "按回车键返回主菜单"
+       echo "输入序号才能执行"
     fi
 }
 function show_Soft() {
@@ -319,11 +322,14 @@ function show_Soft() {
                             done
     printf "****************************************************************************\n"
     read -p   "输入序号【0-"$((${#show_soft[@]}-1))"】：" select
-    if [ ! -z ${show_soft_function[$select]} ] && [[ "$select" =~ ^[0-9]+$ ]] ; then
-       eval  "${show_soft_function[$select]}"
+    if [ ! -z $select ] ;then
+            if [[ "$select" =~ ^[0-9]+$ ]] && [ ! -z ${show_soft_function[$select]} ]  ; then
+                eval  "${show_soft_function[$select]}"
+            else
+               echo "不存在的功能"
+            fi
     else
-       echo "输入错误"
-       read -p "按回车键返回主菜单"
+           echo "输入序号才能执行"
     fi
 
 }
@@ -339,12 +345,16 @@ function soft_Uninstall() {
                             done
       printf "****************************************************************************\n"
       read -p "输入序号【0-"$((${#soft_uninstall[@]}-1))"】：" select
-    if [ ! -z ${soft_uninstall_function[$select]} ] && [[ "$select" =~ ^[0-9]+$ ]] ; then
-       eval  "${soft_uninstall_function[$select]}"
-    else
-       echo "输入错误"
-       read -p "按回车键返回主菜单"
-    fi
+      if [ ! -z $select ] ;then
+            if [[ "$select" =~ ^[0-9]+$ ]] && [ ! -z ${soft_uninstall_function[$select]} ]  ; then
+                eval  "${soft_uninstall_function[$select]}"
+            else
+               echo "不存在的功能"
+            fi
+      else
+           echo "输入序号才能执行"
+      fi
+
 }
 function soft_Upgrade() {
     select=''
@@ -358,11 +368,14 @@ function soft_Upgrade() {
                             done
         printf "****************************************************************************\n"
         read -p "输入序号【0-"$((${#soft_upgrade[@]}-1))"】：" select
-    if [ ! -z ${soft_upgrade_function[$select]} ] && [[ "$select" =~ ^[0-9]+$ ]] ; then
-       eval  "${soft_upgrade_function[$select]}"
+    if [ ! -z $select ] ;then
+            if [[ "$select" =~ ^[0-9]+$ ]] && [ ! -z ${soft_upgrade_function[$select]} ]  ; then
+                eval  "${soft_upgrade_function[$select]}"
+            else
+               echo "不存在的功能"
+            fi
     else
-       echo "输入错误"
-       read -p "按回车键返回主菜单"
+           echo "输入序号才能执行"
     fi
 }
 
