@@ -15,7 +15,7 @@ select=''
     for i in {1..100}; do
         print_progress $i
         #代码执行
-        tar xvf $download_path/nginx/$1 -C /tools/unpack_file/$2 --strip-components 1
+        tar xvf $download_path/nginx/$1 -C /tools/unpack_file/$2 --strip-components 1 &>/dev/null
         [ $? -ne 0 ] && echo "解压失败" && exit 0
     done
     cd /tools/unpack_file/$2 && ./configure --prefix=${install_path}/nginx/ \
