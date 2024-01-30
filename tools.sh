@@ -5,7 +5,7 @@ docker_download_url=
 select_download_version=
 config_path=/tools/
 config_file=/tools/config.sh
-
+source $config_file &>/dev/null
 #Linux-tools start check ...
 [ `whoami` != root ] && echo -e "${red}需要使用root权限${plain}" && exit 1
 # 获取 Github 仓库分支列表
@@ -22,7 +22,7 @@ echo -e "选择项目分支，main为主节点，其余为测试节点会有新�
 for branch in "${!branch_array[@]}"; do
   echo -e "${green}$branch.${branch_array[$branch]}${plain}"
 done
-   read -p "Enther Your branch num (0 ...):" branch_select_choice
+   read -p "select branch num (0 ...):" branch_select_choice
    if [ -z ${branch_array[$branch_select_choice]} ]; then
       echo -e "${red}不存在的分支${plain}" && exit 0
    elif ! [[ $branch_select_choice =~ ^[0-9]+$ ]]; then
@@ -33,7 +33,7 @@ done
 #config.sh check
 #======================================================================
   if [ -z $url_address ]; then
-    url_address_number=("raw.githubusercontent.com" "raw.yzuu.cf")
+          url_address_number=("raw.githubusercontent.com" "raw.yzuu.cf")
 
           for i in "${!url_address_number[@]}"
           do
