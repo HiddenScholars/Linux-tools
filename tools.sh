@@ -75,7 +75,7 @@ done
    [ `curl -is https://$url_address | grep github.com | wc -l` == 0 ] && let temp_url_address_github_check++
   done
   if [ $temp_url_address_github_check == 3 ];then
-      read -p  "${red}未检测到github特征，是否继续(y/n)${plain}" countinue
+      read -p  "链接超时或$url_address 未检测到github特征，是否继续(y/n)" countinue
      [ "$countinue" != "y" ] && exit 0
   fi
 
