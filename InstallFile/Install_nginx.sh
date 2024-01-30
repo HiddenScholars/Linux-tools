@@ -11,13 +11,9 @@ select=''
             $controls install -y gcc g++ libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev make
     fi
     [ -d $install_path/nginx/ ] && mv $install_path/nginx/ $install_path/nginx$time
-    source <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$3/Configt/Print_progress.sh)
-    for i in {1..100}; do
-        print_progress $i
-        #代码执行
-        tar xvf $download_path/nginx/$1 -C /tools/unpack_file/$2 --strip-components 1 &>/dev/null
-        [ $? -ne 0 ] && echo "解压失败" && exit 0
-    done
+
+
+    tar xvf $download_path/nginx/$1 -C /tools/unpack_file/$2 --strip-components 1 &>/dev/null
     cd /tools/unpack_file/$2 && ./configure --prefix=${install_path}/nginx/ \
                                                 --with-pcre \
                                                 --with-http_ssl_module \

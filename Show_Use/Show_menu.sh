@@ -249,7 +249,7 @@ function upgrade_smooth_nginx() {
         manage_download
         check_unpack_file_path
     echo "开始升级Nginx--链接Github获取Nginx升级脚本"
-    bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/Upgrade/Upgrade_smooth_nginx.sh) ${sorted_files[$select]} $missing_dirs $con_branch_menu
+    bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/Upgrade/Upgrade_smooth_nginx.sh) ${sorted_files[$select]} $missing_dirs
 }
 
 function uninstall_nginx() {
