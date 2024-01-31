@@ -51,4 +51,5 @@ echo -e "${green}tool指令已添加，后续可通过tool命令直接调用菜�
 else
   echo -e "tool指令不再添加"
 setTool
+EOF
 fi
