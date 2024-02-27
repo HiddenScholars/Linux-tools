@@ -1,6 +1,6 @@
 #!/bin/bash
 
-
+version='1.0'
 #统一配置变量，不清楚原理保持默认
 #安装包下载路径，例如下载nginx，nginx安装包路径：$download_path/nginx/
 download_path=/tools/soft
