@@ -5,7 +5,7 @@ docker_download_url=
 select_download_version=
 config_path=/tools/
 config_file=/tools/config.sh
-version_file=$config_file/version
+version_file=$config_path/version
 branch_array=()
 branch_select_choice=0
 
