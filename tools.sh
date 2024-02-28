@@ -6,7 +6,6 @@ select_download_version=
 config_path=/tools/
 config_file=/tools/config.sh
 version_file=$config_file/version
-version_update_select=0
 branch_array=()
 branch_select_choice=0
 
