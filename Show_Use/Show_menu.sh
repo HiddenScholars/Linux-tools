@@ -155,7 +155,7 @@ function check_unpack_file_path() {
     done
 }
 function check_update() {
-  GET_REMOTE_VERSION=`curl -s https://raw.githubusercontent.com/HiddenScholars/Linux-tools/TestMain/version`
+  GET_REMOTE_VERSION=`curl -s https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/version`
   GET_LOCATL_VERSION=`cat $version_file`
           if [[ $GET_LOCAL_VERSION =~ ^[0-9]+$ ]] && [ "$GET_REMOTE_VERSION"  -ne "$GET_LOCAL_VERSION" ];then
              bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/UpdateFile/UPDATE.sh)
@@ -303,6 +303,7 @@ echo -e "${green}_|_|_|_|    _|_|      _|_|     _|    _|_|_|${plain}"
 echo -e "${green}   _|      _|    _|  _|    _|  _|  _|_|${plain}"
 echo -e "${green}   _|      _|    _|  _|    _|  _|      _|_|${plain}"
 echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
+curl -s https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/version
     select=''
     printf "****************************************************************************\n"
                             printf "\t\t**欢迎使用Linux-tools脚本菜单**\n"
