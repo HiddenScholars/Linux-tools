@@ -111,6 +111,7 @@ case $1 in
   esac
 ;;
 *)
+  set -x
   SELECT_BRANCHES
   CHECK_URL_ADDRESS
   CHECK_FILE
