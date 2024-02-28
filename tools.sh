@@ -111,9 +111,9 @@ case $1 in
   esac
 ;;
 *)
+  CHECK_FILE
   SELECT_BRANCHES
   CHECK_URL_ADDRESS
-  CHECK_FILE
   bash <(curl -L https://$url_address/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh)
   ;;
 esac
