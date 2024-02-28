@@ -6,7 +6,6 @@ config_path=/tools/
 config_file=/tools/config.sh
 version_file=$config_path/version
 source $config_file &>/dev/null
-con_branch_menu=$1
 
 function manage_download() {
   #server_name下载服务名
@@ -155,10 +154,10 @@ function check_unpack_file_path() {
     done
 }
 function check_update() {
-  GET_REMOTE_VERSION=`curl -s https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/version`
+  GET_REMOTE_VERSION=`curl -s https://$url_address/HiddenScholars/Linux-tools/$con_branch/version`
   GET_LOCATL_VERSION=`cat $version_file`
           if [[ $GET_LOCAL_VERSION =~ ^[0-9]+$ ]] && [ "$GET_REMOTE_VERSION"  -ne "$GET_LOCAL_VERSION" ];then
-             bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/UpdateFile/UPDATE.sh)
+             bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/UpdateFile/UPDATE.sh)
              if [ $? -eq 0 ]; then
              echo "GET_REMOTE_VERSION" >$version_file
              fi
@@ -202,15 +201,15 @@ select=''
     manage_download
     check_unpack_file_path
 echo "开始安装Nginx--链接Github获取Nginx安装脚本"
-bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/InstallFile/Install_nginx.sh) ${sorted_files[$select]} $missing_dirs
+bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/InstallFile/Install_nginx.sh) ${sorted_files[$select]} $missing_dirs
 }
 function setting_ssl() {
 echo "开始安装证书--链接Github获取证书安装脚本"
-bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/InstallFile/Install_ssl_acme.sh)
+bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/InstallFile/Install_ssl_acme.sh)
 }
 function install_docker() {
   echo "开始安装Docker--链接github获取Docker安装脚本"
-  bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/InstallFile/Install_docker.sh) $filename
+  bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/InstallFile/Install_docker.sh) $filename
 }
 function install_docker_compose() {
 regex="v([0-9]+\.[0-9]+\.[0-9]+)"
@@ -229,7 +228,7 @@ done
 select=''
       read -p "Enther Your install service version choice（0）:" select
       [ -z ${docker_compose_download_urls[$select]} ] && echo -e "${red}暂不支持的版本号${plain}" && exit 0
-bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/InstallFile/Install_docker-compose.sh) ${temp_number[$select]} ${select}
+bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/InstallFile/Install_docker-compose.sh) ${temp_number[$select]} ${select}
 }
 
 function upgrade_smooth_nginx() {
@@ -262,20 +261,20 @@ function upgrade_smooth_nginx() {
         manage_download
         check_unpack_file_path
     echo "开始升级Nginx--链接Github获取Nginx升级脚本"
-    bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/Upgrade/Upgrade_smooth_nginx.sh) ${sorted_files[$select]} $missing_dirs
+    bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/Upgrade/Upgrade_smooth_nginx.sh) ${sorted_files[$select]} $missing_dirs
 }
 
 function uninstall_nginx() {
     echo "开始卸载Nginx--链接Github获取Nginx卸载脚本"
-    bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/UninstallFile/Uninstall_nginx.sh)
+    bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/UninstallFile/Uninstall_nginx.sh)
 }
 function uninstall_docker() {
     echo "开始安装Docker--链接Github获取Docker卸载脚本"
-    bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/UninstallFile/Uninstall_docker.sh)
+    bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/UninstallFile/Uninstall_docker.sh)
 }
 function uninstall_tool() {
     echo "卸载tool命令..."
-    bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/Link_localhost/uninstall.sh)
+    bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/Link_localhost/uninstall.sh)
 
 }
 
@@ -303,7 +302,7 @@ echo -e "${green}_|_|_|_|    _|_|      _|_|     _|    _|_|_|${plain}"
 echo -e "${green}   _|      _|    _|  _|    _|  _|  _|_|${plain}"
 echo -e "${green}   _|      _|    _|  _|    _|  _|      _|_|${plain}"
 echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
-curl -s https://$url_address/HiddenScholars/Linux-tools/$con_branch_menu/version
+curl -s https://$url_address/HiddenScholars/Linux-tools/$con_branch/version
     select=''
     printf "****************************************************************************\n"
                             printf "\t\t**欢迎使用Linux-tools脚本菜单**\n"

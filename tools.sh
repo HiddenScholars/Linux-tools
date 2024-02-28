@@ -23,14 +23,14 @@ function SELECT_BRANCHES() {
                 for branch in "${!branch_array[@]}"; do
                   echo -e "${green}$branch.${branch_array[$branch]}${plain}"
                 done
-                   read -p "select branch num (0 ...):" branch_select_choice
+                   read -p "select branch num (0 ...)(default：0):" branch_select_choice
                    if [ -z ${branch_array[$branch_select_choice]} ]; then
                       echo -e "${red}不存在的分支${plain}" && exit 0
                    elif ! [[ $branch_select_choice =~ ^[0-9]+$ ]]; then
                       echo -e "${red}输入错误${plain}" && exit 0
                    fi
                 con_branch=${branch_array[$branch_select_choice]}
-                sed -i "s/con_branch=*/con_branch=$con_branch/g" $config_file
+                sed -i "s/con_branch=.*/con_branch=$con_branch/g" $config_file
         fi
 }
 function CHECK_URL_ADDRESS() {
@@ -41,7 +41,7 @@ function CHECK_URL_ADDRESS() {
                   do
                       echo "$i：${url_address_number[$i]}"
                   done
-                  read -p  "下载地址为空,请选择或手动输入下载地址(default：0)：" url_address_select
+                  read -p  "下载地址为空,请选择或手动输入下载地址：" url_address_select
                   if [[ $url_address_select =~ ^[0-9]+$ ]]; then
                       if [ ! -z ${url_address_number[$url_address_select]} ]; then
                           url_address=${url_address_number[$url_address_select]}
@@ -111,9 +111,9 @@ case $1 in
   esac
 ;;
 *)
+  CHECK_FILE
   SELECT_BRANCHES
   CHECK_URL_ADDRESS
-  CHECK_FILE
-  bash <(curl -L https://$url_address/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh) $con_branch
+  bash <(curl -L https://$url_address/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh)
   ;;
 esac
