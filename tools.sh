@@ -86,16 +86,6 @@ done
         wget -P ${config_path} https://$url_address/HiddenScholars/Linux-tools/$con_branch/config.sh
     [ ! -f ${config_file} ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
     sed -i "s/url_address=.*/url_address=$url_address/g" $config_file #下载完成后修改仓库地址
-#  elif  [ `curl -s https://$url_address/HiddenScholars/Linux-tools/$con_branch/config.sh | wc -l` -gt `cat $config_file | wc -l ` ];then
-#      config_select=''
-#      read -p "config.sh文件有变化，是否重新下载？（y/n）" config_select
-#      if [ "$config_select" == "y" ];then
-#        mv $config_file $config_path/config_bak$time
-#        source $config_path/config_bak$time
-#        wget -P ${config_path} https://$url_address/HiddenScholars/Linux-tools/$con_branch/config.sh
-#        [ ! -f ${config_file} ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
-#        sed -i "s/url_address=.*/url_address=$url_address/g" $config_file #下载完成后修改仓库地址
-#      fi
   fi
 source $config_file &>/dev/null
 #======================================================================
