@@ -4,7 +4,7 @@ docker_download_url=
 select_download_version=
 config_path=/tools/
 config_file=/tools/config.sh
-version_file=$config_file/version
+version_file=$config_path/version
 source $config_file &>/dev/null
 con_branch_menu=$1
 
@@ -162,9 +162,9 @@ function check_update() {
              if [ $? -eq 0 ]; then
              echo "GET_REMOTE_VERSION" >$version_file
              fi
-             echo "${green}已是最新版本${plain}"
+             echo -e"${green}已是最新版本${plain}"
           else
-            echo "${red} 版本参数错误 ${plain}"
+            echo -e "${red} 版本参数错误 ${plain}"
           fi
 }
 function install_nginx() {
