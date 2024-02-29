@@ -303,10 +303,9 @@ echo -e "${green}_|_|_|_|    _|_|      _|_|     _|    _|_|_|${plain}"
 echo -e "${green}   _|      _|    _|  _|    _|  _|  _|_|${plain}"
 echo -e "${green}   _|      _|    _|  _|    _|  _|      _|_|${plain}"
 echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
-curl -s https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version
     select=''
     printf "****************************************************************************\n"
-                            printf "\t\t**欢迎使用Linux-tools脚本菜单**\n"
+                            printf "\t\t**欢迎使用Linux-tools脚本菜单%s**\n" "$(cat $config_path/version)"
     printf "****************************************************************************\n"
                             for i in "${!show_use[@]}"
                             do

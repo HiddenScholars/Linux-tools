@@ -59,7 +59,7 @@ function CHECK_FILE() {
      fi
       if [  ! -f $version_file ]; then
           [ ! -d ${config_path} ] && mkdir ${config_path}
-          echo "0.0" > $version_file
+          echo "0" > $version_file
       fi
       if [ ! -f ${config_file} ];then
             [ ! -d ${config_path} ] && mkdir ${config_path}
