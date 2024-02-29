@@ -1,41 +1,44 @@
 #!/bin/bash
 
-read -p "回车后确认卸载："
+read -rp "回车后确认卸载："
 
 source /etc/profile
 source /tools/config.sh
-if [ `ps -ef | grep nginx | grep -v grep | awk '{print $2}' | wc -l ` != 0 ]; then
+getNginxProcess_number1=$(psgrep nginx | wc -l)
+if [ "$getNginxProcess_number1" != 0 ]; then
     echo "检测到Nginx进程，进程ID："
-    ps -ef | grep nginx | grep -v grep | awk '{print $2}'
+    psgrep nginx
     killall_select=1
     while [ $killall_select -lt 4 ]; do
       echo "开始kill Nginx进程 $killall_select"
-        if [ `ps -ef | grep nginx | grep -v grep | awk '{print $2}' | wc -l ` != 0 ]; then
-        for i in `ps -ef | grep nginx | grep -v grep | awk '{print $2}'`
+      getNginxProcess_number2=$(psgrep nginx | wc -l)
+        if [ "$getNginxProcess_number2" != 0 ]; then
+        for i in $(psgrep nginx)
             do
-              kill -9 $i
+              kill -9 "$i"
             done
         fi
         sleep 2
         let killall_select++
     done
-    [ `ps -ef | grep nginx | grep -v grep | awk '{print $2}' | wc -l ` != 0 ] && echo "Nginx进程杀死失败，退出..." && exit 0
+    getNginxProcess_number3=$(psgrep nginx | wc -l)
+    [ "$getNginxProcess_number3" != 0 ] && echo "Nginx进程杀死失败，退出..." && exit 0
 printf "获取Nginx安装路径："
-        if [ -z $NGINX_HOME ]; then
+        if [ -z "$NGINX_HOME" ]; then
           source /etc/profile
             command -v nginx
            if [ "$(command -v nginx)" == "/usr/sbin/nginx" ];then
             $controls remove -y nginx
             $controls autoremove -y nginx
             source /etc/profile
-          elif [ -h $(command -v nginx) ]; then
+          elif [ -h "$(command -v nginx)" ]; then
               temp_command=$(command -v nginx)
-             if [ ! -z $temp_command ];then
-                link_path=`readlink -f $temp_command`
+             if [ -n  "$temp_command" ];then
+                link_path=$(readlink -f "$temp_command")
               echo "$(command -v nginx)为软连接"
               echo "获取源路径为：$link_path"
-              rm -rf $link_path
-              rm -rf $(command -v nginx)
+              rm -rf "$link_path"
+              rm -rf "$(command -v nginx)"
               source /etc/profile
              fi
           fi
@@ -47,10 +50,10 @@ printf "获取Nginx安装路径："
         echo
         echo "卸载Nginx完成"
 
-        elif [ ! -z $NGINX_HOME ];then
+        elif [ -n "$NGINX_HOME" ];then
         source /etc/profile
-        echo $NGINX_HOME
-        rm -rf $NGINX_HOME
+        echo "$NGINX_HOME"
+        rm -rf "$NGINX_HOME"
         sed -i "/NGINX/d" /etc/profile
         sed -i "/nginx/d" /etc/profile
         source /etc/profile
@@ -58,14 +61,14 @@ printf "获取Nginx安装路径："
             $controls remove -y nginx
             $controls autoremove -y nginx
             source /etc/profile
-        elif [ -h $(command -v nginx) ]; then
+        elif [ -h "$(command -v nginx)" ]; then
             temp_command=$(command -v nginx)
-            if [ ! -z $temp_command ];then
-            link_path=`readlink -f $temp_command`
+            if [ -n  "$temp_command" ];then
+            link_path=$(readlink -f "$temp_command")
             echo "$(command -v nginx)为软连接"
             echo "获取源路径为：$link_path"
-            rm -rf $link_path
-            rm -rf $(command -v nginx)
+            rm -rf "$link_path"
+            rm -rf "$(command -v nginx)"
             source /etc/profile
             fi
         fi
@@ -77,23 +80,23 @@ printf "获取Nginx安装路径："
         echo
         echo "卸载Nginx完成"
         fi
-elif [ ! -z $NGINX_HOME ] || [  "$(command -v nginx)" != " " ]; then
+elif [ -n "$NGINX_HOME" ] || [  "$(command -v nginx)" != " " ]; then
     printf "获取Nginx安装路径："
-        if [ -z $NGINX_HOME ]; then
+        if [ -z "$NGINX_HOME" ]; then
           source /etc/profile
             command -v nginx
            if [ "$(command -v nginx)" == "/usr/sbin/nginx" ];then
             $controls remove -y nginx
             $controls autoremove -y nginx
             source /etc/profile
-          elif [ -h $(command -v nginx) ]; then
+          elif [ -h "$(command -v nginx)" ]; then
               temp_command=$(command -v nginx)
-             if [ ! -z $temp_command ];then
-                link_path=`readlink -f $temp_command`
+             if [ -n "$temp_command" ];then
+                link_path=$(readlink -f "$temp_command")
               echo "$(command -v nginx)为软连接"
               echo "获取源路径为：$link_path"
-              rm -rf $link_path
-              rm -rf $(command -v nginx)
+              rm -rf "$link_path"
+              rm -rf "$(command -v nginx)"
               source /etc/profile
              fi
           fi
@@ -105,10 +108,10 @@ elif [ ! -z $NGINX_HOME ] || [  "$(command -v nginx)" != " " ]; then
         echo
         echo "卸载Nginx完成"
 
-        elif [ ! -z $NGINX_HOME ];then
+        elif [ -n "$NGINX_HOME" ];then
         source /etc/profile
-        echo $NGINX_HOME
-        rm -rf $NGINX_HOME
+        echo "$NGINX_HOME"
+        rm -rf "$NGINX_HOME"
         sed -i "/NGINX/d" /etc/profile
         sed -i "/nginx/d" /etc/profile
         source /etc/profile
@@ -116,14 +119,14 @@ elif [ ! -z $NGINX_HOME ] || [  "$(command -v nginx)" != " " ]; then
             $controls remove -y nginx
             $controls autoremove -y nginx
             source /etc/profile
-        elif [ -h $(command -v nginx) ]; then
+        elif [ -h "$(command -v nginx)" ]; then
             temp_command=$(command -v nginx)
-            if [ ! -z $temp_command ];then
-            link_path=`readlink -f $temp_command`
+            if [ -n "$temp_command" ];then
+            link_path=$(readlink -f "$temp_command")
             echo "$(command -v nginx)为软连接"
             echo "获取源路径为：$link_path"
-            rm -rf $link_path
-            rm -rf $(command -v nginx)
+            rm -rf "$link_path"
+            rm -rf "$(command -v nginx)"
             source /etc/profile
             fi
         fi
