@@ -89,6 +89,6 @@ case $1 in
 *)
   CHECK_FILE
   CHECK_URL_ADDRESS
-  bash <(curl -L https://$url_address/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh) # function menu
+  bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh) # function menu
   ;;
 esac
