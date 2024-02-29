@@ -11,7 +11,7 @@ branch_select_choice=0
 
 source $config_file &>/dev/null
 #Linux-tools start check ...
-[ `whoami` != root ] && echo -e "${red}需要使用root权限${plain}" && exit 0
+#[ `whoami` != root ] && echo -e "${red}需要使用root权限${plain}" && exit 0
 function SELECT_BRANCHES() {
         if [ -z $con_branch ]; then
                 branches=$(curl -s "https://api.github.com/repos/HiddenScholars/Linux-tools/branches" | grep '"name":' | sed -E 's/.*"name": "(.*)",/\1/' | sort)
@@ -82,14 +82,15 @@ function CHECK_URL_ADDRESS() {
           fi
 }
 function CHECK_FILE() {
-     set -x
+
      if [ -z $url_address ] && [ -z $con_branch ] ;then
+       set -x
        url_address=raw.githubusercontent.com
        con_branch=main
+       set +x
      else
        source $config_file &>/dev/null #当url_address and con_branch 都存在时优先使用config.sh配置
      fi
-     set +x
       if [  ! -f $version_file ]; then
           [ ! -d ${config_path} ] && mkdir ${config_path}
           touch $version_file
