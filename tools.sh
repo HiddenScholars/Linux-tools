@@ -83,9 +83,8 @@ function CHECK_URL_ADDRESS() {
 }
 function CHECK_FILE() {
      set -x
-     if [ -z $url_address ];then
+     if [ -z $url_address ] && [ -z $con_branch ] ;then
        url_address=raw.githubusercontent.com
-     elif [ -z $con_branch ];then
        con_branch=main
      else
        source $config_file &>/dev/null #当url_address and con_branch 都存在时优先使用config.sh配置
@@ -97,7 +96,7 @@ function CHECK_FILE() {
       fi
       if [ ! -f ${config_file} ];then
             [ ! -d ${config_path} ] && mkdir ${config_path}
-            echo -e "${red}config.sh downlaoding...${plain}"
+            echo -e "${red}config.sh downloading...${plain}"
             wget -P ${config_path} https://$url_address/HiddenScholars/Linux-tools/$con_branch/config.sh
             [ ! -f ${config_file} ] && echo -e "${red}download failed${plain}" && exit 0
             sed -i "s/url_address=.*/url_address=$url_address/g" $config_file #下载完成后修改仓库地址
@@ -107,7 +106,6 @@ function CHECK_FILE() {
 
 source $config_file &>/dev/null
 bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/Link_localhost/install.sh) # tool link install.sh
-
 
 case $1 in
 -d)
