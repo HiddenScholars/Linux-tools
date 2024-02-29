@@ -82,6 +82,13 @@ function CHECK_URL_ADDRESS() {
           fi
 }
 function CHECK_FILE() {
+     set -x
+     if [ -z $url_address ];then
+       url_address=raw.githubusercontent.com
+     elif [ -z $con_branch ];then
+       con_branch=main
+     fi
+     set +x
       if [  ! -f $version_file ]; then
           [ ! -d ${config_path} ] && mkdir ${config_path}
           touch $version_file
