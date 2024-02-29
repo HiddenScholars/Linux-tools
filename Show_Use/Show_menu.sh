@@ -11,13 +11,14 @@ function manage_download() {
   #server_name下载服务名
   #download_url下载链接
   #select_download_version下载版本搜索
-  [ -z $server_name ] && echo -e "$red 禁止server_name为空使用 $plain" && exit
-  [ -z $download_url ] && echo -e "$red 禁止download_url为使用 $plain" && exit
-  [ ! -d $download_path/$server_name ] &&  mkdir -p $download_path/$server_name
-          if [ `ls $download_path/$server_name/ | grep $select_download_version | wc -l` -ne 0 ];then
+  [ -z "$server_name" ] && echo -e "${red} 禁止server_name为空使用 ${plain}" && exit
+  [ -z "$download_url" ] && echo -e "${red} 禁止download_url为使用 ${plain}" && exit
+  [ ! -d "$download_path"/"$server_name" ] &&  mkdir -p "$download_path"/"$server_name"
+  getDownloadFileNumber=$(find "$download_path/$server_name" -maxdepth 1 -type f -o -type d -name "*$select_download_version*" | wc -l)
+          if [ "${getDownloadFileNumber}" -ne 0 ];then
                 echo -e "${red}$download_path/$server_name/中存在该版本安装包${plain}"
                 echo
-               cd $download_path/$server_name/
+               cd "$download_path"/"$server_name"/ || exit
                     # 定义一个空数组用于存储符合条件的文件
                     files=()
 
@@ -37,11 +38,11 @@ function manage_download() {
                     done
                 echo
                 echo
-                read -p  "文件夹中存在文件是否继续下载(y/n)(default:n):" download_select
+                read -rp  "文件夹中存在文件是否继续下载(y/n)(default:n):" download_select
 
                 if [ "$download_select" == "y" ]; then
-                      wget -P $download_path/$server_name/ $download_url
-                      cd $download_path/$server_name/
+                      wget -P "$download_path"/"$server_name"/ "$download_url"
+                      cd "$download_path"/"$server_name"/ || exit
                       # 定义一个空数组用于存储符合条件的文件
                       files=()
 
@@ -66,8 +67,8 @@ function manage_download() {
                 fi
               fi
               if [ "$if_select" != 1 ] && [ "$if_select" != 0 ]; then
-                wget -P $download_path/$server_name/ $download_url
-                cd $download_path/$server_name/
+                wget -P "$download_path"/"$server_name"/ "$download_url"
+                cd "$download_path"/"$server_name"/ || exit
                 # 定义一个空数组用于存储符合条件的文件
                 files=()
 
@@ -86,40 +87,41 @@ function manage_download() {
                 done
               fi
 
-              read -p "选择安装包序号：" select
-              if [ -z $select ]; then
+              read -rp "选择安装包序号：" select
+              if [ -z "$select" ]; then
                   echo -e "${red}未选择安装包，退出脚本${plain}"
                   exit 0
               fi
 }
 function check_install_system() {
-    [ -z $test_server_port ] && [ -z $process ] && echo -e "$red test_server_port与process禁止为空使用 $plain" && exit
+    [ -z "$test_server_port" ] && [ -z "$process" ] && echo -e "$red test_server_port与process禁止为空使用 $plain" && exit
     #test_server_port=() 检查此数组中的端口
     netstat -ntpl|grep LISTEN|awk '{print $4}' >/opt/test_sys.txt
     #process=(nginx) 检查此数组中的进程
         num=0
-        for line in `cat /opt/test_sys.txt`
+        for line in $(cat /tools/test_sys.txt)
         do
             sys_port=${line##*:}
             for i in ${test_server_port[*]}
             do
-                if [ $sys_port -eq $i ];then
+                if [ "$sys_port" -eq "$i" ];then
                     echo -e "\033[31m $sys_port端口已存在，占用服务端口 \033[0m"
                     let  num=$num+1
                 fi
             done
         done
         u=0
-        if [ $num -eq 0 ]
+        if [ "$num" -eq 0 ]
         then
             for pro in "${process[@]}"
             do
-                if [ `ps -ef|grep $pro |grep -v "grep"|wc -l` -ne 0 ]
+                getProcessNumber=$(pgrep "$pro" | wc -l)
+                if [ "$getProcessNumber" -ne 0 ]
                 then
                     echo "$pro有残余进程，删除后再次执行脚本检测安装环境"
-    				countinue=''
-                      read -p "是否继续安装，继续安装可能会无法启动（y/n）:" countinue
-                        if [ "$countinue" != "y" ]; then
+    				continue=''
+                      read -rp "是否继续安装，继续安装可能会无法启动（y/n）:" continue
+                        if [ "$continue" != "y" ]; then
                         exit 1
                         fi
     				return
@@ -127,17 +129,19 @@ function check_install_system() {
                 fi
             done
         else
-          countinue=''
-          read -p "是否继续安装，继续安装可能会无法启动（y/n）:" countinue
-            if [ "$countinue" != "y" ]; then
+          continue=''
+          read -rp "是否继续安装，继续安装可能会无法启动（y/n）:" continue
+            if [ "$continue" != "y" ]; then
             exit 1
             fi
         fi
 }
 function check_unpack_file_path() {
     [ ! -d $config_path/unpack_file ] && mkdir -p $config_path/unpack_file
-    if [ `ls -l $config_path/unpack_file/ | wc -l` -gt  11 ];then
-      cd $config_path/ && tar cvf unpack_file_bak$(date +%F-%M).tar.gz unpack_file/*
+    getUnpackNumber=$(find "$config_path/unpack_file/" -maxdepth 1 -type f -o -type d | wc -l)
+    if [ "$getUnpackNumber" -gt  11 ];then
+      source $config_file &>/dev/null
+      cd $config_path/ && tar cvf unpack_file_bak"$time".tar.gz unpack_file/*
       rm -rf unpack_file/*
       mv $config_path/unpack_file_bak* unpack_file/
     fi
@@ -154,16 +158,17 @@ function check_unpack_file_path() {
     done
 }
 function check_update() {
-  GET_REMOTE_VERSION=`curl -s https://$url_address/HiddenScholars/Linux-tools/$con_branch/version`
-  GET_LOCATL_VERSION=`cat $version_file`
-          if [[ $GET_LOCAL_VERSION =~ ^[0-9]+$ ]] && [ "$GET_REMOTE_VERSION"  -ne "$GET_LOCAL_VERSION" ];then
+  GET_REMOTE_VERSION=$(curl -s https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version)
+  GET_LOCAL_VERSION=$(cat $version_file)
+          if [[ "$GET_LOCAL_VERSION" =~ ^[0-9]+$ ]] && [ "$GET_REMOTE_VERSION"  -ne "$GET_LOCAL_VERSION" ];then
+             # shellcheck disable=SC2086
              bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/UpdateFile/UPDATE.sh)
-             if [ $? -eq 0 ]; then
+             if mycmd; then
              echo "GET_REMOTE_VERSION" >$version_file
              fi
              echo -e"${green}已是最新版本${plain}"
           else
-            echo -e "${red} 版本参数错误 ${plain}"
+             echo -e "${red} 版本参数错误 ${plain}"
           fi
 }
 function install_nginx() {
@@ -181,18 +186,18 @@ do
     if [[ $url =~ $regex ]]; then
         version="${BASH_REMATCH[1]}"
         echo -e "${green}$nginx_download_urls_select：$version${plain}"
-        temp_number+=($version)
+        temp_number+=("$version")
     fi
 let nginx_download_urls_select=$nginx_download_urls_select+1
 done
 select=''
-      read -p "Enther Your install service version choice(0 ...):" select
-      [ -z ${nginx_download_urls[$select]} ] && echo -e "${red}暂不支持的版本号${plain}" && exit 0
+      read -rp "Enter Your install service version choice(0 ...):" select
+      [ -z "${nginx_download_urls[$select]}" ] && echo -e "${red}暂不支持的版本号${plain}" && exit 0
 
     download_select=''
     if_select=''
     $controls install -y wget curl net-tools
-    if [ $? -ne 0 ];then
+    if mycmd;then
       echo -e "${red}安装失败${plain}" && exit 0
     fi
     server_name=nginx
@@ -201,15 +206,15 @@ select=''
     manage_download
     check_unpack_file_path
 echo "开始安装Nginx--链接Github获取Nginx安装脚本"
-bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/InstallFile/Install_nginx.sh) ${sorted_files[$select]} $missing_dirs
+bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_nginx.sh) "${sorted_files[$select]}" "$missing_dirs"
 }
 function setting_ssl() {
 echo "开始安装证书--链接Github获取证书安装脚本"
-bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/InstallFile/Install_ssl_acme.sh)
+bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_ssl_acme.sh)
 }
 function install_docker() {
   echo "开始安装Docker--链接github获取Docker安装脚本"
-  bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/InstallFile/Install_docker.sh) $filename
+  bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_docker.sh) "$filename"
 }
 function install_docker_compose() {
 regex="v([0-9]+\.[0-9]+\.[0-9]+)"
@@ -221,14 +226,14 @@ do
     if [[ $url =~ $regex ]]; then
         version="${BASH_REMATCH[1]}"
         echo -e "${green}$docker_compose_download_urls_select：$version${plain}"
-        temp_number+=($version)
+        temp_number+=("$version")
     fi
 let docker_compose_download_urls_select=$docker_compose_download_urls_select+1
 done
 select=''
-      read -p "Enther Your install service version choice（0）:" select
-      [ -z ${docker_compose_download_urls[$select]} ] && echo -e "${red}暂不支持的版本号${plain}" && exit 0
-bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/InstallFile/Install_docker-compose.sh) ${temp_number[$select]} ${select}
+      read -rp "Enter Your install service version choice（0）:" select
+      [ -z "${docker_compose_download_urls[$select]}" ] && echo -e "${red}暂不支持的版本号${plain}" && exit 0
+bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_docker-compose.sh) "${temp_number[$select]}" "${select}"
 }
 
 function upgrade_smooth_nginx() {
@@ -241,18 +246,18 @@ function upgrade_smooth_nginx() {
         if [[ $url =~ $regex ]]; then
             version="${BASH_REMATCH[1]}"
             echo -e "${green}$nginx_download_urls_select：$version${plain}"
-            temp_number+=($version)
+            temp_number+=("$version")
         fi
     let nginx_download_urls_select=$nginx_download_urls_select+1
     done
     select=''
-          read -p "Enther Your install service version choice(0 ...):" select
-          [ -z ${nginx_download_urls[$select]} ] && echo -e "${red}序号输入错误${plain}" && exit 0
+          read -rp "Enter Your install service version choice(0 ...):" select
+          [ -z "${nginx_download_urls[$select]}" ] && echo -e "${red}序号输入错误${plain}" && exit 0
 
         download_select=''
         if_select=''
         $controls install -y wget curl net-tools
-        if [ $? -ne 0 ];then
+        if mycmd;then
           echo -e "${red}安装失败${plain}" && exit 0
         fi
         server_name=nginx
@@ -260,21 +265,17 @@ function upgrade_smooth_nginx() {
         select_download_version=${temp_number[$select]}
         manage_download
         check_unpack_file_path
-    echo "开始升级Nginx--链接Github获取Nginx升级脚本"
-    bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/Upgrade/Upgrade_smooth_nginx.sh) ${sorted_files[$select]} $missing_dirs
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Upgrade/Upgrade_smooth_nginx.sh) "${sorted_files[$select]}" "$missing_dirs"
 }
 
 function uninstall_nginx() {
-    echo "开始卸载Nginx--链接Github获取Nginx卸载脚本"
-    bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/UninstallFile/Uninstall_nginx.sh)
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UninstallFile/Uninstall_nginx.sh)
 }
 function uninstall_docker() {
-    echo "开始安装Docker--链接Github获取Docker卸载脚本"
-    bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/UninstallFile/Uninstall_docker.sh)
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UninstallFile/Uninstall_docker.sh)
 }
 function uninstall_tool() {
-    echo "卸载tool命令..."
-    bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/Link_localhost/uninstall.sh)
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Link_localhost/uninstall.sh)
 
 }
 
@@ -293,7 +294,7 @@ soft_upgrade_function=("return" "upgrade_smooth_nginx")
 #该参数请勿修改
 temp_return_select=0
 function show_Use() {
-[ $temp_return_select -ne 0 ] && read -p "回车返回主菜单"
+[ $temp_return_select -ne 0 ] && read -rp "回车返回主菜单"
 let temp_return_select++
 select=''
 clear
@@ -302,19 +303,19 @@ echo -e "${green}_|_|_|_|    _|_|      _|_|     _|    _|_|_|${plain}"
 echo -e "${green}   _|      _|    _|  _|    _|  _|  _|_|${plain}"
 echo -e "${green}   _|      _|    _|  _|    _|  _|      _|_|${plain}"
 echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
-curl -s https://$url_address/HiddenScholars/Linux-tools/$con_branch/version
+curl -s https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version
     select=''
     printf "****************************************************************************\n"
                             printf "\t\t**欢迎使用Linux-tools脚本菜单**\n"
     printf "****************************************************************************\n"
                             for i in "${!show_use[@]}"
                             do
-                            printf "\t\t${green}${i}. ${plain}${show_use[$i]}.\n"
+                            printf "\t\t${green}%s. ${plain}${show_use[$i]}.\n" "${i}"
                             done
     printf "****************************************************************************\n"
-    read -p "输入序号【0-"$((${#show_use[@]}-1))"】：" select
-    if [ ! -z $select ] ;then
-        if [[ "$select" =~ ^[0-9]+$ ]] && [ ! -z ${show_use_function[$select]} ]  ; then
+    read -rp "输入序号【0-"$((${#show_use[@]}-1))"】：" select
+    if [ -n "$select" ] ;then
+        if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${show_use_function[$select]}" ]  ; then
             eval  "${show_use_function[$select]}"
         else
            echo "不存在的功能"
@@ -331,12 +332,12 @@ function show_Soft() {
     printf "****************************************************************************\n"
                             for i in "${!show_soft[@]}"
                             do
-                            printf "\t\t${green}${i}. ${plain}${show_soft[$i]}.\n"
+                            printf "\t\t${green}%s. ${plain}${show_soft[$i]}.\n" "${i}"
                             done
     printf "****************************************************************************\n"
-    read -p   "输入序号【0-"$((${#show_soft[@]}-1))"】：" select
-    if [ ! -z $select ] ;then
-            if [[ "$select" =~ ^[0-9]+$ ]] && [ ! -z ${show_soft_function[$select]} ]  ; then
+    read -rp   "输入序号【0-"$((${#show_soft[@]}-1))"】：" select
+    if [ -n "$select" ] ;then
+            if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${show_soft_function[$select]}" ]  ; then
                 eval  "${show_soft_function[$select]}"
             else
                echo "不存在的功能"
@@ -354,12 +355,12 @@ function soft_Uninstall() {
       printf "****************************************************************************\n"
                             for i in "${!soft_uninstall[@]}"
                             do
-                            printf "\t\t${green}${i}. ${plain}${soft_uninstall[$i]}.\n"
+                            printf "\t\t${green}%s. ${plain}${soft_uninstall[$i]}.\n" "${i}"
                             done
       printf "****************************************************************************\n"
-      read -p "输入序号【0-"$((${#soft_uninstall[@]}-1))"】：" select
-      if [ ! -z $select ] ;then
-            if [[ "$select" =~ ^[0-9]+$ ]] && [ ! -z ${soft_uninstall_function[$select]} ]  ; then
+      read -rp "输入序号【0-"$((${#soft_uninstall[@]}-1))"】：" select
+      if [ -n "$select" ] ;then
+            if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${soft_uninstall_function[$select]}" ]  ; then
                 eval  "${soft_uninstall_function[$select]}"
             else
                echo "不存在的功能"
@@ -377,12 +378,12 @@ function soft_Upgrade() {
         printf "****************************************************************************\n"
                             for i in "${!soft_upgrade[@]}"
                             do
-                            printf "\t\t${green}${i}. ${plain}${soft_upgrade[$i]}.\n"
+                            printf "\t\t${green}%s. ${plain}${soft_upgrade[$i]}.\n" "${i}"
                             done
         printf "****************************************************************************\n"
-        read -p "输入序号【0-"$((${#soft_upgrade[@]}-1))"】：" select
-    if [ ! -z $select ] ;then
-            if [[ "$select" =~ ^[0-9]+$ ]] && [ ! -z ${soft_upgrade_function[$select]} ]  ; then
+        read -rp "输入序号【0-"$((${#soft_upgrade[@]}-1))"】：" select
+    if [ -n "$select" ] ;then
+            if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${soft_upgrade_function[$select]}" ]  ; then
                 eval  "${soft_upgrade_function[$select]}"
             else
                echo "不存在的功能"
@@ -392,6 +393,6 @@ function soft_Upgrade() {
     fi
 }
 
-while [ true ]; do
+while  true ; do
     show_Use
 done

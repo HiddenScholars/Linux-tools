@@ -45,13 +45,11 @@ cd /tools/unpack_file/$2 && ./configure $(${sbin_nginx} -V > /tmp/1.txt 2>&1  | 
 if [ -f /tools/unpack_file/$2/objs/nginx ]; then
  cp -r /tools/unpack_file/$2/objs/nginx $(dirname ${sbin_nginx})
  sleep 10
- echo "启动新的主进程与工作进程..."
+set -x
  kill -USR2 $($(dirname ${sbin_nginx})/../logs/nginx.pid)
- echo "逐渐停止旧的工作进程..."
  kill -WINCH $($(dirname ${sbin_nginx})/../logs/nginx.pid.oldbin)
- echo "逐渐停止旧的主进程"
  kill -QUIT $($(dirname ${sbin_nginx})/../logs/nginx.pid.oldbin)
- echo -e "${green}=================升级后检测====================${plain}"
+ set +x
  $sbin_nginx -v
  $sbin_nginx -V
  $sbin_nginx -t
