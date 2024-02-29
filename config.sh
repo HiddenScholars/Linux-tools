@@ -5,7 +5,8 @@
 download_path=/tools/soft
 #注：这里为所有安装软件的统一路径，任何软件都会以软件名在这个路径下创建路径安装，路径重复根据软件情况通过date +%Y%m%d进行备份
 install_path=/usr/local/soft
-time=`date +%Y%m%d`
+
+time=$(date +%Y%m%d)
 #国内github无法访问时替换该参数，例如：raw.yzuu.cf，等镜像站
 url_address=raw.githubusercontent.com
 #项目分支
@@ -30,7 +31,7 @@ plain='\033[0m'
 # 检测操作系统类型和版本信息
 os_type=$(uname -s)
 serverVersion=
-serverVersion=`awk -F= '/^NAME/{print $2}' /etc/os-release`
+serverVersion=$(awk -F= '/^NAME/{print $2}' /etc/os-release)
 if [  "$serverVersion" == '"CentOS Linux"' ];then
 release="centos"
 elif [ "$serverVersion" == '"Ubuntu"' ];then
@@ -38,8 +39,7 @@ release="ubuntu"
 elif [ "$serverVersion" == '"Debian GNU/Linux"' ];then
 release="debian"
 else
-echo -e  "${red}警告：暂时未适配$serverVersion，自行决定是否安装！！！\n${plain}"
-read -p "回车后继续安装："
+echo -e  "${red}警告：暂时未适配$serverVersion exit 0${plain}"
 fi
 # 输出系统信息
 echo "操作系统类型: $os_type"
