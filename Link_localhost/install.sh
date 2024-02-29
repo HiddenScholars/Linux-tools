@@ -19,9 +19,9 @@ EOF
   chmod +x /tools/tool
 }
 
-if  [  -f /tools/tool ];then
-setTool
-  if [ ! -L /tools/tool ]; then
-     ln -s /tools/tool /usr/bin/
-  fi
+if  [  ! -f /tools/tool ];then
+  setTool
+fi
+if [ ! -L /usr/bin/tool ]; then
+  ln -s /tools/tool /usr/bin/
 fi
