@@ -83,10 +83,11 @@ function CHECK_URL_ADDRESS() {
 }
 function CHECK_FILE() {
      set -x
-     if [ -z $url_address ];then
+     if [ -z $url_address ] && [ -z $con_branch ] ;then
        url_address=raw.githubusercontent.com
-     elif [ -z $con_branch ];then
        con_branch=main
+     else
+       source $config_file &>/dev/null #当url_address and con_branch 都存在时优先使用config.sh配置
      fi
      set +x
       if [  ! -f $version_file ]; then
@@ -95,32 +96,33 @@ function CHECK_FILE() {
       fi
       if [ ! -f ${config_file} ];then
             [ ! -d ${config_path} ] && mkdir ${config_path}
-            echo -e "${red}config文件不存在，开始下载...${plain}"
+            echo -e "${red}config.sh downloading...${plain}"
             wget -P ${config_path} https://$url_address/HiddenScholars/Linux-tools/$con_branch/config.sh
-            [ ! -f ${config_file} ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
+            [ ! -f ${config_file} ] && echo -e "${red}download failed${plain}" && exit 0
             sed -i "s/url_address=.*/url_address=$url_address/g" $config_file #下载完成后修改仓库地址
+            sed -i "s/con_branch=.*/con_branch=$con_branch/g" $config_file #下载完成后修改分支
       fi
 }
 
 source $config_file &>/dev/null
-bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/Link_localhost/install.sh)
+bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/Link_localhost/install.sh) # tool link install.sh
 
 case $1 in
 -d)
   case $2 in
   config.sh)
           wget -P ${config_path} https://$url_address/HiddenScholars/Linux-tools/$con_branch/config.sh
-          [ ! -f ${config_file} ] && echo -e "${red}下载失败，config文件不存在，检查后再次执行脚本!!!${plain}" && exit 0
+          [ ! -f ${config_file} ] && echo -e "${red}download failed${plain}" && exit 0
           ;;
   *)
-  echo -e "${red}参数错误${plain}"
-    ;;
+          echo -e "${red}参数错误${plain}"
+          ;;
   esac
-;;
+  ;;
 *)
   CHECK_FILE
   SELECT_BRANCHES
   CHECK_URL_ADDRESS
-  bash <(curl -L https://$url_address/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh)
+  bash <(curl -L https://$url_address/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh) # function menu
   ;;
 esac

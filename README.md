@@ -12,7 +12,8 @@
 ```shell
 con_branch=main url_address=raw.yzuu.cf bash <(curl -Ls https://$url_address/HiddenScholars/Linux-tools/$con_branch/tools.sh)
 ``` 
-运行脚本
+
+通用运行脚本
 ```shell
  con_branch=main url_address=raw.githubusercontent.com bash <(curl -Ls https://$url_address/HiddenScholars/Linux-tools/$con_branch/tools.sh)
 ```
