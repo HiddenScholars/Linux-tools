@@ -280,7 +280,7 @@ function uninstall_tool() {
 }
 
 #菜单目录显示控制
-show_use=("退出脚本" "安装" "卸载" "升级" "acme脚本(搭配cloudflare)" "检查更新")
+show_use=("退出" "安装" "卸载" "升级" "acme脚本(搭配cloudflare)" "检查更新")
 show_use_function=("exit 1" "show_Soft" "soft_Uninstall" "soft_Upgrade" "setting_ssl" "check_update")
 show_soft=("返回主页面" "nginx" "docker" "docker-compose")
 show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose")
@@ -305,7 +305,7 @@ echo -e "${green}   _|      _|    _|  _|    _|  _|      _|_|${plain}"
 echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
     select=''
     printf "****************************************************************************\n"
-                            printf "\t\t**欢迎使用Linux-tools脚本菜单%s**\n" "$(cat $config_path/version)"
+                            printf "\t\t**欢迎使用Linux-tools脚本菜单v：%s.0**\n" "$(cat $config_path/version)"
     printf "****************************************************************************\n"
                             for i in "${!show_use[@]}"
                             do
