@@ -163,7 +163,7 @@ function check_update() {
           if [[ "$GET_LOCAL_VERSION" =~ ^[0-9]+$ ]] && [ "$GET_REMOTE_VERSION"  -ne "$GET_LOCAL_VERSION" ];then
              # shellcheck disable=SC2086
              bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/UpdateFile/UPDATE.sh)
-             if mycmd; then
+             if [ $? -eq 0 ]; then
              echo "GET_REMOTE_VERSION" >$version_file
              fi
              echo -e"${green}已是最新版本${plain}"
@@ -197,7 +197,7 @@ select=''
     download_select=''
     if_select=''
     $controls install -y wget curl net-tools
-    if mycmd;then
+    if [ $? -eq 0 ];then
       echo -e "${red}安装失败${plain}" && exit 0
     fi
     server_name=nginx
@@ -257,7 +257,7 @@ function upgrade_smooth_nginx() {
         download_select=''
         if_select=''
         $controls install -y wget curl net-tools
-        if mycmd;then
+        if [ $? -eq 0 ];then
           echo -e "${red}安装失败${plain}" && exit 0
         fi
         server_name=nginx
@@ -280,7 +280,7 @@ function uninstall_tool() {
 }
 
 #菜单目录显示控制
-show_use=("退出脚本" "安装" "卸载" "升级" "acme脚本(搭配cloudflare)" "检查更新")
+show_use=("退出" "安装" "卸载" "升级" "acme脚本(搭配cloudflare)" "检查更新")
 show_use_function=("exit 1" "show_Soft" "soft_Uninstall" "soft_Upgrade" "setting_ssl" "check_update")
 show_soft=("返回主页面" "nginx" "docker" "docker-compose")
 show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose")
@@ -305,7 +305,7 @@ echo -e "${green}   _|      _|    _|  _|    _|  _|      _|_|${plain}"
 echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
     select=''
     printf "****************************************************************************\n"
-                            printf "\t\t**欢迎使用Linux-tools脚本菜单%s**\n" "$(cat $config_path/version)"
+                            printf "\t\t**欢迎使用Linux-tools脚本菜单v：%s.0**\n" "$(cat $config_path/version)"
     printf "****************************************************************************\n"
                             for i in "${!show_use[@]}"
                             do
