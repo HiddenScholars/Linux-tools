@@ -27,7 +27,7 @@ echo -e "${green}=================升级前检测====================${plain}"
 $sbin_nginx -v
 $sbin_nginx -V
 $sbin_nginx -t
-if mycmd;then
+if [ $? -eq 0 ];then
   echo "开始备份"
 cd "$(dirname "${sbin_nginx}")" && mv nginx nginx"$(time)"
   echo "备份完成"
@@ -42,7 +42,7 @@ echo "解压完成，开始编译"
 read -rp "是否增加编译参数，增加编译参数直接将编译模块写到后面，无编译参数直接回车：" select_cofigure
 cd /tools/unpack_file/"$2" && ./configure "$(${sbin_nginx} -V > /tools/1.txt 2>&1
 cat /tools/1.txt | grep prefix | awk '{print substr($0, index($0,$3))}')"  "$select_cofigure" && make && rm -rf /tools/1.txt
-! mycmd && echo -e "${red}编译失败${plain}" && exit 0
+ [ $? -ne 0 ] && echo -e "${red}编译失败${plain}" && exit 0
 if [ -f /tools/unpack_file/"$2"/objs/nginx ]; then
  cp -r /tools/unpack_file/"$2"/objs/nginx "$(dirname "$sbin_nginx")"
  sleep 10
@@ -55,7 +55,7 @@ set -
  $sbin_nginx -V
  $sbin_nginx -t
  getNginxProcessNumber_gt=$(pgrep nginx | wc -l )
- if mycmd && [ "$getNginxProcessNumber_gt" -gt 1 ];then
+ if [ $? -eq 0 ] && [ "$getNginxProcessNumber_gt" -gt 1 ];then
    echo -e "${green}升级成功${plain}"
  else
    echo -e "${red}升级失败${plain}"

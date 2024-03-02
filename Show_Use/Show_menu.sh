@@ -163,7 +163,7 @@ function check_update() {
           if [[ "$GET_LOCAL_VERSION" =~ ^[0-9]+$ ]] && [ "$GET_REMOTE_VERSION"  -ne "$GET_LOCAL_VERSION" ];then
              # shellcheck disable=SC2086
              bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/UpdateFile/UPDATE.sh)
-             if mycmd; then
+             if [ $? -eq 0 ]; then
              echo "GET_REMOTE_VERSION" >$version_file
              fi
              echo -e"${green}已是最新版本${plain}"
@@ -197,7 +197,7 @@ select=''
     download_select=''
     if_select=''
     $controls install -y wget curl net-tools
-    if mycmd;then
+    if [ $? -eq 0 ];then
       echo -e "${red}安装失败${plain}" && exit 0
     fi
     server_name=nginx
@@ -257,7 +257,7 @@ function upgrade_smooth_nginx() {
         download_select=''
         if_select=''
         $controls install -y wget curl net-tools
-        if mycmd;then
+        if [ $? -eq 0 ];then
           echo -e "${red}安装失败${plain}" && exit 0
         fi
         server_name=nginx
