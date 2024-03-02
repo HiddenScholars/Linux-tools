@@ -166,7 +166,7 @@ function check_update() {
              if [ $? -eq 0 ]; then
              echo "GET_REMOTE_VERSION" >$version_file
              fi
-             echo -e"${green}已是最新版本${plain}"
+             echo -e "${green}已是最新版本${plain}"
           else
              echo -e "${red} 版本参数错误 ${plain}"
           fi
