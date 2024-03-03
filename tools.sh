@@ -73,7 +73,6 @@ function CHECK_FILE() {
 
 source $config_file &>/dev/null
 bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/Link_localhost/install.sh) # tool link install.sh
-
 case $1 in
 -d)
   case $2 in
