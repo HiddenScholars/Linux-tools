@@ -79,7 +79,13 @@ case $1 in
   case $2 in
   config.sh)
           wget -P ${config_path} https://$url_address/HiddenScholars/Linux-tools/$con_branch/config.sh
-          [ ! -f ${config_file} ] && echo -e "${red}download failed${plain}" && exit 0
+          if [ -f ${config_file} ];then
+            echo -e "${green}download success ${plain}"
+            exit 0
+          else
+            echo -e "${red}download failed${plain}"
+            exit 0
+          fi
           ;;
   *)
           echo -e "${red}参数错误${plain}"
