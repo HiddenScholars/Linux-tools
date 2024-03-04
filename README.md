@@ -10,16 +10,16 @@
 如遇中国境内网络环境无法访问到Github，手动替换url_address地址
 例如：
 ```shell
-con_branch=main url_address=raw.yzuu.cf bash <(curl -Ls https://$url_address/HiddenScholars/Linux-tools/$con_branch/tools.sh)
+export con_branch=main export url_address=raw.yzuu.cf && bash <(curl -Ls https://${url_address}/HiddenScholars/Linux-tools/${con_branch}/tools.sh)
 ``` 
 
 通用运行脚本
 ```shell
- con_branch=main url_address=raw.githubusercontent.com bash <(curl -Ls https://$url_address/HiddenScholars/Linux-tools/$con_branch/tools.sh)
+export con_branch=main export url_address=raw.githubusercontent.com && bash <(curl -Ls https://${url_address}/HiddenScholars/Linux-tools/${con_branch}/tools.sh)
 ```
 
 config.sh下载
 ```shell
- con_branch=main url_address=raw.githubusercontent.com bash <(curl -Ls https://$url_address/HiddenScholars/Linux-tools/$con_branch/tools.sh) -d config.sh
+export con_branch=main export url_address=raw.githubusercontent.com && bash <(curl -Ls https://${url_address}/HiddenScholars/Linux-tools/${con_branch}/tools.sh) -d config.sh
 ```
 
