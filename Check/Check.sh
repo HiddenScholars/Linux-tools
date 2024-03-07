@@ -7,8 +7,6 @@ CPUArchitecture=''
 controls=''
 config_file=/tools/config
 
-SET_CONFIG=$1 #$1==0
-
 function PACKAGE_MASTER() {
 if command -v apt-get &> /dev/null; then
     controls='apt-get'
@@ -31,16 +29,18 @@ else
 SystemVersion=-1
 fi
 }
+PACKAGE_MASTER
+SYSTEM_CHECK
 #DIRECTIVES_CHECK
-DIRECTIVES=() #install list
-NOTFONUDDIRECTIVES=() #install faliled
+#DIRECTIVES=() #install list
+#NOTFONUDDIRECTIVES=() #install faliled
 function DIRECTIVES_CHECK() {
-    NOTFONUDDIRECTIVES_EXEC=$1 #$1==0 repo install
-    GET_WHICH=$(command -v which | wc -l)
+    local NOTFONUDDIRECTIVES_EXEC=$1 #$1==0 repo install
+    local GET_WHICH=$(command -v which | wc -l)
     if [ "${GET_WHICH}" != 0 ]; then
         for i in "${DIRECTIVES[@]}"
         do
-          which "$i"
+          which "$i" &>/dev/null
           if [ $? -ne 0  ]; then
               NOTFONUDDIRECTIVES+=("$i")
           fi
@@ -54,17 +54,17 @@ function DIRECTIVES_CHECK() {
                fi
         done
         if [ "${#NOTFONUDDIRECTIVES[@]}" -ne 0 ]; then
+              echo
+              printf "Software package："
               for (( i = 0; i < "${#NOTFONUDDIRECTIVES[@]}"; i++ )); do
-                  printf "$i\t"
+                  printf "${NOTFONUDDIRECTIVES[$i]};\t"
               done
               echo "install failed!"
         fi
     fi
 
 }
-PACKAGE_MASTER
-SYSTEM_CHECK
-if [ "$SET_CONFIG" == 0 ];then
+function SET_CONFIG() {
    if [ "$controls" != "-1" ] && [ "$SystemVersion" != "-1" ] && [ "$CPUArchitecture" == "x86_64" ] && [ -f "$config_file" ]; then
         GET_CONTROLS=$(cat "$config_file" | grep controls= | wc -l)
         if [ "$GET_CONTROLS" == "1" ]; then
@@ -95,5 +95,18 @@ if [ "$SET_CONFIG" == 0 ];then
         echo "$config_file not found."
      fi
    fi
+}
 
-fi
+
+case $1 in
+DIRECTIVES_CHECK)
+                  shift
+                  DIRECTIVES_CHECK "$@"
+                  ;;
+SET_CONFIG)
+                  shift
+                  SET_CONFIG
+                  ;;
+*)
+                  printf "not found";
+esac
