@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /tools/config.sh
+source /tools/config
 
 if [ -f /usr/local/bin/docker-compose ];then
     docker-compose -v &>/dev/null

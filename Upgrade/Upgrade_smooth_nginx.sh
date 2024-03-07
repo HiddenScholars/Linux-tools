@@ -2,7 +2,7 @@
 
 read -rp "回车后即确认升(降)级："
 source /etc/profile
-source /tools/config.sh
+source /tools/config
 select=''
 sbin_nginx=''
 getNginxProcessNumber=$(pgrep nginx | wc -l)

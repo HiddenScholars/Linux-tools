@@ -1,4 +1,4 @@
-source /tools/config.sh
+source /tools/config
 
 function remove_old_docker() {
 

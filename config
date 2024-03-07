@@ -1,0 +1,21 @@
+#!/bin/bash
+
+download_path=/tools/soft/
+install_path=/usr/local/soft/
+time=$(date +%Y%m%d)
+url_address=raw.githubusercontent.com
+con_branch=main
+nginx_download_urls=(
+"https://nginx.org/download/nginx-1.24.0.tar.gz"
+"https://nginx.org/download/nginx-1.22.1.tar.gz")
+nginx_user=nginx
+docker_compose_download_urls=(
+"https://github.com/docker/compose/releases/download/v2.23.3/docker-compose-linux-x86_64")
+
+red='\033[31m'
+green='\033[32m'
+yellow='\033[33m'
+plain='\033[0m'
+
+
+

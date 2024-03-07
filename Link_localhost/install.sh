@@ -1,9 +1,9 @@
 #!/bin/bash
-source /tools/config.sh &>/dev/null
+source /tools/config &>/dev/null
 
 function setTool(){
   cat > /tools/tool << 'EOF'
-  source /tools/config.sh &>/dev/null
+  source /tools/config &>/dev/null
   if [ -z $url_address ];then
   set -x
   url_address=raw.githubusercontent.com
