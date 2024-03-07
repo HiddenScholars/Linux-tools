@@ -79,7 +79,7 @@ function DIRECTIVES_CHECK() {
 
 }
 function SET_CONFIG() {
-   if [ "$controls" != "-1" ] && [ "$SystemVersion" != "-1" ] && [ "$CPUArchitecture" == "x86_64" ] && [ -f "$config_file" ]; then
+   if [ "$controls" != "1" ] && [ "$SystemVersion" != "1" ] && [ "$CPUArchitecture" == "x86_64" ] && [ -f "$config_file" ]; then
         GET_CONTROLS=$(grep -c 'controls=' $config_file)
         if [ "$GET_CONTROLS" == "1" ]; then
            sed -i "s/controls=.*/controls=$controls/g" $config_file
