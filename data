@@ -1,26 +1,13 @@
 #!/bin/bash
 
 
-#Linux发行版本获取__定义函数：Version
 
-function Version(){
-serverVersion=`awk -F= '/^NAME/{print $2}' /etc/os-release`
-if [  "$serverVersion" == '"CentOS Linux"' ];then
-echo "CentOS"
-elif [ "$serverVersion" == '"Ubuntu"' ];then
-echo "Ubuntu"
-else
-echo $serverVersion
-fi
-}
-
-#获取服务器本机ip与公网ip__定义函数：Host_ip
 
 function Host_ip() {
-ipaddr=(`hostname -I`)
-for i in ${ipaddr[@]}
+ipaddr=($(hostname -I))
+for i in "${ipaddr[@]}"
 do
-echo $i
+echo "$i"
 done
 ping ip.sb -c 1 &>>/dev/null
 if [ $? -eq 0 ];then
