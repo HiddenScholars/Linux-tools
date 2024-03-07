@@ -4,7 +4,7 @@ nginx_download_url=
 docker_download_url=
 select_download_version=
 config_path=/tools/
-config_file=/tools/config.sh
+config_file=/tools/config
 version_file=$config_path/version
 branch_array=()
 branch_select_choice=0
@@ -55,7 +55,7 @@ function CHECK_FILE() {
        con_branch=main
        set +x
      else
-       source $config_file &>/dev/null #当url_address and con_branch 都存在时优先使用config.sh配置
+       source $config_file &>/dev/null #当url_address and con_branch 都存在时优先使用config配置
      fi
       if [  ! -f $version_file ]; then
           [ ! -d ${config_path} ] && mkdir ${config_path}
@@ -63,8 +63,8 @@ function CHECK_FILE() {
       fi
       if [ ! -f ${config_file} ];then
             [ ! -d ${config_path} ] && mkdir ${config_path}
-            echo -e "${red}config.sh downloading...${plain}"
-            wget -P ${config_path} https://$url_address/HiddenScholars/Linux-tools/$con_branch/config.sh
+            echo -e "${red}config downloading...${plain}"
+            wget -P ${config_path} https://$url_address/HiddenScholars/Linux-tools/$con_branch/config
             [ ! -f ${config_file} ] && echo -e "${red}download failed${plain}" && exit 0
             sed -i "s/url_address=.*/url_address=$url_address/g" $config_file #下载完成后修改仓库地址
             sed -i "s/con_branch=.*/con_branch=$con_branch/g" $config_file #下载完成后修改分支
@@ -76,8 +76,8 @@ bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/Link
 case $1 in
 -d)
   case $2 in
-  config.sh)
-          wget -P ${config_path} https://$url_address/HiddenScholars/Linux-tools/$con_branch/config.sh
+  config)
+          wget -P ${config_path} https://$url_address/HiddenScholars/Linux-tools/$con_branch/config
           if [ -f ${config_file} ];then
             echo -e "${green}download success ${plain}"
             exit 0

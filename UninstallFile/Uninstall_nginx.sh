@@ -3,7 +3,7 @@
 read -rp "回车后确认卸载："
 
 source /etc/profile
-source /tools/config.sh
+source /tools/config
 getNginxProcess_number1=$(psgrep nginx | wc -l)
 if [ "$getNginxProcess_number1" != 0 ]; then
     echo "检测到Nginx进程，进程ID："

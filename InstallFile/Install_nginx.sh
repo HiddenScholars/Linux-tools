@@ -1,4 +1,4 @@
-source /tools/config.sh
+source /tools/config
 select=''
     [ ! -f $download_path/nginx/$1 ] && echo -e "${red}文件不存在${plain}" && exit 0
     echo $release

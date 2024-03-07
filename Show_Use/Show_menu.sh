@@ -3,7 +3,7 @@ nginx_download_url=
 docker_download_url=
 select_download_version=
 config_path=/tools/
-config_file=/tools/config.sh
+config_file=/tools/config
 version_file=$config_path/version
 source $config_file &>/dev/null
 
