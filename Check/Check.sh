@@ -13,7 +13,7 @@ if command -v apt-get &> /dev/null; then
 elif command -v yum &> /dev/null; then
     controls='yum'
 else
-    controls=-1
+    controls=1
 fi
 }
 function SYSTEM_CHECK() {
@@ -26,7 +26,7 @@ SystemVersion="ubuntu"
 elif [ "$SystemCategory" == '"Debian GNU/Linux"' ];then
 SystemVersion="debian"
 else
-SystemVersion=-1
+SystemVersion=1
 fi
 }
 PACKAGE_MASTER
