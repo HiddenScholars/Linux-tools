@@ -17,40 +17,5 @@ green='\033[32m'
 yellow='\033[33m'
 plain='\033[0m'
 
-os_type=$(uname -s)
-serverVersion=
-serverVersion=$(awk -F= '/^NAME/{print $2}' /etc/os-release)
-if [  "$serverVersion" == '"CentOS Linux"' ];then
-release="centos"
-elif [ "$serverVersion" == '"Ubuntu"' ];then
-release="ubuntu"
-elif [ "$serverVersion" == '"Debian GNU/Linux"' ];then
-release="debian"
-else
-echo -e  "${red}警告：暂时未适配$serverVersion ${plain}"
-exit 0
-fi
-# 输出系统信息
-echo "操作系统类型: $os_type"
-echo "操作系统发行版本: $serverVersion"
-# 检测常用软件包管理器
-if command -v apt-get &> /dev/null; then
-    echo "已安装：apt-get (Debian/Ubuntu)"
-    controls='apt'
-elif command -v yum &> /dev/null; then
-    echo "已安装：yum (CentOS/RHEL)"
-    controls='yum'
-elif command -v dnf &> /dev/null; then
-    echo "已安装：dnf (Fedora)"
-    controls='dnf'
-elif command -v zypper &> /dev/null; then
-    echo "已安装：zypper (openSUSE)"
-    controls='zypper'
-elif command -v pacman &> /dev/null; then
-    echo "已安装：pacman (Arch Linux)"
-    controls='pacman'
-else
-    echo "未知的软件包管理器"
-    exit 0
-fi
+
 
