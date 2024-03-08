@@ -93,49 +93,6 @@ function manage_download() {
                   exit 0
               fi
 }
-function check_install_system() {
-    [ -z "$test_server_port" ] && [ -z "$process" ] && echo -e "$red test_server_port与process禁止为空使用 $plain" && exit
-    #test_server_port=() 检查此数组中的端口
-    netstat -ntpl|grep LISTEN|awk '{print $4}' >/opt/test_sys.txt
-    #process=(nginx) 检查此数组中的进程
-        num=0
-        for line in $(cat /tools/test_sys.txt)
-        do
-            sys_port=${line##*:}
-            for i in ${test_server_port[*]}
-            do
-                if [ "$sys_port" -eq "$i" ];then
-                    echo -e "\033[31m $sys_port端口已存在，占用服务端口 \033[0m"
-                    let  num=$num+1
-                fi
-            done
-        done
-        u=0
-        if [ "$num" -eq 0 ]
-        then
-            for pro in "${process[@]}"
-            do
-                getProcessNumber=$(pgrep "$pro" | wc -l)
-                if [ "$getProcessNumber" -ne 0 ]
-                then
-                    echo "$pro有残余进程，删除后再次执行脚本检测安装环境"
-    				continue=''
-                      read -rp "是否继续安装，继续安装可能会无法启动（y/n）:" continue
-                        if [ "$continue" != "y" ]; then
-                        exit 1
-                        fi
-    				return
-                    let  u=$u+1
-                fi
-            done
-        else
-          continue=''
-          read -rp "是否继续安装，继续安装可能会无法启动（y/n）:" continue
-            if [ "$continue" != "y" ]; then
-            exit 1
-            fi
-        fi
-}
 function check_unpack_file_path() {
     [ ! -d $config_path/unpack_file ] && mkdir -p $config_path/unpack_file
     getUnpackNumber=$(find "$config_path/unpack_file/" -maxdepth 1 -type f -o -type d | wc -l)
@@ -196,10 +153,6 @@ select=''
 
     download_select=''
     if_select=''
-    $controls install -y wget curl net-tools
-    if [ $? -eq 0 ];then
-      echo -e "${red}安装失败${plain}" && exit 0
-    fi
     server_name=nginx
     download_url=${nginx_download_urls[$select]}
     select_download_version=${temp_number[$select]}

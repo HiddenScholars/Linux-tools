@@ -38,7 +38,7 @@ function CHECK_FILE() {
       fi
       if [ ! -f ${config_file} ];then
             [ ! -d ${config_path} ] && mkdir ${config_path}
-            echo -e "${red}config downloading...${plain}"
+            echo -e "${red} config downloading... ${plain}"
             wget -P ${config_path} https://$url_address/HiddenScholars/Linux-tools/$con_branch/config
             [ ! -f ${config_file} ] && echo -e "${red}download failed${plain}" && exit 0
             sed -i "s/url_address=.*/url_address=$url_address/g" $config_file #下载完成后修改仓库地址
@@ -48,8 +48,40 @@ function CHECK_FILE() {
 
 source $config_file &>/dev/null
 bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/Link_localhost/install.sh) # tool link install.sh
+# 环境检测
 curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh | bash -s -- SET_CONFIG
-curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh | bash -s -- DIRECTIVES_CHECK 0 "wget" "netstat"
+# 获取包管理器
+GET_PACKAGE_MASTER=$(curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh | bash -s -- PACKAGE_MASTER)
+# 获取系统版本
+GET_SYSTEM_CHECK=$(curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh | bash -s -- SYSTEM_CHECK)
+# 必装命令检测
+GET_DIRECTIVES_CHECK=$(curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh | bash -s -- DIRECTIVES_CHECK 0 "wget" "netstat" "pgrep")
+for i in "${GET_DIRECTIVES_CHECK[@]}"
+do
+    if [ "$i" == "netstat" ]; then
+        "$GET_PACKAGE_MASTER" -y install net-tools
+    elif [ "$i" == "pgrep" ]; then
+        case "$GET_SYSTEM_CHECK" in
+        debian)
+              "$GET_PACKAGE_MASTER" -y install procps
+              ;;
+        ubuntu)
+              "$GET_PACKAGE_MASTER" -y install procps
+              ;;
+        centos)
+              "$GET_PACKAGE_MASTER" -y install procps-ng
+              ;;
+        kali_Linux)
+              "$GET_PACKAGE_MASTER" -y install procps
+              ;;
+        *)
+              echo "SYSTEM_CHECK NOT FOUND"
+              return 1
+              ;;
+        esac
+    fi
+done
+
 case $1 in
 -d)
   case $2 in

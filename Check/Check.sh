@@ -14,6 +14,7 @@ elif command -v yum &> /dev/null; then
     controls='yum'
 else
     controls=1
+    return 1
 fi
 }
 function SYSTEM_CHECK() {
@@ -27,13 +28,11 @@ elif [ "$SystemCategory" == '"Debian GNU/Linux"' ];then
 SystemVersion="debian"
 else
 SystemVersion=1
+return 1
 fi
 }
 PACKAGE_MASTER
 SYSTEM_CHECK
-#DIRECTIVES_CHECK
-#DIRECTIVES=() #install list
-#NOTFONUDDIRECTIVES=() #install failed
 function DIRECTIVES_CHECK() {
     if [ "$1" == 0 ]; then
        local NOTFONUDDIRECTIVES_EXEC=$1 #$1==0 repo install
@@ -52,11 +51,12 @@ function DIRECTIVES_CHECK() {
           which "$i" &>/dev/null
           if [ $? -ne 0  ]; then
               NOTFONUDDIRECTIVES+=("$i")
-             [ "${#NOTFONUDDIRECTIVES[@]}" != 0 ] && printf  "%s,\t Not installed." "$i"
+             [ "${#NOTFONUDDIRECTIVES[@]}" != 0 ] && printf  "%s\t" "$i"
           fi
         done
+        printf "\tNot_installed.\n" #名称不可更改，调用时可根据该名称标注结尾
     else
-      echo "which not found."
+      echo "The argument is empty or which is not found."
       exit 1
     fi
     if [ -n "$NOTFONUDDIRECTIVES_EXEC" ] && [ "$NOTFONUDDIRECTIVES_EXEC" -eq 0 ]; then
@@ -70,9 +70,9 @@ function DIRECTIVES_CHECK() {
               echo
               printf "Software Package："
               for (( i = 0; i < "${#NOTFONUDDIRECTIVES[@]}"; i++ )); do
-                  printf "%s," "${NOTFONUDDIRECTIVES[$i]}"
+                  printf "%s\t" "${NOTFONUDDIRECTIVES[$i]}"
               done
-              printf "\t install failed!"
+              printf "\t Installed_failed!"
               return 1;
         fi
     fi
@@ -111,8 +111,33 @@ function SET_CONFIG() {
      fi
    fi
 }
-
-
+function PROCESS_CHECK() {
+    PROCESS_NAME=("$@")
+    for i in "${PROCESS_NAME[@]}"
+    do
+        GET_PROCESS_NUM=$(ps aux | grep -v grep | grep -c "$i" )
+       if [ "$GET_PROCESS_NUM" -ne 0 ]; then
+          PROCESS_EXIST+=("$i")
+          printf "%s\t" "$i"
+       fi
+    done
+    [ "${#PROCESS_EXIST[@]}" -ne 0 ] && printf "PROCESS_EXIST\n"
+    if [ "${#PROCESS_EXIST[@]}" -eq 0 ]; then
+       for y in "${PROCESS_NAME[@]}"
+       do
+          GET_PROCESS_RESIDUE_ID=$(pgrep "$y")
+          if [ ${#GET_PROCESS_RESIDUE_ID[@]} -ne 0 ]; then
+              PROCESS_RESIDUE_ID+=("$y")
+              printf "%s\t" "$y"
+          fi
+       done
+    [ "${#PROCESS_RESIDUE_ID[@]}" -ne 0 ] && printf ",PROCESS_RESIDUE_ID\n"
+    fi
+}
+function PORT_CHECK() {
+    GET_PORT=("$@")
+    CHECK_PORT_GET=$()
+}
 case $1 in
 DIRECTIVES_CHECK)
                   shift
@@ -121,7 +146,31 @@ DIRECTIVES_CHECK)
 SET_CONFIG)
                   shift
                   SET_CONFIG
+                  return $?
+                  ;;
+PACKAGE_MASTER)
+                  shift
+                  PACKAGE_MASTER
+                  return $?
+                  echo "$controls"
+                  ;;
+PROCESS_CHECK)
+                  shift
+                  PROCESS_CHECK "$@"
+                  ;;
+SYSTEM_CHECK)
+                  shift
+                  SYSTEM_CHECK
+                  return $?
+                  echo  "SystemVersion"
+                  ;;
+CPUArchitecture)
+                  shift
+                  SYSTEM_CHECK
+                  return $?
+                  echo "CPUArchitecture"
                   ;;
 *)
-                  return 1;
+                  echo "failed 404"
+                  exit 1;
 esac
