@@ -104,9 +104,10 @@ function SET_CONFIG() {
         echo "软件包管理器：$controls"
         echo "Linux系统版本：$SystemVersion"
         echo "CPU架构：$CPUArchitecture"
-        exit 0
+        return 1
     else
         echo "$config_file not found."
+        return 1
      fi
    fi
 }

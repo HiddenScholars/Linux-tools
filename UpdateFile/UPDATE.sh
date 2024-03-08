@@ -1,8 +1,8 @@
 #!/bin/bash
-source /tools/config
+source /tools/config &>/dev/null
     if [ -f /tools/config ]; then
         mv /tools/config /tools/config_bak
-        wget -P "$config_path" https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/config
+        wget -P /tools/ https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/config
         if [ $? -eq 0 ]; then
             sed -i "s/url_address=.*/url_address=$url_address/g" /tools/config #下载完成后修改仓库地址
             sed -i "s/con_branch=.*/con_branch=$con_branch/g" /tools/config #下载完成后修改分支

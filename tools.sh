@@ -9,46 +9,21 @@ version_file=$config_path/version
 branch_array=()
 branch_select_choice=0
 
+handle_error() {
+    echo "出现运行错误，解决后再次运行！错误码：$?"
+    exit 1
+}
+handle_exit() {
+    echo "脚本退出..."
+    exit 0
+}
+trap handle_error ERR
+trap handle_exit EXIT
+
 source $config_file &>/dev/null
 #Linux-tools start check ...
 #[ `whoami` != root ] && echo -e "${red}需要使用root权限${plain}" && exit 0
-
-function CHECK_URL_ADDRESS() {
-    if [ -z "$url_address" ]; then
-                  url_address_number=("raw.githubusercontent.com" "raw.yzuu.cf")
-    
-                  for i in "${!url_address_number[@]}"
-                  do
-                      echo "$i：${url_address_number[$i]}"
-                  done
-                  read -rp  "下载地址为空,请选择或手动输入下载地址：" url_address_select
-                  if [[ $url_address_select =~ ^[0-9]+$ ]]; then
-                      if [  -n "${url_address_number[$url_address_select]}" ]; then
-                          url_address=${url_address_number[$url_address_select]}
-                          if [ -f $config_file ];then
-                             sed -i "s/url_address=.*/url_address=$url_address/g" $config_file
-                             source $config_file &>/dev/null
-                             [ "$url_address" != "${url_address_number[$url_address_select]}" ] && echo "url_address=${url_address_number[$url_address_select]}" >> $config_file
-                          fi
-                      else
-                          echo -e "${red}选择的地址不存在${plain}"
-                          exit 0
-                      fi
-                  elif [[ $url_address_select =~ [a-zA-Z0-9]+\.[a-zA-Z]{2,3}(/\S*)?$ ]]; then
-                      url_address=$url_address_select
-                          if [ -f $config_file ];then
-                             sed -i "s/url_address=.*/url_address=$url_address/g" $config_file
-                             source $config_file &>/dev/null
-                             [ "$url_address" != "$url_address_select" ] && echo "url_address=$url_address_select" >> $config_file
-                          fi
-                  else
-                     echo "参数错误"
-                     exit 0
-                  fi
-          fi
-}
 function CHECK_FILE() {
-
      if [ -z "$url_address" ] && [ -z "$con_branch" ] ;then
        set -x
        url_address=raw.githubusercontent.com
@@ -95,7 +70,6 @@ case $1 in
   ;;
 *)
   CHECK_FILE
-  CHECK_URL_ADDRESS
   bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh) # function menu
   ;;
 esac
