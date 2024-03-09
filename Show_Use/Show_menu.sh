@@ -129,11 +129,11 @@ function check_update() {
           fi
 }
 function install_nginx() {
-     #check pid port
-     process=(nginx)
-     test_server_port=(80 443)
-     check_install_system
-     #check END
+     # 进程检查
+     curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh | bash -s -- PROCESS_CHECK "nginx"
+     # 端口检查
+     curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh | bash -s -- PORT_CHECK "80" "443"
+
 regex="nginx-([0-9]+\.[0-9]+\.[0-9]+)"
 nginx_download_urls_select=0
 temp_number=()

@@ -127,16 +127,24 @@ function PROCESS_CHECK() {
        do
           GET_PROCESS_RESIDUE_ID=$(pgrep "$y")
           if [ ${#GET_PROCESS_RESIDUE_ID[@]} -ne 0 ]; then
-              PROCESS_RESIDUE_ID+=("$y")
+              PROCESS_RESIDUE+=("$y")
               printf "%s\t" "$y"
           fi
        done
-    [ "${#PROCESS_RESIDUE_ID[@]}" -ne 0 ] && printf ",PROCESS_RESIDUE_ID\n"
+    [ "${#PROCESS_RESIDUE[@]}" -ne 0 ] && printf ",PROCESS_RESIDUE\n"
     fi
 }
 function PORT_CHECK() {
     GET_PORT=("$@")
-    CHECK_PORT_GET=$()
+    for i in "${GET_PORT[@]}"
+    do
+    CHECK_PORT_GET=$(netstat -lnupt | grep -c "$i")
+    if [ "$CHECK_PORT_GET" -ne 0 ]; then
+        PORT_EXIST+=("$i")
+        printf  "%s\t" "$i"
+    fi
+    done
+    [ "${#PORT_EXIST[@]}" -ne 0 ] && printf "：PORT_EXIST\n"
 }
 case $1 in
 DIRECTIVES_CHECK)
@@ -163,6 +171,10 @@ SYSTEM_CHECK)
                   SYSTEM_CHECK
                   return $?
                   echo  "SystemVersion"
+                  ;;
+PORT_CHECK)
+                  shift
+                  PORT_CHECK "$@"
                   ;;
 CPUArchitecture)
                   shift
