@@ -44,6 +44,25 @@ function CHECK_FILE() {
             sed -i "s/url_address=.*/url_address=$url_address/g" $config_file #下载完成后修改仓库地址
             sed -i "s/con_branch=.*/con_branch=$con_branch/g" $config_file #下载完成后修改分支
       fi
+
+    GET_DOWNLOAD_PATH=$(grep -c download_path $config_file)
+    if [ -z "$download_path" ] && [ "$GET_DOWNLOAD_PATH" == 1 ]; then
+       sed -i "s/download_path=.*/download_path=/tools/soft/g" $config_file
+    else
+      echo "download_path=/tools/soft" >>$config_file
+    fi
+    GET_INSTALL_PATH=$(grep -c install_path $config_file)
+    if [ -z "$install_path" ] && [ "$GET_INSTALL_PATH" == 1 ]; then
+       sed -i "s/install_path=.*/install_path=/usr/local/soft/g" $config_file
+    else
+      echo "install_path=/usr/local/soft/" >>$config_file
+    fi
+    if [ ! -d "$install_path" ]; then
+        mkdir -p "$download_path"
+    fi
+    if [ ! -d "$install_path" ]; then
+        mkdir -p "$download_path"
+    fi
 }
 
 source $config_file &>/dev/null

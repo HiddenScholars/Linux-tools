@@ -1,20 +1,14 @@
 source /tools/config
-select=''
-    [ ! -f $download_path/nginx/$1 ] && echo -e "${red}文件不存在${plain}" && exit 0
-    echo $release
 
-    if [ "$release" == "centos" ]; then
-            $controls install -y gcc gcc-c++ pcre pcre-devel zlib zlib-devel openssl openssl-devel gd gd-devel
-    elif [ "$release" == "ubuntu" ]; then
-            $controls install -y gcc g++ libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev make
-    else
-            $controls install -y gcc g++ libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev make
-    fi
-    [ -d $install_path/nginx/ ] && mv $install_path/nginx/ $install_path/nginx$time
+#依赖检测
+GET_DIRECTIVES_CHECK=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- DIRECTIVES_CHECK  "gcc" "make" "openssl" "pcre" "zlib")
+#安装包下载
+curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PACKAGE_DOWNLOAD  nginx  $(for i in "${nginx_download_urls[@]}";do printf "$i";done)
 
 
-    tar xvf $download_path/nginx/$1 -C /tools/unpack_file/$2 --strip-components 1 &>/dev/null
-    cd /tools/unpack_file/$2 && ./configure --prefix=${install_path}/nginx/ \
+    [ -d "$install_path"/nginx/ ] && mv "$install_path"/nginx/ "$install_path"/nginx$time
+    tar xvf "$download_path"/nginx/$1 -C /tools/unpack_file/$2 --strip-components 1 &>/dev/null
+    cd /tools/unpack_file/$2 && ./configure --prefix="${install_path}"/nginx/ \
                                                 --with-pcre \
                                                 --with-http_ssl_module \
                                                 --with-http_v2_module \

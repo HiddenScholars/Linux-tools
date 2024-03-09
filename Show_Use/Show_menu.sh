@@ -5,94 +5,10 @@ select_download_version=
 config_path=/tools/
 config_file=/tools/config
 version_file=$config_path/version
+select=
 source $config_file &>/dev/null
 
-function manage_download() {
-  #server_name下载服务名
-  #download_url下载链接
-  #select_download_version下载版本搜索
-  [ -z "$server_name" ] && echo -e "${red} 禁止server_name为空使用 ${plain}" && exit
-  [ -z "$download_url" ] && echo -e "${red} 禁止download_url为使用 ${plain}" && exit
-  [ ! -d "$download_path"/"$server_name" ] &&  mkdir -p "$download_path"/"$server_name"
-  getDownloadFileNumber=$(find "$download_path/$server_name" -maxdepth 1 -type f -o -type d -name "*$select_download_version*" | wc -l)
-          if [ "${getDownloadFileNumber}" -ne 0 ];then
-                echo -e "${red}$download_path/$server_name/中存在该版本安装包${plain}"
-                echo
-               cd "$download_path"/"$server_name"/ || exit
-                    # 定义一个空数组用于存储符合条件的文件
-                    files=()
 
-                    # 获取目录下所有文件，并将符合条件的文件添加到数组中
-                    for file in *; do
-                      # 过滤文件的条件，可以根据需求进行修改
-                      if [[  "$file" =~ .*${select_download_version}.*  ]]; then
-                        files+=("$file")
-                      fi
-                    done
-
-                    # 对数组进行排序，并打印文件名和数字序号
-                    IFS=$'\n' sorted_files=($(sort <<<"${files[*]}"))
-                    for i in "${!sorted_files[@]}"
-                    do
-                      echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
-                    done
-                echo
-                echo
-                read -rp  "文件夹中存在文件是否继续下载(y/n)(default:n):" download_select
-
-                if [ "$download_select" == "y" ]; then
-                      wget -P "$download_path"/"$server_name"/ "$download_url"
-                      cd "$download_path"/"$server_name"/ || exit
-                      # 定义一个空数组用于存储符合条件的文件
-                      files=()
-
-                      # 获取目录下所有文件，并将符合条件的文件添加到数组中
-                      for file in *; do
-                        # 过滤文件的条件，可以根据您的需求进行修改
-                        if [[  "$file" =~ .*${select_download_version}.*  ]]; then
-                          files+=("$file")
-                        fi
-                      done
-
-                      # 对数组进行排序，并打印文件名和数字序号
-                      IFS=$'\n' sorted_files=($(sort <<<"${files[*]}"))
-                      for i in "${!sorted_files[@]}"; do
-                        echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
-                      done
-                      #标记执行过下载安装包命令
-                      if_select=0
-                else
-                      #标记不执行
-                      if_select=1
-                fi
-              fi
-              if [ "$if_select" != 1 ] && [ "$if_select" != 0 ]; then
-                wget -P "$download_path"/"$server_name"/ "$download_url"
-                cd "$download_path"/"$server_name"/ || exit
-                # 定义一个空数组用于存储符合条件的文件
-                files=()
-
-                # 获取目录下所有文件，并将符合条件的文件添加到数组中
-                for file in *; do
-                  # 过滤文件的条件，可以根据需求进行修改
-                  if [[  "$file" =~ .*${select_download_version}.*  ]]; then
-                    files+=("$file")
-                  fi
-                done
-
-                # 对数组进行排序，并打印文件名和数字序号
-                IFS=$'\n' sorted_files=($(sort <<<"${files[*]}"))
-                for i in "${!sorted_files[@]}"; do
-                  echo -e "${green}$((i)):${sorted_files[$i]}${plain}"
-                done
-              fi
-
-              read -rp "选择安装包序号：" select
-              if [ -z "$select" ]; then
-                  echo -e "${red}未选择安装包，退出脚本${plain}"
-                  exit 0
-              fi
-}
 function check_unpack_file_path() {
     [ ! -d $config_path/unpack_file ] && mkdir -p $config_path/unpack_file
     getUnpackNumber=$(find "$config_path/unpack_file/" -maxdepth 1 -type f -o -type d | wc -l)
@@ -129,96 +45,23 @@ function check_update() {
           fi
 }
 function install_nginx() {
-     # 进程检查
-     curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh | bash -s -- PROCESS_CHECK "nginx"
-     # 端口检查
-     curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh | bash -s -- PORT_CHECK "80" "443"
-
-regex="nginx-([0-9]+\.[0-9]+\.[0-9]+)"
-nginx_download_urls_select=0
-temp_number=()
-url=''
-for url in "${nginx_download_urls[@]}"
-do
-    if [[ $url =~ $regex ]]; then
-        version="${BASH_REMATCH[1]}"
-        echo -e "${green}$nginx_download_urls_select：$version${plain}"
-        temp_number+=("$version")
-    fi
-let nginx_download_urls_select=$nginx_download_urls_select+1
-done
-select=''
-      read -rp "Enter Your install service version choice(0 ...):" select
-      [ -z "${nginx_download_urls[$select]}" ] && echo -e "${red}暂不支持的版本号${plain}" && exit 0
-
-    download_select=''
-    if_select=''
-    server_name=nginx
-    download_url=${nginx_download_urls[$select]}
-    select_download_version=${temp_number[$select]}
-    manage_download
-    check_unpack_file_path
-echo "开始安装Nginx--链接Github获取Nginx安装脚本"
-bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_nginx.sh) "${sorted_files[$select]}" "$missing_dirs"
+echo "开始安装Nginx"
+bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_nginx.sh)
 }
 function setting_ssl() {
-echo "开始安装证书--链接Github获取证书安装脚本"
+echo "开始安装证书"
 bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_ssl_acme.sh)
 }
 function install_docker() {
-  echo "开始安装Docker--链接github获取Docker安装脚本"
-  bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_docker.sh) "$filename"
+echo "开始安装Docker"
+bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_docker.sh) "$filename"
 }
 function install_docker_compose() {
-regex="v([0-9]+\.[0-9]+\.[0-9]+)"
-docker_compose_download_urls_select=0
-temp_number=()
-url=''
-for url in "${docker_compose_download_urls[@]}"
-do
-    if [[ $url =~ $regex ]]; then
-        version="${BASH_REMATCH[1]}"
-        echo -e "${green}$docker_compose_download_urls_select：$version${plain}"
-        temp_number+=("$version")
-    fi
-let docker_compose_download_urls_select=$docker_compose_download_urls_select+1
-done
-select=''
-      read -rp "Enter Your install service version choice（0）:" select
-      [ -z "${docker_compose_download_urls[$select]}" ] && echo -e "${red}暂不支持的版本号${plain}" && exit 0
-bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_docker-compose.sh) "${temp_number[$select]}" "${select}"
+echo "开始安装Docker-compose"
+bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_docker-compose.sh)
 }
-
 function upgrade_smooth_nginx() {
-    regex="nginx-([0-9]+\.[0-9]+\.[0-9]+)"
-    nginx_download_urls_select=0
-    temp_number=()
-    url=''
-    for url in "${nginx_download_urls[@]}"
-    do
-        if [[ $url =~ $regex ]]; then
-            version="${BASH_REMATCH[1]}"
-            echo -e "${green}$nginx_download_urls_select：$version${plain}"
-            temp_number+=("$version")
-        fi
-    let nginx_download_urls_select=$nginx_download_urls_select+1
-    done
-    select=''
-          read -rp "Enter Your install service version choice(0 ...):" select
-          [ -z "${nginx_download_urls[$select]}" ] && echo -e "${red}序号输入错误${plain}" && exit 0
-
-        download_select=''
-        if_select=''
-        $controls install -y wget curl net-tools
-        if [ $? -eq 0 ];then
-          echo -e "${red}安装失败${plain}" && exit 0
-        fi
-        server_name=nginx
-        download_url=${nginx_download_urls[$select]}
-        select_download_version=${temp_number[$select]}
-        manage_download
-        check_unpack_file_path
-    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Upgrade/Upgrade_smooth_nginx.sh) "${sorted_files[$select]}" "$missing_dirs"
+bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Upgrade/Upgrade_smooth_nginx.sh) "${sorted_files[$select]}" "$missing_dirs"
 }
 
 function uninstall_nginx() {
@@ -229,7 +72,6 @@ function uninstall_docker() {
 }
 function uninstall_tool() {
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Link_localhost/uninstall.sh)
-
 }
 
 #菜单目录显示控制
@@ -347,4 +189,5 @@ function soft_Upgrade() {
 
 while  true ; do
     show_Use
+    check_unpack_file_path
 done

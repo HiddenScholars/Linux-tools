@@ -6,7 +6,7 @@ SystemVersion=''
 CPUArchitecture=''
 controls=''
 config_file=/tools/config
-
+source $config_file
 function PACKAGE_MASTER() {
 if command -v apt-get &> /dev/null; then
     controls='apt-get'
@@ -146,6 +146,33 @@ function PORT_CHECK() {
     done
     [ "${#PORT_EXIST[@]}" -ne 0 ] && printf "：PORT_EXIST\n"
 }
+function PACKAGE_DOWNLOAD() {
+    local ServerName=$1
+    shift
+    DownloadUrl=("$@")
+    [ ! -d "$download_path/$ServerName" ] &&  mkdir -p "$download_path/$ServerName"
+    for (( i = 0; i < "${#DownloadUrl[@]}"; i++ )); do
+        GET_PackageVersion_1=$(echo "${DownloadUrl[$i]}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+        GET_PackageVersion_2=$(echo "${DownloadUrl[$i]}" | grep -oE '[0-9]+\.[0-9]+\.tar.gz+' | sed 's/\.tar\.gz$//')
+        if [ "${#GET_PackageVersion_1}" -ne 0 ]; then
+          echo "$i : $GET_PackageVersion_1"
+        elif [ "${#GET_PackageVersion_2}" -ne 0  ]; then
+          echo "$i : $GET_PackageVersion_2"
+        else
+          if [ -n "$ServerName"  ] && [ "${#DownloadUrl[@]}" -ne 0 ]; then
+              echo "$i : 未识别的版本"
+          fi
+        fi
+    done
+     [ -n "$ServerName"  ] && [ "${#DownloadUrl[@]}" -ne 0 ] && read -rp "Enter Your install service version choice：" y
+    if [[ "$y" =~ ^[0-9]+$ ]] && [ "$i" -le "${#DownloadUrl[@]}" ] ; then
+        wget -nc -P "$download_path/$ServerName" "${DownloadUrl[$y]}"
+        [ $? -eq 0 ] || echo "download failed." && return 1
+    else
+        echo "Input Failed."
+        return 1
+    fi
+}
 case $1 in
 DIRECTIVES_CHECK)
                   shift
@@ -171,7 +198,11 @@ SYSTEM_CHECK)
                   ;;
 PORT_CHECK)
                   shift
-                  PORT_CHECK "$@"
+                  PORT_CHECK  "$@"
+                  ;;
+PACKAGE_DOWNLOAD)
+                  shift
+                  PACKAGE_DOWNLOAD "$@"
                   ;;
 CPUArchitecture)
                   shift
