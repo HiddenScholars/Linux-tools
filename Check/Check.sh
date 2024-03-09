@@ -154,12 +154,10 @@ DIRECTIVES_CHECK)
 SET_CONFIG)
                   shift
                   SET_CONFIG
-                  return $?
                   ;;
 PACKAGE_MASTER)
                   shift
                   PACKAGE_MASTER
-                  return $?
                   echo "$controls"
                   ;;
 PROCESS_CHECK)
@@ -169,7 +167,6 @@ PROCESS_CHECK)
 SYSTEM_CHECK)
                   shift
                   SYSTEM_CHECK
-                  return $?
                   echo  "SystemVersion"
                   ;;
 PORT_CHECK)
@@ -179,7 +176,6 @@ PORT_CHECK)
 CPUArchitecture)
                   shift
                   SYSTEM_CHECK
-                  return $?
                   echo "CPUArchitecture"
                   ;;
 *)

@@ -8,7 +8,7 @@ config_file=/tools/config
 version_file=$config_path/version
 branch_array=()
 branch_select_choice=0
-
+set -x
 handle_error() {
     echo "出现运行错误，解决后再次运行！错误码：$?"
     exit 1
