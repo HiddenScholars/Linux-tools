@@ -5,6 +5,7 @@ SystemCategory=''
 SystemVersion=''
 CPUArchitecture=''
 controls=''
+config_path=/tools
 config_file=/tools/config
 source $config_file
 function PACKAGE_MASTER() {
@@ -166,12 +167,36 @@ function PACKAGE_DOWNLOAD() {
     done
      [ -n "$ServerName"  ] && [ "${#DownloadUrl[@]}" -ne 0 ] && read -rp "Enter Your install service version choice：" y
     if [[ "$y" =~ ^[0-9]+$ ]] && [ "$i" -le "${#DownloadUrl[@]}" ] ; then
-        wget -nc -P "$download_path/$ServerName" "${DownloadUrl[$y]}"
+        wget -nc -P "$download_path/$ServerName" -O "$ServerName" "${DownloadUrl[$y]}"
         [ $? -eq 0 ] || echo "download failed." && return 1
     else
         echo "Input Failed."
         return 1
     fi
+}
+function check_unpack_file_path() {
+    [ ! -d "$config_path"/unpack_file ] && mkdir -p "$config_path"/unpack_file
+    getUnpackNumber=$(find "$config_path/unpack_file/" -maxdepth 1 -type f -o -type d | wc -l)
+    if [ "$getUnpackNumber" -gt  11 ];then
+      source $config_file &>/dev/null
+      cd "$config_path"/ && tar cvf unpack_file_bak"$time".tar.gz unpack_file/*
+      rm -rf unpack_file/*
+      mv "$config_path"/unpack_file_bak* unpack_file/
+    fi
+    # 存放不存在的目录的变量
+    missing_dirs=""
+    # 检测并创建目录
+    for ((i=1; i<=100; i++)); do
+        dir=$i
+        if [ -d "$config_path/unpack_file/$dir"  ] && [ "$(find $config_path/unpack_file/"$dir" | grep -v $config_path/unpack_file/"$dir" |  wc -l )" -eq 0 ]; then
+            missing_dirs=$dir
+            let i+=100
+        elif [ ! -d "$config_path/unpack_file/$dir" ]; then
+            mkdir "$config_path/unpack_file/$dir"
+            missing_dirs=$dir
+            let i+=100
+        fi
+    done
 }
 case $1 in
 DIRECTIVES_CHECK)
@@ -203,6 +228,11 @@ PORT_CHECK)
 PACKAGE_DOWNLOAD)
                   shift
                   PACKAGE_DOWNLOAD "$@"
+                  ;;
+check_unpack_file_path)
+                  shift
+                  check_unpack_file_path
+                  echo "$missing_dirs"
                   ;;
 CPUArchitecture)
                   shift

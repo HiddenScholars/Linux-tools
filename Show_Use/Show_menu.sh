@@ -9,27 +9,7 @@ select=
 source $config_file &>/dev/null
 
 
-function check_unpack_file_path() {
-    [ ! -d $config_path/unpack_file ] && mkdir -p $config_path/unpack_file
-    getUnpackNumber=$(find "$config_path/unpack_file/" -maxdepth 1 -type f -o -type d | wc -l)
-    if [ "$getUnpackNumber" -gt  11 ];then
-      source $config_file &>/dev/null
-      cd $config_path/ && tar cvf unpack_file_bak"$time".tar.gz unpack_file/*
-      rm -rf unpack_file/*
-      mv $config_path/unpack_file_bak* unpack_file/
-    fi
-    # 存放不存在的目录的变量
-    missing_dirs=""
-    # 检测并创建目录
-    for ((i=1; i<=100; i++)); do
-        dir=$i
-        if [ ! -d "$config_path/unpack_file/$dir" ]; then
-            mkdir "$config_path/unpack_file/$dir"
-            missing_dirs=$dir
-            let i+=100
-        fi
-    done
-}
+
 function check_update() {
   GET_REMOTE_VERSION=$(curl -s https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version)
   GET_LOCAL_VERSION=$(cat $version_file)
@@ -54,14 +34,14 @@ bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/
 }
 function install_docker() {
 echo "开始安装Docker"
-bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_docker.sh) "$filename"
+bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_docker.sh)
 }
 function install_docker_compose() {
 echo "开始安装Docker-compose"
 bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_docker-compose.sh)
 }
-function upgrade_smooth_nginx() {
-bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Upgrade/Upgrade_smooth_nginx.sh) "${sorted_files[$select]}" "$missing_dirs"
+function upgrade_smooth_nginx()
+bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Upgrade/Upgrade_smooth_nginx.sh)
 }
 
 function uninstall_nginx() {
@@ -189,5 +169,4 @@ function soft_Upgrade() {
 
 while  true ; do
     show_Use
-    check_unpack_file_path
 done

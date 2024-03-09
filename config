@@ -2,16 +2,20 @@
 
 download_path=/tools/soft/
 install_path=/usr/local/soft/
+
 time=$(date +%Y%m%d)
 url_address=raw.githubusercontent.com
 con_branch=main
-nginx_download_urls=(
-"https://nginx.org/download/nginx-1.24.0.tar.gz"
-"https://nginx.org/download/nginx-1.22.1.tar.gz")
 nginx_user=nginx
-docker_compose_download_urls=(
-"https://github.com/docker/compose/releases/download/v2.23.3/docker-compose-linux-x86_64")
+nginx_download_urls=(
+https://nginx.org/download/nginx-1.24.0.tar.gz
+https://nginx.org/download/nginx-1.22.1.tar.gz)
 
+docker_compose_download_urls=(https://github.com/docker/compose/releases/download/v2.23.3/docker-compose-linux-x86_64)
+pcre=(https://netix.dl.sourceforge.net/project/pcre/pcre/8.40/pcre-8.40.tar.gz)
+make=(https://ftp.gnu.org/gnu/make/make-4.4.tar.gz)
+openssl=(https://www.openssl.org/source/openssl-3.0.11.tar.gz)
+zlib=(https://www.zlib.net/zlib-1.3.1.tar.gz)
 red='\033[31m'
 green='\033[32m'
 yellow='\033[33m'
