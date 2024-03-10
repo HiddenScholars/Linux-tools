@@ -36,24 +36,28 @@ do
        "$GET_PACKAGE_MASTER" install -y gcc && echo "安装成功"
     elif [ "$i" == "make" ]; then
        echo "make 未安装"
+       GET_missing_dirs_make=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
        bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD make $(for y in "${make[@]}";do printf "$y ";done)
-       tar xvf "$download_path"/make/make -C "$config_path"/unpack_file/"$GET_missing_dirs" --strip-components 1 &>/dev/null
-       cd "$config_path"/unpack_file/"$GET_missing_dirs" && ./configure make && make install && echo "安装成功"
+       tar xvf "$download_path"/make/make -C "$config_path"/unpack_file/"$GET_missing_dirs_make" --strip-components 1 &>/dev/null
+       cd "$config_path"/unpack_file/"$GET_missing_dirs_make" && ./configure make && make install && echo "安装成功"
     elif [ "$i" == "openssl" ]; then
        echo "openssl 未安装"
+       GET_missing_dirs_openssl=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
        bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD openssl $(for y in "${openssl[@]}";do printf "$y ";done)
-       tar xvf "$download_path"/openssl/openssl -C "$config_path"/unpack_file/"$GET_missing_dirs" --strip-components 1 &>/dev/null
-       cd "$config_path"/unpack_file/"$GET_missing_dirs" && ./configure make && make install && echo "安装成功"
+       tar xvf "$download_path"/openssl/openssl -C "$config_path"/unpack_file/"$GET_missing_dirs_openssl" --strip-components 1 &>/dev/null
+       cd "$config_path"/unpack_file/"$GET_missing_dirs_openssl" && ./configure make && make install && echo "安装成功"
     elif [ "$i" == "pcre" ]; then
        echo "pcre 未安装"
+       GET_missing_dirs_pcre=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
        bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD pcre $(for y in "${pcre[@]}";do printf "$y ";done)
-       tar xvf "$download_path"/pcre/pcre -C "$config_path"/unpack_file/"$GET_missing_dirs" --strip-components 1 &>/dev/null
-       cd "$config_path"/unpack_file/"$GET_missing_dirs" && ./configure make && make install && echo "安装成功"
+       tar xvf "$download_path"/pcre/pcre -C "$config_path"/unpack_file/"$GET_missing_dirs_pcre" --strip-components 1 &>/dev/null
+       cd "$config_path"/unpack_file/"$GET_missing_dirs_pcre" && ./configure make && make install && echo "安装成功"
     elif [ "$i" == "zlib" ]; then
        echo "zlib 未安装"
+       GET_missing_dirs_zlib=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
        bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD zlib $(for y in "${zlib[@]}";do printf "$y ";done)
-       tar xvf "$download_path"/zlib/zlib -C "$config_path"/unpack_file/"$GET_missing_dirs" --strip-components 1 &>/dev/null
-       cd "$config_path"/unpack_file/"$GET_missing_dirs" && ./configure make && make install && echo "安装成功"
+       tar xvf "$download_path"/zlib/zlib -C "$config_path"/unpack_file/"$GET_missing_dirs_zlib" --strip-components 1 &>/dev/null
+       cd "$config_path"/unpack_file/"$GET_missing_dirs_zlib" && ./configure make && make install && echo "安装成功"
     fi
 
 done
@@ -61,7 +65,7 @@ set +x
 echo "安装包下载"
 bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  nginx  $(for i in "${nginx_download_urls[@]}";do printf "$i ";done)
 #解压目录检测
-GET_missing_dirs=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
+GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
 
     [ -d "$install_path"/nginx/ ] && mv "$install_path"/nginx/ "$install_path"/nginx"$time"
     tar xvf "$download_path"/nginx/nginx -C /tools/unpack_file/"$GET_missing_dirs" --strip-components 1
