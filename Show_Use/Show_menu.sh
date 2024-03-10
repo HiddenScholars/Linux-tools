@@ -40,10 +40,9 @@ function install_docker_compose() {
 echo "开始安装Docker-compose"
 bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_docker-compose.sh)
 }
-function upgrade_smooth_nginx()
+function upgrade_smooth_nginx(){
 bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Upgrade/Upgrade_smooth_nginx.sh)
 }
-
 function uninstall_nginx() {
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UninstallFile/Uninstall_nginx.sh)
 }

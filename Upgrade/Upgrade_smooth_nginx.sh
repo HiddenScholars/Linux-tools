@@ -46,7 +46,7 @@ cat /tools/1.txt | grep prefix | awk '{print substr($0, index($0,$3))}')"  "$sel
 if [ -f /tools/unpack_file/"$2"/objs/nginx ]; then
  cp -r /tools/unpack_file/"$2"/objs/nginx "$(dirname "$sbin_nginx")"
  sleep 10
-set -
+ set -
  kill -USR2  "$("$(dirname "$sbin_nginx")"/../logs/nginx.pid)"
  kill -WINCH "$("$(dirname "$sbin_nginx")"/../logs/nginx.pid.oldbin)"
  kill -QUIT  "$("$(dirname "$sbin_nginx")"/../logs/nginx.pid.oldbin)"

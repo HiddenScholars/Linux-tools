@@ -2,9 +2,27 @@ config_path=/tools/
 config_file=/tools/config
 source /tools/config
 # 获取包管理器
-GET_PACKAGE_MASTER=$(curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh | bash -s -- PACKAGE_MASTER)
+GET_PACKAGE_MASTER=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PACKAGE_MASTER)
 # 获取系统版本
-GET_SYSTEM_CHECK=$(curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh | bash -s -- SYSTEM_CHECK)
+GET_SYSTEM_CHECK=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- SYSTEM_CHECK)
+# 进程检测
+GET_PROCESS_CHECK=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PROCESS_CHECK nginx)
+# 端口检测
+GET_PORT_CHECK=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PORT_CHECK 80 443)
+if [ "${#GET_PROCESS_CHECK[@]}" -ne 0 ]  && [ "${#GET_PORT_CHECK[@]}" -ne 0 ]; then
+    read -rp "nginx程序已存在是否继续安装（y/n）：" select
+    [ "$select" != "y" ] && exit 0
+elif [ "${#GET_PROCESS_CHECK[@]}" -ne 0 ] ; then
+    echo "nginx有残留进程，尝试执行卸载脚本后再次执行"
+    exit 1
+elif [ "${#GET_PORT_CHECK[@]}" -ne 0 ]; then
+    for i in "${GET_PORT_CHECK[@]}"
+    do
+        printf "%s\t" "$i"
+    done
+     read -rp "被占用是否继续安装（y/n）：" select
+    [ "$select" != "y" ] && exit 0
+fi
 #依赖检测
 GET_DIRECTIVES_CHECK=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- DIRECTIVES_CHECK  "gcc" "make" "openssl" "pcre" "zlib")
 for i in "${GET_DIRECTIVES_CHECK[@]}"
@@ -12,19 +30,19 @@ do
     if [ "$i" == "gcc" ]; then
        "$GET_PACKAGE_MASTER" install -y gcc && echo "安装成功"
     elif [ "$i" == "make" ]; then
-       curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PACKAGE_DOWNLOAD make $(for i in "${make[@]}";do printf "$i";done)
+       curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PACKAGE_DOWNLOAD make $(for y in "${make[@]}";do printf "$y";done)
        tar xvf "$download_path"/make/make -C "$config_path"/unpack_file/"$GET_missing_dirs" --strip-components 1 &>/dev/null
        cd "$config_path"/unpack_file/"$GET_missing_dirs" && ./configure make && make install && echo "安装成功"
     elif [ "$i" == "openssl" ]; then
-       curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PACKAGE_DOWNLOAD openssl $(for i in "${openssl[@]}";do printf "$i";done)
+       curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PACKAGE_DOWNLOAD openssl $(for y in "${openssl[@]}";do printf "$y";done)
        tar xvf "$download_path"/openssl/openssl -C "$config_path"/unpack_file/"$GET_missing_dirs" --strip-components 1 &>/dev/null
        cd "$config_path"/unpack_file/"$GET_missing_dirs" && ./configure make && make install && echo "安装成功"
     elif [ "$i" == "pcre" ]; then
-       curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PACKAGE_DOWNLOAD pcre $(for i in "${pcre[@]}";do printf "$i";done)
+       curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PACKAGE_DOWNLOAD pcre $(for y in "${pcre[@]}";do printf "$y";done)
        tar xvf "$download_path"/pcre/pcre -C "$config_path"/unpack_file/"$GET_missing_dirs" --strip-components 1 &>/dev/null
        cd "$config_path"/unpack_file/"$GET_missing_dirs" && ./configure make && make install && echo "安装成功"
     elif [ "$i" == "zlib" ]; then
-       curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PACKAGE_DOWNLOAD zlib $(for i in "${zlib[@]}";do printf "$i";done)
+       curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PACKAGE_DOWNLOAD zlib $(for y in "${zlib[@]}";do printf "$y";done)
        tar xvf "$download_path"/zlib/zlib -C "$config_path"/unpack_file/"$GET_missing_dirs" --strip-components 1 &>/dev/null
        cd "$config_path"/unpack_file/"$GET_missing_dirs" && ./configure make && make install && echo "安装成功"
     fi
