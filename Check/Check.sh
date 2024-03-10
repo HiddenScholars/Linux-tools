@@ -8,7 +8,7 @@ controls=''
 config_path=/tools
 config_file=/tools/config
 handle_error() {
-    echo "出现运行错误，解决后再次运行！错误码：$?"
+    echo "出现运行错误，解决后再次运行！错误码：$0 : $?"
     exit 1
 }
 trap handle_error ERR
@@ -122,6 +122,8 @@ function SET_CONFIG() {
    fi
 }
 function PROCESS_CHECK() {
+    PROCESS_EXIST=()
+    PROCESS_RESIDUE=()
     PROCESS_NAME=("$@")
     for i in "${PROCESS_NAME[@]}"
     do
@@ -131,7 +133,9 @@ function PROCESS_CHECK() {
           printf "%s\t" "$i"
        fi
     done
-    [ "${#PROCESS_EXIST[@]}" -ne 0 ] && printf "PROCESS_EXIST\n"
+     if [ -n "${PROCESS_EXIST[@]}" ] && [ "${#PROCESS_EXIST[@]}" -ne 0 ];then
+       printf "PROCESS_EXIST\n"
+    fi
     if [ "${#PROCESS_EXIST[@]}" -eq 0 ]; then
        for y in "${PROCESS_NAME[@]}"
        do
@@ -141,7 +145,9 @@ function PROCESS_CHECK() {
               printf "%s\t" "$y"
           fi
        done
-    [ "${#PROCESS_RESIDUE[@]}" -ne 0 ] && printf ",PROCESS_RESIDUE\n"
+     if [ -n "${PROCESS_EXIST[@]}" ] && [ "${#PROCESS_RESIDUE[@]}" -ne 0 ];then
+       printf ",PROCESS_RESIDUE\n"
+     fi
     fi
 }
 function PORT_CHECK() {
@@ -154,14 +160,18 @@ function PORT_CHECK() {
         printf  "%s\t" "$i"
     fi
     done
-    [ "${#PORT_EXIST[@]}" -ne 0 ] && printf "：PORT_EXIST\n"
+    if [ "${#PORT_EXIST[@]}" -ne 0 ];then
+      printf "：PORT_EXIST\n"
+    fi
 }
 function PACKAGE_DOWNLOAD() {
     source $config_file &>/dev/null
     local ServerName=$1
     shift
     DownloadUrl=("$@")
-    [ ! -d "$download_path/$ServerName" ] &&  mkdir -p "$download_path/$ServerName"
+    if [ ! -d "$download_path/$ServerName" ];then
+      mkdir -p "$download_path/$ServerName"
+    fi
     for (( i = 0; i < "${#DownloadUrl[@]}"; i++ )); do
         GET_PackageVersion_1=$(echo "${DownloadUrl[$i]}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
         GET_PackageVersion_2=$(echo "${DownloadUrl[$i]}" | grep -oE '[0-9]+\.[0-9]+\.tar.gz+' | sed 's/\.tar\.gz$//')
@@ -175,7 +185,9 @@ function PACKAGE_DOWNLOAD() {
           fi
         fi
     done
-     [ -n "$ServerName"  ] && [ "${#DownloadUrl[@]}" -ne 0 ] && read -rp "Enter Your install service version choice：" y
+    if [ -n "$ServerName"  ] && [ "${#DownloadUrl[@]}" -ne 0 ];then
+      read -rp "Enter Your install service version choice：" y
+    fi
     if [[ "$y" =~ ^[0-9]+$ ]] && [ "$i" -le "${#DownloadUrl[@]}" ] ; then
         echo "$download_path/$ServerName"
         wget -nc -O "/$download_path/$ServerName/$ServerName" "${DownloadUrl[$y]}"
@@ -189,7 +201,9 @@ function PACKAGE_DOWNLOAD() {
     fi
 }
 function check_unpack_file_path() {
-    [ ! -d "$config_path"/unpack_file ] && mkdir -p "$config_path"/unpack_file
+    if [ ! -d "$config_path"/unpack_file ];then
+      mkdir -p "$config_path"/unpack_file
+    fi
     getUnpackNumber=$(find "$config_path/unpack_file/" -maxdepth 1 -type f -o -type d | wc -l)
     if [ "$getUnpackNumber" -gt  11 ];then
       source $config_file &>/dev/null
