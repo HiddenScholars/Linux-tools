@@ -66,7 +66,7 @@ function initialize_check() {
 source $config_file &>/dev/null
 bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/Link_localhost/install.sh) # tool link install.sh
 # 环境检测
-curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh | bash -s -- SET_CONFIG
+bash <(curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh) SET_CONFIG
 # 获取包管理器
 GET_PACKAGE_MASTER=$(curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh | bash -s -- PACKAGE_MASTER)
 # 获取系统版本
