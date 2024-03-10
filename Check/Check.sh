@@ -85,23 +85,27 @@ function DIRECTIVES_CHECK() {
 }
 function SET_CONFIG() {
    source $config_file &>/dev/null
+   sed -i '/^$/d' $config_file
    if [ "$controls" != "N/A" ] && [ "$SystemVersion" != "N/A" ] && [ "$CPUArchitecture" == "x86_64" ] && [ -f "$config_file" ]; then
         GET_LOCAL_CONTROLS=$(grep -c 'controls=' $config_file)
         if [ "$GET_LOCAL_CONTROLS" == "1" ]; then
            sed -i "s/controls=.*/controls='$controls'/g" $config_file
         else
+           echo -e "\n" >> "$config_file"
            echo "controls='$controls'" >> "$config_file"
         fi
         GET_LOCAL_CPUArchitecture=$(grep -c 'CPUArchitecture=' $config_file)
         if [ "$GET_LOCAL_CPUArchitecture" == "1" ]; then
             sed -i "s/CPUArchitecture=.*/CPUArchitecture='$CPUArchitecture'/g" $config_file
         else
+            echo -e "\n" >> "$config_file"
             echo "CPUArchitecture='$CPUArchitecture'" >> $config_file
         fi
         GET_LOCAL_SystemVersion=$(grep -c 'SystemVersion=' $config_file)
         if [ "$GET_LOCAL_SystemVersion" == "1" ]; then
             sed -i "s/SystemVersion=.*/SystemVersion='$SystemVersion'/g" $config_file
         else
+            echo -e "\n" >> "$config_file"
             echo "SystemVersion='$SystemVersion'" >> $config_file
         fi
    else
