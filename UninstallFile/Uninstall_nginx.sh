@@ -1,7 +1,6 @@
 #!/bin/bash
 
 read -rp "回车后确认卸载："
-set -x
 source /etc/profile
 source /tools/config
 getNginxProcess_number1=$(ps aux | grep -v grep | grep -v  "$0" | grep nginx | wc -l)

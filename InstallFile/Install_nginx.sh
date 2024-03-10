@@ -29,7 +29,7 @@ elif [ -n "$GET_PORT_CHECK" ] &&[ "${#GET_PORT_CHECK[@]}" -ne 0 ]; then
     [ "$select" != "y" ] && exit 0
 fi
 #依赖检测
-GET_DIRECTIVES_CHECK=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- DIRECTIVES_CHECK  "gcc" "make" "openssl" "pcre" "zlib")
+GET_DIRECTIVES_CHECK=$(bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) DIRECTIVES_CHECK "gcc" "make" "openssl" "pcre" "zlib")
 for i in "${GET_DIRECTIVES_CHECK[@]}"
 do
     if [ "$i" == "gcc" ]; then
@@ -96,11 +96,10 @@ GET_missing_dirs=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$
     sed -i "s/#user  nobody/user $nginx_user/g" "$install_path"/nginx/conf/nginx.conf
     source /etc/profile
     fi
-    if [ ! -z "$nginx_user" ]; then
+    if [ -n "$nginx_user" ]; then
     id "$nginx_user" &>/dev/null
     [ $? -ne 0 ] && useradd -s /sbin/nologin "$nginx_user"
-    # shellcheck disable=SC2086
-    chown -R "$nginx_user":"$nginx_user" $NGINX_HOME
+    chown -R "$nginx_user":"$nginx_user" "$NGINX_HOME"
     fi
 
     if [ -f "$NGINX_HOME"/sbin/nginx ]; then
