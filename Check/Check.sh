@@ -189,7 +189,9 @@ function PACKAGE_DOWNLOAD() {
       read -rp "Enter Your install service version choice：" y
     fi
     if [[ "$y" =~ ^[0-9]+$ ]] && [ "$i" -le "${#DownloadUrl[@]}" ] ; then
-        echo "$download_path/$ServerName"
+        if [ -f "/$download_path/$ServerName/$ServerName" ]; then
+            rm -rf "/$download_path/$ServerName/$ServerName"
+        fi
         wget -nc -O "/$download_path/$ServerName/$ServerName" "${DownloadUrl[$y]}"
         if [ $? -ne 0 ] && [ ! -f "/$download_path/$ServerName/$ServerName" ];then
           echo "download failed."
