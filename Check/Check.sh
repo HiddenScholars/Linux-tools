@@ -7,7 +7,16 @@ CPUArchitecture=''
 controls=''
 config_path=/tools
 config_file=/tools/config
-
+handle_error() {
+    echo "出现运行错误，解决后再次运行！错误码：$?"
+    exit 1
+}
+handle_exit() {
+    echo "脚本退出..."
+    exit 0
+}
+trap handle_error ERR
+trap handle_exit EXIT
 function PACKAGE_MASTER() {
 if command -v apt-get &> /dev/null; then
     controls='apt-get'
@@ -149,6 +158,7 @@ function PORT_CHECK() {
     [ "${#PORT_EXIST[@]}" -ne 0 ] && printf "：PORT_EXIST\n"
 }
 function PACKAGE_DOWNLOAD() {
+    source $config_file &>/dev/null
     local ServerName=$1
     shift
     DownloadUrl=("$@")
@@ -168,8 +178,12 @@ function PACKAGE_DOWNLOAD() {
     done
      [ -n "$ServerName"  ] && [ "${#DownloadUrl[@]}" -ne 0 ] && read -rp "Enter Your install service version choice：" y
     if [[ "$y" =~ ^[0-9]+$ ]] && [ "$i" -le "${#DownloadUrl[@]}" ] ; then
-        wget -nc -P "$download_path/$ServerName" -O "$ServerName" "${DownloadUrl[$y]}"
-        [ $? -eq 0 ] || echo "download failed." && return 1
+        echo "$download_path/$ServerName"
+        wget -nc -O "/$download_path/$ServerName/$ServerName" "${DownloadUrl[$y]}"
+        if [ $? -ne 0 ] && [ ! -f "/$download_path/$ServerName/$ServerName" ];then
+          echo "download failed."
+           return 1
+        fi
     else
         echo "Input Failed."
         return 1

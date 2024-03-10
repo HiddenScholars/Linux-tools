@@ -7,7 +7,16 @@ source $config_file &>/dev/null
 red=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR red)
 green=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR green)
 plain=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR plain)
-
+handle_error() {
+    echo "出现运行错误，解决后再次运行！错误码：$?"
+    exit 1
+}
+handle_exit() {
+    echo "脚本退出..."
+    exit 0
+}
+trap handle_error ERR
+trap handle_exit EXIT
 function check_update() {
   GET_REMOTE_VERSION=$(curl -s https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version)
   GET_LOCAL_VERSION=$(cat $version_file)
