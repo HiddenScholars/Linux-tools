@@ -22,6 +22,8 @@ trap handle_exit EXIT
 [ `whoami` != root ] && echo -e "${red}需要使用root权限${plain}" && exit 0
 function CHECK_FILE() {
      source $config_file &>/dev/null #优先使用config中的配置
+     echo "$url_address"
+     echo "$con_branch"
      if [ -z "$url_address" ] && [ -z "$con_branch" ] ;then
        set -x
        url_address=raw.githubusercontent.com
