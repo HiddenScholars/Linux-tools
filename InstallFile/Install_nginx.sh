@@ -11,9 +11,9 @@ GET_PACKAGE_MASTER=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/
 # 获取系统版本
 GET_SYSTEM_CHECK=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- SYSTEM_CHECK)
 # 进程检测
-GET_PROCESS_CHECK=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PROCESS_CHECK nginx)
+GET_PROCESS_CHECK=($(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PROCESS_CHECK nginx))
 # 端口检测
-GET_PORT_CHECK=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PORT_CHECK 80 443)
+GET_PORT_CHECK=($(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PORT_CHECK 80 443))
 if [ -n "$GET_PROCESS_CHECK" ] && [ -n "$GET_PORT_CHECK" ] && [ "${#GET_PROCESS_CHECK[@]}" -ne 0 ]  && [ "${#GET_PORT_CHECK[@]}" -ne 0 ]; then
     read -rp "nginx程序已存在是否继续安装（y/n）：" select
     [ "$select" != "y" ] && exit 0
@@ -29,7 +29,7 @@ elif [ -n "$GET_PORT_CHECK" ] &&[ "${#GET_PORT_CHECK[@]}" -ne 0 ]; then
     [ "$select" != "y" ] && exit 0
 fi
 #依赖检测
-GET_DIRECTIVES_CHECK=$(bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) DIRECTIVES_CHECK "gcc" "make" "openssl" "pcre" "zlib")
+GET_DIRECTIVES_CHECK=($(bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) DIRECTIVES_CHECK "gcc" "make" "openssl" "pcre" "zlib"))
 for i in "${GET_DIRECTIVES_CHECK[@]}"
 do
     if [ "$i" == "gcc" ]; then
