@@ -98,7 +98,7 @@ do
         esac
     fi
 done
-
+echo "脚本获取成功，数据处理中，请稍后..."
 case $1 in
 -d)
   case $2 in

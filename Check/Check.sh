@@ -116,7 +116,7 @@ function PROCESS_CHECK() {
     PROCESS_NAME=("$@")
     for i in "${PROCESS_NAME[@]}"
     do
-        GET_PROCESS_NUM=$(ps aux | grep -v grep | grep -c "$i" )
+        GET_PROCESS_NUM=$(ps aux | grep -v grep | grep -v "$0" | grep -c "$i" )
        if [ "$GET_PROCESS_NUM" -ne 0 ]; then
           PROCESS_EXIST+=("$i")
           printf "%s\t" "$i"
@@ -127,7 +127,7 @@ function PROCESS_CHECK() {
        for y in "${PROCESS_NAME[@]}"
        do
           GET_PROCESS_RESIDUE_ID=$(pgrep "$y")
-          if [ ${#GET_PROCESS_RESIDUE_ID[@]} -ne 0 ]; then
+          if [ -n "$GET_PROCESS_RESIDUE_ID"  ]; then
               PROCESS_RESIDUE+=("$y")
               printf "%s\t" "$y"
           fi
@@ -188,7 +188,7 @@ function check_unpack_file_path() {
     # 检测并创建目录
     for ((i=1; i<=100; i++)); do
         dir=$i
-        if [ -d "$config_path/unpack_file/$dir"  ] && [ "$(find $config_path/unpack_file/"$dir" | grep -v $config_path/unpack_file/"$dir" |  wc -l )" -eq 0 ]; then
+        if [ -d "$config_path/unpack_file/$dir"  ] && [ "$(find $config_path/unpack_file/"$dir" | grep -v $config_path/unpack_file/"$dir" | grep -v "$0" |  wc -l )" -eq 0 ]; then
             missing_dirs=$dir
             let i+=100
         elif [ ! -d "$config_path/unpack_file/$dir" ]; then
@@ -236,7 +236,7 @@ PROCESS_CHECK)
 SYSTEM_CHECK)
                   shift
                   SYSTEM_CHECK
-                  echo  "SystemVersion"
+                  echo  "$SystemVersion"
                   ;;
 PORT_CHECK)
                   shift
@@ -258,7 +258,7 @@ COLOR)
 CPUArchitecture)
                   shift
                   SYSTEM_CHECK
-                  echo "CPUArchitecture"
+                  echo "$CPUArchitecture"
                   ;;
 *)
                   echo "failed 404"

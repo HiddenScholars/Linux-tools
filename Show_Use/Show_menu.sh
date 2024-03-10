@@ -18,8 +18,11 @@ function check_update() {
              echo "$GET_REMOTE_VERSION" >$version_file
              fi
              echo -e "${green}已是最新版本${plain}"
+          elif [ "$GET_REMOTE_VERSION"  -ne "$GET_LOCAL_VERSION" ];then
+             echo -e "${green}已是最新版本${plain}"
           else
              echo -e "${red} 版本参数错误 ${plain}"
+             return 1
           fi
 }
 function install_nginx() {

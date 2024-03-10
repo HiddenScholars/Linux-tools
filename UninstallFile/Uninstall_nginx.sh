@@ -1,19 +1,19 @@
 #!/bin/bash
 
 read -rp "回车后确认卸载："
-
+set -x
 source /etc/profile
 source /tools/config
-getNginxProcess_number1=$(ps aux | grep -v grep | grep nginx | wc -l)
+getNginxProcess_number1=$(ps aux | grep -v grep | grep -v  "$0" | grep nginx | wc -l)
 if [ "$getNginxProcess_number1" != 0 ]; then
     echo "检测到Nginx进程，进程ID："
-    ps aux | grep -v grep | grep nginx
+    ps aux | grep -v grep | grep -v "$0" | grep nginx
     killall_select=1
     while [ $killall_select -lt 4 ]; do
       echo "开始kill Nginx进程 $killall_select"
-      getNginxProcess_number2=$(ps aux | grep -v grep | grep nginx | wc -l)
+      getNginxProcess_number2=$(ps aux | grep -v grep | grep -v "$0" | grep nginx | wc -l)
         if [ "$getNginxProcess_number2" != 0 ]; then
-        for i in $(ps aux | grep -v grep | grep nginx)
+        for i in $(ps aux | grep -v grep | grep -v "$0" | grep nginx)
             do
               kill -9 "$i"
             done
@@ -21,7 +21,7 @@ if [ "$getNginxProcess_number1" != 0 ]; then
         sleep 2
         let killall_select++
     done
-    getNginxProcess_number3=$(ps aux | grep -v grep | grep nginx | wc -l)
+    getNginxProcess_number3=$(ps aux | grep -v grep | grep -v "$0" | grep nginx | wc -l)
     [ "$getNginxProcess_number3" != 0 ] && echo "Nginx进程杀死失败，退出..." && exit 0
 printf "获取Nginx安装路径："
         if [ -z "$NGINX_HOME" ]; then
