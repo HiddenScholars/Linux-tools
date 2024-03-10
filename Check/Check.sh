@@ -14,8 +14,7 @@ if command -v apt-get &> /dev/null; then
 elif command -v yum &> /dev/null; then
     controls='yum'
 else
-    controls=1
-    return 1
+    controls='N/A'
 fi
 }
 function SYSTEM_CHECK() {
@@ -27,9 +26,10 @@ elif [ "$SystemCategory" == '"Ubuntu"' ];then
 SystemVersion="ubuntu"
 elif [ "$SystemCategory" == '"Debian GNU/Linux"' ];then
 SystemVersion="debian"
+elif [ "$SystemCategory" == '"Anolis OS"' ]; then
+SystemVersion="Anolis OS"
 else
-SystemVersion=1
-return 1
+SystemVersion=N/A
 fi
 }
 PACKAGE_MASTER
@@ -74,14 +74,14 @@ function DIRECTIVES_CHECK() {
                   printf "%s\t" "${NOTFONUDDIRECTIVES[$i]}"
               done
               printf "\t Installed_failed!"
-              return 1;
+              exit 1;
         fi
     fi
 
 }
 function SET_CONFIG() {
    source $config_file &>/dev/null
-   if [ "$controls" != "1" ] && [ "$SystemVersion" != "1" ] && [ "$CPUArchitecture" == "x86_64" ] && [ -f "$config_file" ]; then
+   if [ "$controls" != "N/A" ] && [ "$SystemVersion" != "N/A" ] && [ "$CPUArchitecture" == "x86_64" ] && [ -f "$config_file" ]; then
         GET_CONTROLS=$(grep -c 'controls=' $config_file)
         if [ "$GET_CONTROLS" == "1" ]; then
            sed -i "s/controls=.*/controls=$controls/g" $config_file
@@ -106,10 +106,10 @@ function SET_CONFIG() {
         echo "软件包管理器：$controls"
         echo "Linux系统版本：$SystemVersion"
         echo "CPU架构：$CPUArchitecture"
-        return 1
+        exit 1
     else
         echo "$config_file not found."
-        return 1
+        exit 1
      fi
    fi
 }
