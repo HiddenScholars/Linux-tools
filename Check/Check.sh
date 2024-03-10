@@ -101,7 +101,7 @@ function SET_CONFIG() {
         if [ "$GET_CPUArchitecture" == "1" ]; then
             sed -i "s/CPUArchitecture=.*/CPUArchitecture=$GET_CPUArchitecture/g" $config_file
         else
-            echo "CPUArchitecture=$GET_CPUArchitecture" >> $config_file
+            echo "CPUArchitecture=$CPUArchitecture" >> $config_file
         fi
         GET_SystemVersion=$(grep -c 'SystemVersion=' $config_file)
         if [ "$GET_SystemVersion" == "1" ]; then
