@@ -1,14 +1,12 @@
 #!/bin/bash
-nginx_download_url=
-docker_download_url=
-select_download_version=
+
 config_path=/tools/
 config_file=/tools/config
 version_file=$config_path/version
-select=
 source $config_file &>/dev/null
-
-
+red=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR red)
+green=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR green)
+plain=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR plain)
 
 function check_update() {
   GET_REMOTE_VERSION=$(curl -s https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version)

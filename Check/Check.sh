@@ -198,6 +198,23 @@ function check_unpack_file_path() {
         fi
     done
 }
+function COLOR() {
+red='\033[31m'
+green='\033[32m'
+yellow='\033[33m'
+plain='\033[0m'
+if [ "$1" == "red" ]; then
+    printf "%s" "$red"
+elif [ "$1" == "green" ]; then
+    printf "%s" "$green"
+elif [  "$1" == "yellow" ]; then
+    printf "%s" "$yellow"
+elif [  "$1" == "plain" ]; then
+    printf "%s" "$plain"
+else
+     return 1
+fi
+}
 case $1 in
 DIRECTIVES_CHECK)
                   shift
@@ -234,6 +251,10 @@ check_unpack_file_path)
                   check_unpack_file_path
                   echo "$missing_dirs"
                   ;;
+COLOR)
+                 shift
+                 COLOR "$1"
+                 ;;
 CPUArchitecture)
                   shift
                   SYSTEM_CHECK

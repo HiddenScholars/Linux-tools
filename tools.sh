@@ -1,13 +1,11 @@
 #!/bin/bash
 
-nginx_download_url=
-docker_download_url=
-select_download_version=
 config_path=/tools/
 config_file=/tools/config
 version_file=$config_path/version
-branch_array=()
-branch_select_choice=0
+
+red=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR red)
+plain=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR plain)
 
 handle_error() {
     echo "出现运行错误，解决后再次运行！错误码：$?"

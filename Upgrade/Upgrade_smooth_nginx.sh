@@ -3,6 +3,8 @@
 read -rp "回车后即确认升(降)级："
 source /etc/profile
 source /tools/config
+red=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR red)
+plain=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR plain)
 select=''
 sbin_nginx=''
 getNginxProcessNumber=$(pgrep nginx | wc -l)
