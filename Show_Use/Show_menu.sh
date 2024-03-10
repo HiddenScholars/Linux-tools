@@ -17,7 +17,7 @@ function check_update() {
              # shellcheck disable=SC2086
              bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/UpdateFile/UPDATE.sh)
              if [ $? -eq 0 ]; then
-             echo "GET_REMOTE_VERSION" >$version_file
+             echo "$GET_REMOTE_VERSION" >$version_file
              fi
              echo -e "${green}已是最新版本${plain}"
           else

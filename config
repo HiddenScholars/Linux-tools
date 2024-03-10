@@ -1,5 +1,3 @@
-#!/bin/bash
-
 download_path=/tools/soft/
 install_path=/usr/local/soft/
 
