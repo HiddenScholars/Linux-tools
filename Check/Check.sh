@@ -11,12 +11,7 @@ handle_error() {
     echo "出现运行错误，解决后再次运行！错误码：$?"
     exit 1
 }
-handle_exit() {
-    echo "脚本退出..."
-    exit 0
-}
 trap handle_error ERR
-trap handle_exit EXIT
 function PACKAGE_MASTER() {
 if command -v apt-get &> /dev/null; then
     controls='apt-get'
