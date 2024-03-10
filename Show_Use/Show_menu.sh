@@ -56,7 +56,7 @@ function uninstall_tool() {
 
 #菜单目录显示控制
 show_use=("退出" "安装" "卸载" "升级" "acme脚本(搭配cloudflare)" "检查更新")
-show_use_function=("exit 1" "show_Soft" "soft_Uninstall" "soft_Upgrade" "setting_ssl" "check_update")
+show_use_function=("exit 0" "show_Soft" "soft_Uninstall" "soft_Upgrade" "setting_ssl" "check_update")
 show_soft=("返回主页面" "nginx" "docker" "docker-compose")
 show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose")
 soft_uninstall=("返回主页面" "Nginx卸载" "Docker卸载" "tool命令卸载")

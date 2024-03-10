@@ -7,7 +7,7 @@ CPUArchitecture=''
 controls=''
 config_path=/tools
 config_file=/tools/config
-source $config_file
+
 function PACKAGE_MASTER() {
 if command -v apt-get &> /dev/null; then
     controls='apt-get'
@@ -80,6 +80,7 @@ function DIRECTIVES_CHECK() {
 
 }
 function SET_CONFIG() {
+   source $config_file &>/dev/null
    if [ "$controls" != "1" ] && [ "$SystemVersion" != "1" ] && [ "$CPUArchitecture" == "x86_64" ] && [ -f "$config_file" ]; then
         GET_CONTROLS=$(grep -c 'controls=' $config_file)
         if [ "$GET_CONTROLS" == "1" ]; then
@@ -214,6 +215,46 @@ elif [  "$1" == "plain" ]; then
 else
      return 1
 fi
+}
+function FIREWALL_MASTER() {
+    local GET_FIREWALL_SELECT=("$1") #add/remove
+    local GET_FIREWALL_SELECT_ServiceAndPort=("$2") #service/port
+    GET_FIREWALL_SELECT_Port=("$@")
+    local GET_FIREWALL_MASTER=("firewall" "ufw" "iptables")
+    for i in "${GET_FIREWALL_MASTER[@]}"
+    do
+        if which "$i" &>/dev/null && [ "$(pgrep $i | wc -l)" -ne 0 ];then
+            for i in "${GET_FIREWALL_SELECT_Port[@]}"
+            do
+            if [ "$i" == "firewall" ];then
+                --query-port=8080/tcp
+
+
+                if [ "$1" == "add" ] && [ "$2" == "port" ]; then
+                    firewall-cmd --permenent --zone=public --add-port="$i"
+                elif [ "$1" == "add" ] && [ "$2" == "service" ];then
+                    firewall-cmd --permenent --zone=public --add-service="$i"
+                elif [ "$1" == "remove" ] && [ "$2" == "port" ]; then
+                    firewall-cmd --permenent --zone=public --remove-port="$i"
+                elif [ "$1" == "remove" ] && [ "$2" == "service" ];then
+                    firewall-cmd --permenent --zone=public --remove-service="$i"
+                fi
+                firewall-cmd --reload
+                return 0
+            elif [ "$i" == "ufw" ];then
+
+
+                return 0
+            elif [ "$i" == "iptables" ];then
+
+                return 0
+            else
+              echo "Get Firewall failed"
+              return 1
+            fi
+            done
+        fi
+    done
 }
 case $1 in
 DIRECTIVES_CHECK)
