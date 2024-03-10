@@ -21,13 +21,12 @@ trap handle_exit EXIT
 #Linux-tools start check ...
 [ `whoami` != root ] && echo -e "${red}需要使用root权限${plain}" && exit 0
 function CHECK_FILE() {
+     source $config_file &>/dev/null #优先使用config中的配置
      if [ -z "$url_address" ] && [ -z "$con_branch" ] ;then
        set -x
        url_address=raw.githubusercontent.com
        con_branch=main
        set +x
-     else
-       source $config_file &>/dev/null #当url_address and con_branch 都存在时优先使用config配置
      fi
       if [  ! -f $version_file ]; then
           [ ! -d ${config_path} ] && mkdir ${config_path}
