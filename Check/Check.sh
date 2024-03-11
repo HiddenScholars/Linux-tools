@@ -218,7 +218,7 @@ function check_unpack_file_path() {
     # 检测并创建目录
     for ((i=1; i<=100; i++)); do
         dir=$i
-        if [ -d "$config_path/unpack_file/$dir"  ] && [ "$(find $config_path/unpack_file/"$dir" | grep -v $config_path/unpack_file/"$dir"  |  wc -l )" -eq 0 ]; then
+        if [ -d "$config_path/unpack_file/$dir"  ] && [ "$(find $config_path/unpack_file/"$dir" |  wc -l )" -eq 1 ]; then
             missing_dirs=$dir
             let i+=100
         elif [ ! -d "$config_path/unpack_file/$dir" ]; then
