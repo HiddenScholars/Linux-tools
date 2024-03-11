@@ -12,7 +12,7 @@ handle_error() {
     exit 1
 }
 handle_exit() {
-    echo "脚本退出..."
+    echo "退出菜单页..."
     exit 0
 }
 trap handle_error ERR

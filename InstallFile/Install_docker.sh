@@ -3,13 +3,11 @@ config_file=/tools/config
 source $config_file
 GET_missing_dirs_docker=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
 #Docker下载
-bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  docker  $(for i in "${docker_download_urls[@]}";do printf "$i ";done)
-if $(tar -xzvf "$download_path"/docker/docker -C  /tools/unpack_file/"$GET_missing_dirs_docker" --strip-components 1);then
-  echo "解压完成"
+bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  docker $(for i in "${docker_download_urls[@]}";do printf "$i ";done)
+tar -xzvf "$download_path/docker/docker" -C  "/tools/unpack_file/$GET_missing_dirs_docker" --strip-components 1
   if $(cp -rf /tools/unpack_file/"$GET_missing_dirs_docker"/* /usr/bin/); then
     echo "复制完成"
   fi
-fi 
 echo "[Unit]
 Description=Docker Application Container Engine
 Documentation=https://docs.docker.com
@@ -41,6 +39,3 @@ if $(docker info &>/dev/null); then
 else
     echo "Docker安装失败"
 fi
-
-
-
