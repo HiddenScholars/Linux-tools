@@ -3,6 +3,7 @@
 read -rp "回车后确认卸载："
 source /etc/profile
 source /tools/config
+function KILL_NGINX_PROCESS() {
 getNginxProcess_number1=($(pgrep nginx))
 if [ "${#getNginxProcess_number1[@]}" != 0 ]; then
     echo "检测到Nginx进程，进程ID："
@@ -17,122 +18,33 @@ if [ "${#getNginxProcess_number1[@]}" != 0 ]; then
             done
         sleep 2
     getNginxProcess_number2=($(pgrep nginx))
-    [ "${#getNginxProcess_number2[@]}" != 0 ] && echo "Nginx进程杀死失败，退出..." && exit 0
-printf "获取Nginx安装路径："
-        if [ -z "$NGINX_HOME" ]; then
-          source /etc/profile
-            command -v nginx
-           if [ "$(command -v nginx)" == "/usr/sbin/nginx" ];then
-            $controls remove -y nginx
-            $controls autoremove -y nginx
-            source /etc/profile
-          elif [ -h "$(command -v nginx)" ]; then
-              temp_command=$(command -v nginx)
-             if [ -n  "$temp_command" ];then
-                link_path=$(readlink -f "$temp_command")
-              echo "$(command -v nginx)为软连接"
-              echo "获取源路径为：$link_path"
-              rm -rf "$link_path"
-              rm -rf "$(command -v nginx)"
-              source /etc/profile
-             fi
-          fi
-        [ -f /etc/init.d/nginx ] &&  rm -f /etc/init.d/nginx
-        systemctl disable nginx.service &>/dev/null
-        [ -f /usr/lib/systemd/system/nginx.service ] &&  rm -rf /usr/lib/systemd/system/nginx.service
-        [ -f /etc/systemd/system/nginx.service ] &&  rm -rf /etc/systemd/system/nginx.service
-        systemctl daemon-reload
-        echo
-        echo "卸载Nginx完成"
-
-        elif [ -n "$NGINX_HOME" ];then
-        source /etc/profile
-        echo "$NGINX_HOME"
-        rm -rf "$NGINX_HOME"
-        sed -i "/NGINX/d" /etc/profile
-        sed -i "/nginx/d" /etc/profile
-        source /etc/profile
-        if [ "$(command -v nginx)" == "/usr/sbin/nginx" ]; then
-            $controls remove -y nginx
-            $controls autoremove -y nginx
-            source /etc/profile
-        elif [ -h "$(command -v nginx)" ]; then
-            temp_command=$(command -v nginx)
-            if [ -n  "$temp_command" ];then
-            link_path=$(readlink -f "$temp_command")
-            echo "$(command -v nginx)为软连接"
-            echo "获取源路径为：$link_path"
-            rm -rf "$link_path"
-            rm -rf "$(command -v nginx)"
-            source /etc/profile
-            fi
-        fi
-        [ -f /etc/init.d/nginx ] &&  rm -f /etc/init.d/nginx
-        systemctl disable nginx.service &>/dev/null
-        [ -f /usr/lib/systemd/system/nginx.service ] &&  rm -rf /usr/lib/systemd/system/nginx.service
-        [ -f /etc/systemd/system/nginx.service ] &&  rm -rf /etc/systemd/system/nginx.service
-        systemctl daemon-reload
-        echo
-        echo "卸载Nginx完成"
-        fi
-elif [ -n "$NGINX_HOME" ] || [  "$(command -v nginx)" != " " ]; then
-    printf "获取Nginx安装路径："
-        if [ -z "$NGINX_HOME" ]; then
-          source /etc/profile
-            command -v nginx
-           if [ "$(command -v nginx)" == "/usr/sbin/nginx" ];then
-            $controls remove -y nginx
-            $controls autoremove -y nginx
-            source /etc/profile
-          elif [ -h "$(command -v nginx)" ]; then
-              temp_command=$(command -v nginx)
-             if [ -n "$temp_command" ];then
-                link_path=$(readlink -f "$temp_command")
-              echo "$(command -v nginx)为软连接"
-              echo "获取源路径为：$link_path"
-              rm -rf "$link_path"
-              rm -rf "$(command -v nginx)"
-              source /etc/profile
-             fi
-          fi
-        [ -f /etc/init.d/nginx ] && rm -f /etc/init.d/nginx
-        systemctl disable nginx.service &>/dev/null
-        [ -f /usr/lib/systemd/system/nginx.service ] &&  rm -rf /usr/lib/systemd/system/nginx.service
-        [ -f /etc/systemd/system/nginx.service ] && rm -rf /etc/systemd/system/nginx.service
-        systemctl daemon-reload
-        echo
-        echo "卸载Nginx完成"
-
-        elif [ -n "$NGINX_HOME" ];then
-        source /etc/profile
-        echo "$NGINX_HOME"
-        rm -rf "$NGINX_HOME"
-        sed -i "/NGINX/d" /etc/profile
-        sed -i "/nginx/d" /etc/profile
-        source /etc/profile
-        if [ "$(command -v nginx)" == "/usr/sbin/nginx" ]; then
-            $controls remove -y nginx
-            $controls autoremove -y nginx
-            source /etc/profile
-        elif [ -h "$(command -v nginx)" ]; then
-            temp_command=$(command -v nginx)
-            if [ -n "$temp_command" ];then
-            link_path=$(readlink -f "$temp_command")
-            echo "$(command -v nginx)为软连接"
-            echo "获取源路径为：$link_path"
-            rm -rf "$link_path"
-            rm -rf "$(command -v nginx)"
-            source /etc/profile
-            fi
-        fi
-        [ -f /etc/init.d/nginx ] && rm -f /etc/init.d/nginx
-        systemctl disable nginx.service &>/dev/null
-        [ -f /usr/lib/systemd/system/nginx.service ] && rm -rf /usr/lib/systemd/system/nginx.service
-        [ -f /etc/systemd/system/nginx.service ] &&  rm -rf /etc/systemd/system/nginx.service
-        systemctl daemon-reload
-        echo
-        echo "卸载Nginx完成"
-        fi
-else
-  echo "未检测到Nginx安装信息"
+    [ "${#getNginxProcess_number2[@]}" != 0 ] && echo "Nginx进程杀死失败，退出..." && return 1
 fi
+}
+function DELETE_NGINX_FILE() {
+GET_PACKAGE_MASTER=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PACKAGE_MASTER)
+GET_NGINX_SERVICE_PATH=($(find / -name "nginx.service"))
+if which nginx &>/dev/null; then
+"$GET_PACKAGE_MASTER" remove -y nginx
+systemctl daemon-reload
+fi
+GET_PATH="$install_path/nginx/"
+if [ -d "$GET_PATH" ]; then
+    rm -rf "$GET_PATH"
+    for i in "${GET_NGINX_SERVICE_PATH[@]}"
+    do
+          rm -rf "$i"
+    done
+    echo  "卸载完成"
+else
+   read -rp "未获取到nginx路径，手动输入：" temp
+   if [ -n "$temp" ] && [ "$temp" != "/" ] && [ -d "$temp" ]; then
+       rm -rf "$temp"
+       echo  "卸载完成"
+   fi
+fi
+
+}
+
+KILL_NGINX_PROCESS
+DELETE_NGINX_FILE

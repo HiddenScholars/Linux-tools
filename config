@@ -7,6 +7,7 @@ nginx_user=nginx
 nginx_download_urls=(
 https://nginx.org/download/nginx-1.24.0.tar.gz
 https://nginx.org/download/nginx-1.22.1.tar.gz)
+docker_urls=(https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/static/stable/x86_64/docker-17.03.0-ce.tgz)
 docker_compose_download_urls=(https://github.com/docker/compose/releases/download/v2.23.3/docker-compose-linux-x86_64)
 pcre=(https://netix.dl.sourceforge.net/project/pcre/pcre/8.40/pcre-8.40.tar.gz)
 make=(https://ftp.gnu.org/gnu/make/make-4.4.tar.gz)
