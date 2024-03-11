@@ -85,7 +85,6 @@ function DIRECTIVES_CHECK() {
 }
 function SET_CONFIG() {
    source $config_file &>/dev/null
-   sed -i '/^$/d' $config_file
    if [ "$controls" != "N/A" ] && [ "$SystemVersion" != "N/A" ] && [ "$CPUArchitecture" == "x86_64" ] && [ -f "$config_file" ]; then
         GET_LOCAL_CONTROLS=$(grep -c 'controls=' $config_file)
         if [ "$GET_LOCAL_CONTROLS" == "1" ]; then
@@ -108,6 +107,7 @@ function SET_CONFIG() {
             echo -e "\n" >> "$config_file"
             echo "SystemVersion='$SystemVersion'" >> $config_file
         fi
+        sed -i '/^$/d' $config_file
    else
      if [ -f "$config_file" ]; then
         echo "不支持的版本"
@@ -218,7 +218,7 @@ function check_unpack_file_path() {
     # 检测并创建目录
     for ((i=1; i<=100; i++)); do
         dir=$i
-        if [ -d "$config_path/unpack_file/$dir"  ] && [ "$(find $config_path/unpack_file/"$dir" | grep -v $config_path/unpack_file/"$dir" | grep -v "$0" |  wc -l )" -eq 0 ]; then
+        if [ -d "$config_path/unpack_file/$dir"  ] && [ "$(find $config_path/unpack_file/"$dir" | grep -v $config_path/unpack_file/"$dir"  |  wc -l )" -eq 0 ]; then
             missing_dirs=$dir
             let i+=100
         elif [ ! -d "$config_path/unpack_file/$dir" ]; then

@@ -48,12 +48,14 @@ function CHECK_FILE() {
     if [ -z "$download_path" ] && [ "$GET_DOWNLOAD_PATH" == 1 ]; then
        sed -i "s/download_path=.*/download_path=/tools/soft/g" $config_file
     elif [ -z "$download_path" ] && [ "$GET_DOWNLOAD_PATH" == 0 ]; then
+      echo -e "\n" >> "$config_file"
       echo "download_path=/tools/soft" >>$config_file
     fi
     GET_INSTALL_PATH=$(grep -c install_path $config_file)
     if [ -z "$install_path" ] && [ "$GET_INSTALL_PATH" == 1 ]; then
        sed -i "s/install_path=.*/install_path=/usr/local/soft/g" $config_file
     elif [ -z "$install_path" ] && [ "$GET_INSTALL_PATH" == 0 ];then
+      echo -e "\n" >> "$config_file"
       echo "install_path=/usr/local/soft/" >>$config_file
     fi
     if [ -n "$download_path" ] && [ ! -d "$download_path" ]; then
@@ -62,6 +64,7 @@ function CHECK_FILE() {
     if [ -n "$install_path" ] && [ ! -d "$install_path" ]; then
         mkdir -p "$install_path"
     fi
+    sed '/^$/d' "$config_file" #删除空行
 }
 function initialize_check() {
 source $config_file &>/dev/null
