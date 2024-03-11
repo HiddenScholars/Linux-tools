@@ -64,7 +64,7 @@ function CHECK_FILE() {
     if [ -n "$install_path" ] && [ ! -d "$install_path" ]; then
         mkdir -p "$install_path"
     fi
-    sed '/^$/d' "$config_file" #删除空行
+    sed '/^$/d' "$config_file" &>/dev/null #删除空行
 }
 function initialize_check() {
 source $config_file &>/dev/null

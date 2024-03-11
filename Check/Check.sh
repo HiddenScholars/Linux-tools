@@ -107,7 +107,7 @@ function SET_CONFIG() {
             echo -e "\n" >> "$config_file"
             echo "SystemVersion='$SystemVersion'" >> $config_file
         fi
-        sed -i '/^$/d' $config_file
+        sed -i '/^$/d' $config_file &>/dev/null
    else
      if [ -f "$config_file" ]; then
         echo "不支持的版本"
