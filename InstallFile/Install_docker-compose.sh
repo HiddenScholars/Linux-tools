@@ -9,9 +9,10 @@ if [ -f /usr/local/bin/docker-compose ];then
 fi
 echo -e "${red} 注意：请选择与机型相匹配的架构安装包当前架构：`uname -m`${plain}"
 bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  docker-compose  $(for i in "${docker_compose_download_urls[@]}";do printf "$i ";done)
-
-if $(cp -rf "$download_path"/docker-compose/docker-compose /usr/local/bin/);then
-  chown +x /usr/local/bin/docker-compose
+if [ -f "$download_path"/docker-compose/docker-compose ]; then
+  if $(cp -rf "$download_path"/docker-compose/docker-compose /usr/local/bin/);then
+    chown +x /usr/local/bin/docker-compose
+  fi
 fi
 
 if $(docker-compose -v) &>/dev/null; then
