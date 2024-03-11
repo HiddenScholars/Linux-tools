@@ -57,8 +57,8 @@ bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/
 function uninstall_nginx() {
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UninstallFile/Uninstall_nginx.sh)
 }
-function uninstall_docker() {
-    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UninstallFile/Uninstall_docker.sh)
+function Uninstall_docker_docker_compose() {
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UninstallFile/Uninstall_docker_docker_compose.sh)
 }
 function uninstall_tool() {
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Link_localhost/uninstall.sh)
@@ -69,8 +69,8 @@ show_use=("退出" "安装" "卸载" "升级" "acme脚本(搭配cloudflare)" "�
 show_use_function=("exit 0" "show_Soft" "soft_Uninstall" "soft_Upgrade" "setting_ssl" "check_update")
 show_soft=("返回主页面" "nginx" "docker+docker-compose" "docker-compose")
 show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose")
-soft_uninstall=("返回主页面" "Nginx卸载" "Docker卸载" "tool命令卸载")
-soft_uninstall_function=("return" "uninstall_nginx" "uninstall_docker" "uninstall_tool")
+soft_uninstall=("返回主页面" "nginx卸载" "docker+docker-compose卸载" "tool命令卸载")
+soft_uninstall_function=("return" "uninstall_nginx" "Uninstall_docker_docker_compose" "uninstall_tool")
 soft_upgrade=("返回主菜单" "Nginx平滑升(降)级")
 soft_upgrade_function=("return" "upgrade_smooth_nginx")
 
