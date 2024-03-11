@@ -5,8 +5,10 @@ GET_missing_dirs_docker=$(curl -sl https://"$url_address"/HiddenScholars/Linux-t
 #Docker下载
 bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  docker  $(for i in "${docker_urls[@]}";do printf "$i ";done)
 tar -xzvf "$download_path"/docker/docker -C  /tools/unpack_file/"$GET_missing_dirs_docker" --strip-components 1
-cd /tools/unpack_file/"$GET_missing_dirs_docker" && cp -rf * /usr/bin/*
 
+if $(cp -rf /tools/unpack_file/"$GET_missing_dirs_docker"/* /usr/bin/); then
+    echo "复制完成"
+fi
 echo "[Unit]
 Description=Docker Application Container Engine
 Documentation=https://docs.docker.com
@@ -34,9 +36,10 @@ systemctl daemon-reload
 systemctl start docker
 
 if $(docker info &>/dev/null); then
-    echo "安装成功"
+    echo "Docker安装成功"
 else
     echo "安装失败"
 fi
+
 
 
