@@ -17,7 +17,7 @@ if [ "${#getNginxProcess_number1[@]}" != 0 ]; then
             done
         sleep 2
     getNginxProcess_number2=($(pgrep nginx))
-    [ "${getNginxProcess_number2[@]}" != 0 ] && echo "Nginx进程杀死失败，退出..." && exit 0
+    [ "${#getNginxProcess_number2[@]}" != 0 ] && echo "Nginx进程杀死失败，退出..." && exit 0
 printf "获取Nginx安装路径："
         if [ -z "$NGINX_HOME" ]; then
           source /etc/profile
