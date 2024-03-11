@@ -18,16 +18,15 @@ handle_exit() {
 trap handle_error ERR
 trap handle_exit EXIT
 function check_update() {
-  GET_REMOTE_VERSION=$(curl -s https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version)
+  GET_REMOTE_VERSION=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version)
   GET_LOCAL_VERSION=$(cat $version_file)
-          if [[ "$GET_LOCAL_VERSION" =~ ^[0-9]+$ ]] && [ "$GET_REMOTE_VERSION"  -ne "$GET_LOCAL_VERSION" ];then
-             # shellcheck disable=SC2086
-             bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/UpdateFile/UPDATE.sh)
+          if [[ "$GET_LOCAL_VERSION" =~ ^[0-9]+$ ]] && [ "$GET_REMOTE_VERSION"  != "$GET_LOCAL_VERSION" ];then
+             bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UpdateFile/UPDATE.sh)
              if [ $? -eq 0 ]; then
              echo "$GET_REMOTE_VERSION" >$version_file
-             fi
              echo -e "${green}已是最新版本${plain}"
-          elif [ "$GET_REMOTE_VERSION"  -ne "$GET_LOCAL_VERSION" ];then
+             fi
+          elif [ "$GET_REMOTE_VERSION"  == "$GET_LOCAL_VERSION" ];then
              echo -e "${green}已是最新版本${plain}"
           else
              echo -e "${red} 版本参数错误 ${plain}"
