@@ -169,7 +169,7 @@ function PACKAGE_DOWNLOAD() {
     local ServerName=$1
     shift
     DownloadUrl=("$@")
-    tr_s_variable_1=$(echo "$download_path/$ServerName" | tr -s '/')
+    tr_s_variable_1=$(echo "/$download_path/$ServerName/" | tr -s '/')
     if [ ! -d "$tr_s_variable" ];then
       mkdir -p "$tr_s_variable"
     fi
