@@ -13,6 +13,7 @@ handle_error() {
 }
 handle_exit() {
     echo "脚本退出..."
+    bash
     exit 0
 }
 trap handle_error ERR
@@ -126,5 +127,6 @@ case $1 in
   CHECK_FILE
   initialize_check
   bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh) # function menu
+  bash
   ;;
 esac

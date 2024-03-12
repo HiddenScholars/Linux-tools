@@ -17,9 +17,20 @@ handle_exit() {
 }
 trap handle_error ERR
 trap handle_exit EXIT
-function check_update() {
+
+#菜单目录显示控制
+show_use=("退出" "安装" "卸载" "升级" "acme脚本(搭配cloudflare)" "检查更新")
+show_use_function=("exit 0" "show_Soft" "soft_Uninstall" "soft_Upgrade" "setting_ssl" "check_update")
+show_soft=("返回主页面" "nginx" "docker+docker-compose" "docker-compose" "一键安装所有")
+show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose" "install_all")
+soft_uninstall=("返回主页面" "nginx卸载" "docker+docker-compose卸载" "tool命令卸载")
+soft_uninstall_function=("return" "uninstall_nginx" "Uninstall_docker_docker_compose" "uninstall_tool")
+soft_upgrade=("返回主菜单" "Nginx平滑升(降)级")
+soft_upgrade_function=("return" "upgrade_smooth_nginx")
+
   GET_REMOTE_VERSION=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version)
   GET_LOCAL_VERSION=$(cat $version_file)
+function check_update() {
           if [[ "$GET_LOCAL_VERSION" =~ ^[0-9]+$ ]] && [ "$GET_REMOTE_VERSION"  != "$GET_LOCAL_VERSION" ];then
              bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UpdateFile/UPDATE.sh)
              if [ $? -eq 0 ]; then
@@ -63,17 +74,14 @@ function Uninstall_docker_docker_compose() {
 function uninstall_tool() {
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Link_localhost/uninstall.sh)
 }
-
-#菜单目录显示控制
-show_use=("退出" "安装" "卸载" "升级" "acme脚本(搭配cloudflare)" "检查更新")
-show_use_function=("exit 0" "show_Soft" "soft_Uninstall" "soft_Upgrade" "setting_ssl" "check_update")
-show_soft=("返回主页面" "nginx" "docker+docker-compose" "docker-compose")
-show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose")
-soft_uninstall=("返回主页面" "nginx卸载" "docker+docker-compose卸载" "tool命令卸载")
-soft_uninstall_function=("return" "uninstall_nginx" "Uninstall_docker_docker_compose" "uninstall_tool")
-soft_upgrade=("返回主菜单" "Nginx平滑升(降)级")
-soft_upgrade_function=("return" "upgrade_smooth_nginx")
-
+function install_all() {
+for i in "${show_soft_function[@]}"
+do
+  if [ "$i" != "install_docker_compose" ] && [ "$i" != "install_all" ] && [ "$i" != "return" ]; then
+      $i
+  fi
+done
+}
 
 
 #该参数请勿修改
@@ -90,7 +98,7 @@ echo -e "${green}   _|      _|    _|  _|    _|  _|      _|_|${plain}"
 echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
     select=''
     printf "****************************************************************************\n"
-                            printf "\t\t**欢迎使用Linux-tools脚本菜单** \t version：%s\n" "$(cat $config_path/version)"
+                            printf "\t\t**欢迎使用Linux-tools脚本菜单** \t %s\n" "$([ "$GET_REMOTE_VERSION" != "$GET_LOCAL_VERSION" ] && echo -e "${red}有更新内容!!!${plain}")"
     printf "****************************************************************************\n"
                             for i in "${!show_use[@]}"
                             do
