@@ -18,5 +18,5 @@ fi
 if $(docker-compose -v) &>/dev/null; then
    echo -e "${green}docker_compose安装完成${plain}"
 else
-   echo "${green}docker_compose安装失败${plain}'"
+   echo -e "${green}docker_compose安装失败${plain}'"
 fi
