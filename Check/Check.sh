@@ -200,7 +200,7 @@ function PACKAGE_DOWNLOAD() {
             mv "$tr_s_variable_2" "$tr_s_variable_2$(date +%Y%m%d)_bak"
            fi
         fi
-        wget -nc -O "$tr_s_variable_2" "${DownloadUrl[$y]}"
+        wget -O "$tr_s_variable_2" "${DownloadUrl[$y]}"
         if [ $? -ne 0 ] && [ ! -f "$tr_s_variable_2" ];then
           echo "download failed."
            return 1
