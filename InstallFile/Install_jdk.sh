@@ -39,4 +39,5 @@ EOF
         else
             echo "安装失败"
             sed -i "\|$jdk_install_path|d" /etc/profile
+            sed -i "\|JAVA_HOME|d" /etc/profile
         fi
