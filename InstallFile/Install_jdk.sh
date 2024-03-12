@@ -15,7 +15,9 @@ else
   tar xvf "$jdk_download_path" -C /tools/unpack_file/"$GET_missing_dirs_nginx" --strip-components 1
 fi
     if [ -d "$jdk_install_path" ];then
-      mv "$jdk_install_path" "$jdk_install_path$(date +%Y%m%d)_bak"
+     if cd "$jdk_install_path";then
+       tar zcvf $(date +%Y%m%d)_bak.tar.gz *
+     fi
     fi
     if [ -n "$jdk_install_path" ] && [ ! -d "$jdk_install_path" ];then
       mkdir -p "$jdk_install_path"
