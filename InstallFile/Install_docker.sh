@@ -3,7 +3,7 @@ config_file=/tools/config
 source $config_file
 GET_missing_dirs_docker=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
 #Docker下载
-bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  docker $(for i in "${docker_download_urls[@]}";do printf "$i ";done)
+bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  docker $(for i in "${docker_download_urls[@]}";do printf "%s " "$i";done)
 tar -xzvf "$download_path/docker/docker" -C  "/tools/unpack_file/$GET_missing_dirs_docker" --strip-components 1
   if $(cp -rf /tools/unpack_file/"$GET_missing_dirs_docker"/* /usr/bin/); then
     echo "复制完成"

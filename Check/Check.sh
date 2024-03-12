@@ -169,16 +169,20 @@ function PACKAGE_DOWNLOAD() {
     local ServerName=$1
     shift
     DownloadUrl=("$@")
-    if [ ! -d "$download_path/$ServerName" ];then
-      mkdir -p "$download_path/$ServerName"
+    tr_s_variable_1=$(echo "$download_path/$ServerName" | tr -s '/')
+    if [ ! -d "$tr_s_variable" ];then
+      mkdir -p "$tr_s_variable"
     fi
     for (( i = 0; i < "${#DownloadUrl[@]}"; i++ )); do
         GET_PackageVersion_1=$(echo "${DownloadUrl[$i]}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
         GET_PackageVersion_2=$(echo "${DownloadUrl[$i]}" | grep -oE '[0-9]+\.[0-9]+\.tar.gz+' | sed 's/\.tar\.gz$//')
+        GET_PackageVersion_3=$(echo "${DownloadUrl[$i]}" | sed 's/.*\(jdk.*tar\.gz\)/\1/')
         if [ "${#GET_PackageVersion_1}" -ne 0 ]; then
           echo "$i : $GET_PackageVersion_1"
         elif [ "${#GET_PackageVersion_2}" -ne 0  ]; then
           echo "$i : $GET_PackageVersion_2"
+        elif [ "${#GET_PackageVersion_3}" -ne 0  ]; then
+          echo "$i : $GET_PackageVersion_3"
         else
           if [ -n "$ServerName"  ] && [ "${#DownloadUrl[@]}" -ne 0 ]; then
               echo "$i : 未识别的版本"
@@ -189,11 +193,12 @@ function PACKAGE_DOWNLOAD() {
       read -rp "Enter Your install service version choice：" y
     fi
     if [[ "$y" =~ ^[0-9]+$ ]] && [ "$i" -le "${#DownloadUrl[@]}" ] ; then
-        if [ -f "/$download_path/$ServerName/$ServerName" ]; then
-            rm -rf "/$download_path/$ServerName/$ServerName"
+        tr_s_variable_2=$(echo "$download_path/$ServerName/$ServerName" | tr -s '/')
+        if [ -f "$tr_s_variable_2" ]; then
+            rm -rf "$tr_s_variable_2"
         fi
-        wget -nc -O "/$download_path/$ServerName/$ServerName" "${DownloadUrl[$y]}"
-        if [ $? -ne 0 ] && [ ! -f "/$download_path/$ServerName/$ServerName" ];then
+        wget -nc -O "$tr_s_variable_2" "${DownloadUrl[$y]}"
+        if [ $? -ne 0 ] && [ ! -f "$tr_s_variable_2" ];then
           echo "download failed."
            return 1
         fi

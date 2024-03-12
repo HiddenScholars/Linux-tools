@@ -42,11 +42,11 @@ done
 
 set +x
 echo "nginx安装包下载"
-bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  nginx  $(for i in "${nginx_download_urls[@]}";do printf "$i ";done)
+bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  nginx  $(for i in "${nginx_download_urls[@]}";do printf "%s " "$i";done)
 #解压目录检测
 GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
 
-    [ -d "$install_path"/nginx/ ] && mv "$install_path"/nginx/ "$install_path"/nginx"$time_bak"
+    [ -d "$install_path"/nginx/ ] && mv "$install_path"/nginx/ "$install_path"/nginx$(date +%Y%m%d)_bak
     tar xvf "$download_path"/nginx/nginx -C /tools/unpack_file/"$GET_missing_dirs_nginx" --strip-components 1
     cd /tools/unpack_file/"$GET_missing_dirs_nginx" && ./configure --prefix="${install_path}"/nginx/ \
                                                 --with-pcre \

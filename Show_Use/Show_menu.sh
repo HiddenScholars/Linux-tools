@@ -21,21 +21,24 @@ trap handle_exit EXIT
 #菜单目录显示控制
 show_use=("退出" "安装" "卸载" "升级" "acme脚本(搭配cloudflare)" "检查更新")
 show_use_function=("exit 0" "show_Soft" "soft_Uninstall" "soft_Upgrade" "setting_ssl" "check_update")
-show_soft=("返回主页面" "nginx" "docker+docker-compose" "docker-compose" "一键安装所有")
-show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose" "install_all")
+show_soft=("返回主页面" "nginx" "docker+docker-compose" "docker-compose" "jdk" "一键安装所有")
+show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose" "install_jdk" "install_all")
 soft_uninstall=("返回主页面" "nginx卸载" "docker+docker-compose卸载" "tool命令卸载")
-soft_uninstall_function=("return" "uninstall_nginx" "Uninstall_docker_docker_compose" "uninstall_tool")
+soft_uninstall_function=("return" "uninstall_nginx" "uninstall_docker_docker_compose" "uninstall_tool")
 soft_upgrade=("返回主菜单" "Nginx平滑升(降)级")
 soft_upgrade_function=("return" "upgrade_smooth_nginx")
 
   GET_REMOTE_VERSION=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version)
   GET_LOCAL_VERSION=$(cat $version_file)
 function check_update() {
-          if [[ "$GET_LOCAL_VERSION" =~ ^[0-9]+$ ]] && [ "$GET_REMOTE_VERSION"  != "$GET_LOCAL_VERSION" ];then
-             bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UpdateFile/UPDATE.sh)
-             if [ $? -eq 0 ]; then
+          if [ "$GET_REMOTE_VERSION"  != "$GET_LOCAL_VERSION" ];then
+             if bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UpdateFile/UPDATE.sh); then
              echo "$GET_REMOTE_VERSION" >$version_file
+             sed -i "s/url_address=.*/url_address=$url_address/g" "$config_file" #下载完成后修改仓库地址
+             sed -i "s/con_branch=.*/con_branch=$con_branch/g" "$config_file" #下载完成后修改分支
              echo -e "${green}已是最新版本${plain}"
+             GET_REMOTE_VERSION=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version)
+             GET_LOCAL_VERSION=$(cat $version_file)
              fi
           elif [ "$GET_REMOTE_VERSION"  == "$GET_LOCAL_VERSION" ];then
              echo -e "${green}已是最新版本${plain}"
@@ -68,11 +71,14 @@ bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/
 function uninstall_nginx() {
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UninstallFile/Uninstall_nginx.sh)
 }
-function Uninstall_docker_docker_compose() {
+function uninstall_docker_docker_compose() {
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UninstallFile/Uninstall_docker_docker_compose.sh)
 }
 function uninstall_tool() {
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Link_localhost/uninstall.sh)
+}
+function install_jdk() {
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_jdk.sh)
 }
 function install_all() {
 for i in "${show_soft_function[@]}"

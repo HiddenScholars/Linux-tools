@@ -33,7 +33,8 @@ function CHECK_FILE() {
      fi
       if [  ! -f $version_file ]; then
           [ ! -d ${config_path} ] && mkdir ${config_path}
-          echo "0" > $version_file
+          GET_REMOTE_VERSION=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version)
+          echo "$GET_REMOTE_VERSION" > $version_file
       fi
       if [ ! -f ${config_file} ];then
             [ ! -d ${config_path} ] && mkdir ${config_path}
@@ -41,7 +42,7 @@ function CHECK_FILE() {
             wget -P ${config_path} https://$url_address/HiddenScholars/Linux-tools/$con_branch/config
             [ ! -f ${config_file} ] && echo -e "${red}download failed${plain}" && exit 0
             sed -i "s/url_address=.*/url_address=$url_address/g" "$config_file" #下载完成后修改仓库地址
-           sed -i "s/con_branch=.*/con_branch=$con_branch/g" "$config_file" #下载完成后修改分支
+            sed -i "s/con_branch=.*/con_branch=$con_branch/g" "$config_file" #下载完成后修改分支
       fi
 
     GET_DOWNLOAD_PATH=$(grep -c download_path $config_file)
