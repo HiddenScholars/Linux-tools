@@ -170,7 +170,7 @@ function PACKAGE_DOWNLOAD() {
     DownloadUrl=("$@")
     tr_s_variable_1=$(echo "/$download_path/$ServerName/" | tr -s '/')
     if [ -n "$tr_s_variable_1" ] && [ ! -d "$tr_s_variable_1" ];then
-      mkdir -p "$tr_s_variable"
+      mkdir -p "$tr_s_variable_1"
     fi
     for (( i = 0; i < "${#DownloadUrl[@]}"; i++ )); do
         GET_PackageVersion_1=$(echo "${DownloadUrl[$i]}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
