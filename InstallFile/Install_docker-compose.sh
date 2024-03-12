@@ -12,7 +12,7 @@ bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/
     chown +x /usr/local/bin/docker-compose
   fi
 
-if $(docker-compose -v) &>/dev/null; then
+if $(docker-compose --version) &>/dev/null; then
    echo -e "${green}docker_compose安装完成${plain}"
 else
    echo -e "${red}docker_compose安装失败${plain}'"
