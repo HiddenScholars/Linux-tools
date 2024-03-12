@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 SystemCategory=''
 SystemVersion=''
 CPUArchitecture=''
@@ -170,7 +169,7 @@ function PACKAGE_DOWNLOAD() {
     shift
     DownloadUrl=("$@")
     tr_s_variable_1=$(echo "/$download_path/$ServerName/" | tr -s '/')
-    if [ ! -d "$tr_s_variable" ];then
+    if [ -n "$tr_s_variable_1" ] && [ ! -d "$tr_s_variable_1" ];then
       mkdir -p "$tr_s_variable"
     fi
     for (( i = 0; i < "${#DownloadUrl[@]}"; i++ )); do
