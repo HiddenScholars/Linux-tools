@@ -29,7 +29,7 @@ fi
 
      sed -i "\|$jdk_install_path|d" /etc/profile
 cat << EOF >> /etc/profile
-export JAVA_HOME=jdk_install_path
+export JAVA_HOME="$jdk_install_path"
 export PATH=\$JAVA_HOME/bin:\$PATH
 export CLASSPATH=.:\$JAVA_HOME/lib/dt.jar:\$JAVA_HOME/lib/tools.jar
 EOF

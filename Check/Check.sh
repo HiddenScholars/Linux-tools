@@ -194,7 +194,11 @@ function PACKAGE_DOWNLOAD() {
     if [[ "$y" =~ ^[0-9]+$ ]] && [ "$i" -le "${#DownloadUrl[@]}" ] ; then
         tr_s_variable_2=$(echo "$download_path/$ServerName/$ServerName" | tr -s '/')
         if [ -f "$tr_s_variable_2" ]; then
-            rm -rf "$tr_s_variable_2"
+           if [ -f "$tr_s_variable_2$(date +%Y%m%d)_bak" ];then
+              rm -rf "$tr_s_variable_2$(date +%Y%m%d)_bak"
+           else
+            mv "$tr_s_variable_2" "$tr_s_variable_2$(date +%Y%m%d)_bak"
+           fi
         fi
         wget -nc -O "$tr_s_variable_2" "${DownloadUrl[$y]}"
         if [ $? -ne 0 ] && [ ! -f "$tr_s_variable_2" ];then
