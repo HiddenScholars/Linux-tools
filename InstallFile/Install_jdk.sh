@@ -36,7 +36,7 @@ export PATH=\$JAVA_HOME/bin:\$PATH
 export CLASSPATH=.:\$JAVA_HOME/lib/dt.jar:\$JAVA_HOME/lib/tools.jar
 EOF
         source /etc/profile
-        if $(java -version) &>/dev/null && $(javac -version) &>/dev/null; then
+        if $(java -version) && $(javac -version) &>/dev/null; then
             echo "安装成功"
         else
             echo "安装失败"
