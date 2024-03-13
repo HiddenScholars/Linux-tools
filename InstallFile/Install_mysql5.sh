@@ -68,7 +68,7 @@ EOF
       if [ $? -ne 0 ]; then
          useradd -s /sbin/nologin "$mysql5_user"
       fi
-  chown -R  "$mysql5_user":"$mysql5_user"  "$mysql5_install_pat"
+  chown -R "$mysql5_user":"$mysql5_user"  "$mysql5_install_path"
   if [ $? -eq 0 ];then
      sudo chmod 644 "$mysql5_my_cnf_path"
   fi
@@ -83,7 +83,7 @@ source /etc/profile
          sudo chmod 777 /etc/init.d/mysqld
          /etc/init.d/mysqld start
          systemctl daemon-reload
-         systemctl restart mysql.service
+         systemctl enable mysql.service
      fi
      echo "安装成功"
   else
