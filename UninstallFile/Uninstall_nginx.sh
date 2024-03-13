@@ -37,10 +37,14 @@ if [ -d "$GET_PATH" ]; then
     done
     echo  "卸载完成"
 else
-   read -rp "未获取到nginx路径，手动输入：" temp
-   if [ -n "$temp" ] && [ "$temp" != "/" ] && [ -d "$temp" ]; then
-       rm -rf "$temp"
-       echo  "卸载完成"
+   if [ "${#getNginxProcess_number1[@]}" != 0 ]; then
+       read -rp "未获取到nginx路径，手动输入：" temp
+       if [ -n "$temp" ] && [ "$temp" != "/" ] && [ -d "$temp" ]; then
+           rm -rf "$temp"
+           echo  "卸载完成"
+       fi
+  else
+    echo  "卸载完成"
    fi
 fi
 
