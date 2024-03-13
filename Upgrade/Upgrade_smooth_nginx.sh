@@ -3,6 +3,8 @@
 read -rp "回车后即确认升(降)级："
 source /etc/profile
 source /tools/config
+red=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR red)
+plain=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR plain)
 select=''
 sbin_nginx=''
 getNginxProcessNumber=$(pgrep nginx | wc -l)
@@ -46,7 +48,7 @@ cat /tools/1.txt | grep prefix | awk '{print substr($0, index($0,$3))}')"  "$sel
 if [ -f /tools/unpack_file/"$2"/objs/nginx ]; then
  cp -r /tools/unpack_file/"$2"/objs/nginx "$(dirname "$sbin_nginx")"
  sleep 10
-set -
+ set -
  kill -USR2  "$("$(dirname "$sbin_nginx")"/../logs/nginx.pid)"
  kill -WINCH "$("$(dirname "$sbin_nginx")"/../logs/nginx.pid.oldbin)"
  kill -QUIT  "$("$(dirname "$sbin_nginx")"/../logs/nginx.pid.oldbin)"
