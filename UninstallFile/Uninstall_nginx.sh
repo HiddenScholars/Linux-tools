@@ -6,11 +6,12 @@ source /tools/config
 function KILL_NGINX_PROCESS() {
 getNginxProcess_number1=($(pgrep nginx))
 if [ "${#getNginxProcess_number1[@]}" != 0 ]; then
-    echo "检测到Nginx进程，进程ID："
+    printf "检测到Nginx进程，进程ID："
     for i in "${getNginxProcess_number1[@]}"
     do
       echo "$i"
     done
+    printf "\n"
         for y in "${getNginxProcess_number1[@]}"
             do
               echo "开始kill Nginx进程 $y"
