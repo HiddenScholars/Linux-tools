@@ -29,21 +29,21 @@ if which mysql &>/dev/null; then
 systemctl daemon-reload
 fi
 if [ -f /etc/init.d/mysqld ]; then
-    rm -rf /etc/init.d/mysqld
+   sudo  rm -rf /etc/init.d/mysqld
 fi
 GET_PATH="$install_path/mysql5/"
 if [ -d "$GET_PATH" ]; then
-    rm -rf "$GET_PATH"
+    sudo rm -rf "$GET_PATH"
     for i in "${GET_MYSQL5_SERVICE_PATH[@]}"
     do
-          rm -rf "$i"
+        sudo  rm -rf "$i"
     done
     echo  "卸载完成"
 else
    if [ "${#getMysqlProcess_number_1[@]}" -ne 0 ]; then
        read -rp "未获取到mysql路径，手动输入：" temp
        if [ -n "$temp" ] && [ "$temp" != "/" ] && [ -d "$temp" ]; then
-           rm -rf "$temp"
+          sudo rm -rf "$temp"
            echo  "卸载完成"
        fi
    else
