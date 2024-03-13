@@ -84,7 +84,7 @@ source /etc/profile
          sudo chmod 777 /etc/init.d/mysqld
          /etc/init.d/mysqld start
          systemctl daemon-reload
-         systemctl enable mysql.service
+         systemctl enable mysqld.service
      fi
      echo "安装成功"
   else
