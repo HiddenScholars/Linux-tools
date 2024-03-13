@@ -68,7 +68,8 @@ EOF
       if [ $? -ne 0 ]; then
          useradd -s /sbin/nologin "$mysql5_user"
       fi
-  if $(chown -R  "$mysql5_user":"$mysql5_user"  "$mysql5_install_pat");then
+  chown -R  "$mysql5_user":"$mysql5_user"  "$mysql5_install_pat"
+  if [ $? -eq 0 ];then
      sudo chmod 644 "$mysql5_my_cnf_path"
   fi
 sed -i "\|$mysql5_install_path|d" /etc/profile
