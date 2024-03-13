@@ -7,13 +7,9 @@ jdk_download_path=$(echo "$download_path"/jdk/jdk | tr -s '/' )
 GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
 # 获取包管理器
 GET_PACKAGE_MASTER=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PACKAGE_MASTER)
-read -rp "使用本地安装包直接输入文件所在绝对路径，回车进行网络安装：" select
-if [ -n "$select" ] && [ -f "$select" ]; then
-  tar xvf "$select" -C /tools/unpack_file/"$GET_missing_dirs_nginx" --strip-components 1
-else
+
   bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  jdk  $(for i in "${jdk_download_urls[@]}";do printf "%s " "$i";done)
   tar xvf "$jdk_download_path" -C /tools/unpack_file/"$GET_missing_dirs_nginx" --strip-components 1
-fi
     if [ -d "$jdk_install_path" ];then
      if cd "$jdk_install_path";then
        tar zcvf $(date +%Y%m%d)_bak.tar.gz *
