@@ -38,14 +38,13 @@ GET_missing_dirs_mysql5=$(curl -sl https://"$url_address"/HiddenScholars/Linux-t
     echo "The decompression is complete."
     if [ -d "$mysql5_install_path" ];then
       rm -rf "$mysql5_install_path"
-      mkdir -p "$mysql5_install_path"
-      mkdir -p "$mysql5_install_path"/etc/
-      mkdir -p "$mysql5_install_path"/logs/
+      mkdir -p "$mysql5_install_path" "$mysql5_install_path"/etc/ "$mysql5_install_path"/logs/
+      cp -rf /tools/unpack_file/"$GET_missing_dirs_mysql5"/*  "$mysql5_install_path"
     elif [ ! -d  "$mysql5_install_path" ]; then
-      mkdir -p "$mysql5_install_path"
-      mkdir -p "$mysql5_install_path"/logs/
+      mkdir -p "$mysql5_install_path" "$mysql5_install_path"/etc/ "$mysql5_install_path"/logs/
+      cp -rf /tools/unpack_file/"$GET_missing_dirs_mysql5"/*  "$mysql5_install_path"
     fi
-if $(cp -rf /tools/unpack_file/"$GET_missing_dirs_mysql5"/*  "$mysql5_install_path");then
+if [ -f "$mysql5_install_path_bin/mysqld" ];then
 echo "复制完成"
 cat << EOF > "$mysql5_my_cnf_path"
 [mysql]
@@ -77,7 +76,7 @@ sed -i "\|$mysql5_install_path|d" /etc/profile
 echo "export MYSQL_HOME=$mysql5_install_path">>/etc/profile
 echo "export PATH=$PATH:$mysql5_install_path_bin" >>/etc/profile
 source /etc/profile
-  "$mysql5_install_path_bin"/mysqld --initialize --user="$mysql5_user" --basedir="$mysql5_install_path" --datadir="$mysql5_data_path" --socket="$mysql5_socket_path" &>/dev/null
+  "$mysql5_install_path_bin"/mysqld --initialize --user="$mysql5_user" --basedir="$mysql5_install_path" --datadir="$mysql5_data_path" --defaults-file="$mysql5_my_cnf_path" --socket="$mysql5_socket_path" &>/dev/null
   if [ $? -eq 0 ];then
     cp -rf "$mysql5_install_path"/support-files/mysql.server /etc/init.d/mysqld
      if [ $? -eq 0 ];then
