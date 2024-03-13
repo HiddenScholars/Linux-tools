@@ -6,10 +6,10 @@ source /tools/config
 function KILL_MYSQL5_PROCESS() {
 getMysqlProcess_number_1=($(pgrep mysql))
 if [ "${#getMysqlProcess_number_1[@]}" != 0 ]; then
-    printf "检测到Mysql进程，进程ID："
+    echo "检测到Mysql进程，进程ID："
     for i in "${getMysqlProcess_number_1[@]}"
     do
-      echo "$i"
+      printf "%s" "$i"
     done
     printf "\n"
         for y in "${getMysqlProcess_number_1[@]}"
@@ -24,7 +24,6 @@ fi
 }
 function DELETE_MYSQL5_FILE() {
 GET_PACKAGE_MASTER=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PACKAGE_MASTER)
-GET_MYSQL5_SERVICE_PATH=($(find / -name "mysqld.service"))
 if which mysql &>/dev/null; then
 "$GET_PACKAGE_MASTER" remove -y mysql* mariadb* &>/dev/null
 systemctl daemon-reload
@@ -35,10 +34,6 @@ fi
 GET_PATH="$install_path/mysql5/"
 if [ -d "$GET_PATH" ]; then
     sudo rm -rf "$GET_PATH"
-    for i in "${GET_MYSQL5_SERVICE_PATH[@]}"
-    do
-        sudo  rm -rf "$i"
-    done
     echo  "卸载完成"
 else
    if [ "${#getMysqlProcess_number_1[@]}" -ne 0 ]; then

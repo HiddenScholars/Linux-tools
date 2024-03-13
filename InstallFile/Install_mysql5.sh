@@ -40,9 +40,10 @@ GET_missing_dirs_mysql5=$(curl -sl https://"$url_address"/HiddenScholars/Linux-t
       rm -rf "$mysql5_install_path"
       mkdir -p "$mysql5_install_path"
       mkdir -p "$mysql5_install_path"/etc/
+      mkdir -p "$mysql5_install_path"/logs/
     elif [ ! -d  "$mysql5_install_path" ]; then
       mkdir -p "$mysql5_install_path"
-      mkdir -p "$mysql5_install_path"/etc/
+      mkdir -p "$mysql5_install_path"/logs/
     fi
 if $(cp -rf /tools/unpack_file/"$GET_missing_dirs_mysql5"/*  "$mysql5_install_path");then
 echo "复制完成"
@@ -85,14 +86,15 @@ source /etc/profile
          mysqld_safe --skip-grant-tables &
          sleep 5
 mysql -u root << EOF
-UPDATE mysql.user SET authentication_string=PASSWORD('1qaz2wsx#EDC') WHERE User='root';
+alter user user() identified by "1qaz2wsx#EDC";
 FLUSH PRIVILEGES;
 EOF
          /etc/init.d/mysqld start
          systemctl daemon-reload
          systemctl enable mysqld.service
      fi
-     echo "安装成功,root登陆密码：1qaz2wsx#EDC"
+     echo "安装成功."
+     echo "root登陆密码：1qaz2wsx#EDC"
   else
     echo "安装失败"
   fi
