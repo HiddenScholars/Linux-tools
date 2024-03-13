@@ -81,7 +81,7 @@ function install_jdk() {
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_jdk.sh)
 }
 function install_mysql5() {
-    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install.mysql5.sh)
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_mysql5.sh)
 }
 function install_all() {
 for i in "${show_soft_function[@]}"
