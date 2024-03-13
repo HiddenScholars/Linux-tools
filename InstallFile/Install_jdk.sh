@@ -11,9 +11,8 @@ GET_PACKAGE_MASTER=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/
   bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  jdk  $(for i in "${jdk_download_urls[@]}";do printf "%s " "$i";done)
   tar xvf "$jdk_download_path" -C /tools/unpack_file/"$GET_missing_dirs_nginx" --strip-components 1
     if [ -d "$jdk_install_path" ];then
-     if cd "$jdk_install_path";then
-       tar zcvf $(date +%Y%m%d)_bak.tar.gz *
-     fi
+      rm -rf "$jdk_install_path"
+      mkdir -p "$jdk_install_path"
     fi
     if [ -n "$jdk_install_path" ] && [ ! -d "$jdk_install_path" ];then
       mkdir -p "$jdk_install_path"

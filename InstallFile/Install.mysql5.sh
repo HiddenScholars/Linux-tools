@@ -1,8 +1,8 @@
 #!/bin/bash
 
 source /tools/config
-# 获取系统版本
-GET_SYSTEM_CHECK=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- SYSTEM_CHECK)
+# 获取包管理器
+GET_PACKAGE_MASTER=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PACKAGE_MASTER)
 # 进程检测
 GET_PROCESS_CHECK=($(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PROCESS_CHECK mysql))
 # 端口检测
@@ -21,26 +21,32 @@ elif [ -n "$GET_PORT_CHECK" ] &&[ "${#GET_PORT_CHECK[@]}" -ne 0 ]; then
      read -rp "被占用是否继续安装（y/n）：" select
     [ "$select" != "y" ] && exit 0
 fi
+"$GET_PACKAGE_MASTER" -y remove mysql* mariadb* &>/dev/null
+
 mysql5_install_path=$(echo "/$install_path"/mysql5/ | tr -s '/')
 mysql5_install_path_bin=$(echo "/$mysql5_install_path"/bin/ | tr -s '/')
 mysql5_socket_path=$(echo "/$install_path"/mysql5/mysql.sock | tr -s '/')
 mysql5_data_path=$(echo "/$install_path"/mysql5/data/ | tr -s '/')
-mysql5_download_path=$(echo "/$download_path"/mysql/mysql | tr -s '/' )
-mysql5_log_error_path=$(echo "/$install_path"/mysql/logs/error.log | tr -s '/')
-mysql5_my_cnf_path=$(echo "/$mysql5_install_path"/my.cnf | tr -s '/')
+mysql5_download_path=$(echo "/$download_path"/mysql5/mysql5 | tr -s '/' )
+mysql5_log_error_path=$(echo "/$install_path"/mysql5/logs/error.log | tr -s '/')
+mysql5_my_cnf_path=$(echo "/$mysql5_install_path"/etc/my.cnf | tr -s '/')
 
 bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  mysql5  $(for i in "${mysql5_download_urls[@]}";do printf "%s " "$i";done)
 GET_missing_dirs_mysql5=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
-
+    echo "Start unzipping."
+    tar xvf "$mysql5_download_path" -C /tools/unpack_file/"$GET_missing_dirs_mysql5" --strip-components 1 &>/dev/null
+    echo "The decompression is complete."
     if [ -d "$mysql5_install_path" ];then
-      mv "$mysql5_install_path" "$mysql5_install_path"$(date +%Y%m%d)_bak
+      rm -rf "$mysql5_install_path"
+      mkdir -p "$mysql5_install_path"
+      mkdir -p "$mysql5_install_path"/etc/
+    elif [ ! -d  "$mysql5_install_path" ]; then
+      mkdir -p "$mysql5_install_path"
+      mkdir -p "$mysql5_install_path"/etc/
     fi
-    tar xvf "$mysql5_download_path" -C /tools/unpack_file/"$GET_missing_dirs_mysql5" --strip-components 1
-
 if $(cp -rf /tools/unpack_file/"$GET_missing_dirs_mysql5"/*  "$mysql5_install_path");then
 echo "复制完成"
-mkdir "$mysql5_install_path"/etc/
-cat << EOF >> "$mysql5_my_cnf_path"
+cat << EOF > "$mysql5_my_cnf_path"
 [mysql]
 socket=$mysql5_socket_path
 [mysqld]
@@ -58,24 +64,30 @@ log-error=$mysql5_log_error_path
 user=$mysql5_user
 basedir=$mysql5_install_path
 EOF
-  if $(chown -R  "$mysql5_user":"$mysql5_user"  "$mysql5_my_cnf_path");then
-     sudo chmod 644 /etc/my.cnf
+      id "$mysql5_user" &>/dev/null
+      if [ $? -ne 0 ]; then
+         useradd -s /sbin/nologin "$mysql5_user"
+      fi
+  if $(chown -R  "$mysql5_user":"$mysql5_user"  "$mysql5_install_pat");then
+     sudo chmod 644 "$mysql5_my_cnf_path"
   fi
 sed -i "\|$mysql5_install_path|d" /etc/profile
 echo "export MYSQL_HOME=$mysql5_install_path">>/etc/profile
 echo "export PATH=$PATH:$mysql5_install_path_bin" >>/etc/profile
 source /etc/profile
-  if $("$mysql5_install_path_bin"/mysql_install_db --user="$mysql5_user" --basedir="$mysql5_install_path" --datadir="$mysql5_data_path");then
-     sudo cp ./support-files/mysql.server /etc/init.d/mysqld
-     sudo chmod 777 /etc/init.d/mysqld
-     /etc/init.d/mysqld start
-     systemctl daemon-reload
-     systemctl restart mysql.service
-     echo "初始密码：$(cat /root/.mysql_secret | awk NR==2)"
+  "$mysql5_install_path_bin"/mysqld --initialize --user="$mysql5_user" --basedir="$mysql5_install_path" --datadir="$mysql5_data_path" --socket="$mysql5_socket_path" &>/dev/null
+  if [ $? -eq 0 ];then
+     if $(cp "$mysql5_install_path"/support-files/mysql.server /etc/init.d/mysqld);then
+         sed -i "s#/usr/local/mysql#$mysql5_install_path#g" /etc/init.d/mysqld
+         sudo chmod 777 /etc/init.d/mysqld
+         /etc/init.d/mysqld start
+         systemctl daemon-reload
+         systemctl restart mysql.service
+     fi
+     echo "安装成功"
   else
     echo "安装失败"
   fi
 else
-  echo "复制失败，安装失败"
+  printf "复制失败\n安装失败\n"
 fi
-
