@@ -78,7 +78,8 @@ echo "export PATH=$PATH:$mysql5_install_path_bin" >>/etc/profile
 source /etc/profile
   "$mysql5_install_path_bin"/mysqld --initialize --user="$mysql5_user" --basedir="$mysql5_install_path" --datadir="$mysql5_data_path" --socket="$mysql5_socket_path" &>/dev/null
   if [ $? -eq 0 ];then
-     if $(cp "$mysql5_install_path"/support-files/mysql.server /etc/init.d/mysqld);then
+    cp -rf "$mysql5_install_path"/support-files/mysql.server /etc/init.d/mysqld
+     if [ $? -eq 0 ];then
          sed -i "s#/usr/local/mysql#$mysql5_install_path#g" /etc/init.d/mysqld
          sudo chmod 777 /etc/init.d/mysqld
          /etc/init.d/mysqld start
