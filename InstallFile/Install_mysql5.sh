@@ -82,11 +82,17 @@ source /etc/profile
      if [ $? -eq 0 ];then
          sed -i "s#/usr/local/mysql#$mysql5_install_path#g" /etc/init.d/mysqld
          sudo chmod 777 /etc/init.d/mysqld
+         mysqld_safe --skip-grant-tables &
+         sleep 5
+mysql -u root << EOF
+UPDATE mysql.user SET authentication_string=PASSWORD('1qaz2wsx#EDC') WHERE User='root';
+FLUSH PRIVILEGES;
+EOF
          /etc/init.d/mysqld start
          systemctl daemon-reload
          systemctl enable mysqld.service
      fi
-     echo "安装成功"
+     echo "安装成功,root登陆密码：1qaz2wsx#EDC"
   else
     echo "安装失败"
   fi
