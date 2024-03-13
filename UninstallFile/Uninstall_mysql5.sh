@@ -6,10 +6,10 @@ source /tools/config
 function KILL_MYSQL5_PROCESS() {
 getMysqlProcess_number_1=($(pgrep mysql))
 if [ "${#getMysqlProcess_number_1[@]}" != 0 ]; then
-    echo "检测到Mysql进程，进程ID："
+    printf "检测到Mysql进程，进程ID："
     for i in "${getMysqlProcess_number_1[@]}"
     do
-      printf "%s" "$i"
+      printf "%s\t" "$i"
     done
     printf "\n"
         for y in "${getMysqlProcess_number_1[@]}"
