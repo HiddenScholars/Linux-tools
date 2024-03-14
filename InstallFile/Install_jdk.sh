@@ -22,7 +22,7 @@ GET_PACKAGE_MASTER=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/
     else
       echo "文件复制失败"
     fi
-    "$GET_PACKAGE_MASTER" remove -y '*openjdk*' java*
+    "$GET_PACKAGE_MASTER" remove -y '*openjdk*' java* &>/dev/null
 
      sed -i "\|$jdk_install_path|d" /etc/profile
 cat << EOF >> /etc/profile
