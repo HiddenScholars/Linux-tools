@@ -25,7 +25,7 @@ GET_PACKAGE_MASTER=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/
     "$GET_PACKAGE_MASTER" remove -y '*openjdk*' java* &>/dev/null
 
      sed -i "\|$jdk_install_path|d" /etc/profile
-cat << EOF >> /etc/profile
+cat << 'EOF' >> /etc/profile
 export JAVA_HOME="$jdk_install_path"
 export PATH=\$JAVA_HOME/bin:\$PATH
 export CLASSPATH=.:\$JAVA_HOME/lib/dt.jar:\$JAVA_HOME/lib/tools.jar
