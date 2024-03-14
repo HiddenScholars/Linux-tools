@@ -28,7 +28,7 @@ mysql5_install_path_bin=$(echo "/$mysql5_install_path"/bin/ | tr -s '/')
 mysql5_socket_path=$(echo "/$install_path"/mysql5/mysql.sock | tr -s '/')
 mysql5_data_path=$(echo "/$install_path"/mysql5/data/ | tr -s '/')
 mysql5_download_path=$(echo "/$download_path"/mysql5/mysql5 | tr -s '/' )
-mysql5_log_error_path=$(echo "/$install_path"/mysql5/logs/error.log | tr -s '/')
+mysql5_log_error_path=$(echo "/$install_path"/mysql5/logs/mysqld.log | tr -s '/')
 mysql5_pid_path=$(echo "$mysql5_install_path_bin"/mysql5.pid | tr -s '/')
 bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  mysql5  $(for i in "${mysql5_download_urls[@]}";do printf "%s " "$i";done)
 GET_missing_dirs_mysql5=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
@@ -77,22 +77,19 @@ sed -i "\|$mysql5_install_path|d" /etc/profile
 echo "export MYSQL_HOME=$mysql5_install_path">>/etc/profile
 echo "export PATH=$PATH:$mysql5_install_path_bin" >>/etc/profile
 source /etc/profile
-  "$mysql5_install_path_bin"/mysqld --initialize  --user="$mysql5_user" --basedir="$mysql5_install_path" --datadir="$mysql5_data_path"  --socket="$mysql5_socket_path"
-  if [ $? -eq 0 ];then
+echo "数据初始化..."
+"$mysql5_install_path_bin"/mysqld --initialize  --user="$mysql5_user" --basedir="$mysql5_install_path" --datadir="$mysql5_data_path"  --socket="$mysql5_socket_path"
+GET_initial_PASSWD=$(cat "$mysql5_log_error_path"  | grep 'A temporary password is generated for root@localhost:' | awk '{print $11}')
+  if [ -n "$GET_initial_PASSWD" ];then
     cp -rf "$mysql5_install_path"/support-files/mysql.server /etc/init.d/mysqld
-     if [ $? -eq 0 ];then
-         sed -i "s#/usr/local/mysql#$mysql5_install_path#g" /etc/init.d/mysqld
-         sudo chmod 777 /etc/init.d/mysqld
-         mysqld_safe --skip-grant-tables &
-         sleep 5
-mysql -u root << EOF
+    sed -i "s#/usr/local/mysql#$mysql5_install_path#g" /etc/init.d/mysqld
+    chmod 777 /etc/init.d/mysqld
+mysql -u root -p'"$GET_initial_PASSWD"' --socket="$mysql5_socket_path" << EOF
 alter user user() identified by "1qaz2wsx#EDC";
 FLUSH PRIVILEGES;
 EOF
-         /etc/init.d/mysqld start
          systemctl daemon-reload
-         systemctl enable mysqld.service
-     fi
+         /etc/init.d/mysqld start
      echo "安装成功."
      echo "root登陆密码：1qaz2wsx#EDC"
   else
