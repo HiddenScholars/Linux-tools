@@ -29,8 +29,7 @@ mysql5_socket_path=$(echo "/$install_path"/mysql5/mysql.sock | tr -s '/')
 mysql5_data_path=$(echo "/$install_path"/mysql5/data/ | tr -s '/')
 mysql5_download_path=$(echo "/$download_path"/mysql5/mysql5 | tr -s '/' )
 mysql5_log_error_path=$(echo "/$install_path"/mysql5/logs/error.log | tr -s '/')
-mysql5_my_cnf_path=$(echo "/$mysql5_install_path"/etc/my.cnf | tr -s '/')
-
+mysql5_pid_path=$(echo "$mysql5_install_path_bin"/mysql5.pid | tr -s '/')
 bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  mysql5  $(for i in "${mysql5_download_urls[@]}";do printf "%s " "$i";done)
 GET_missing_dirs_mysql5=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
     echo "Start unzipping."
@@ -46,7 +45,7 @@ GET_missing_dirs_mysql5=$(curl -sl https://"$url_address"/HiddenScholars/Linux-t
     fi
 if [ -f "$mysql5_install_path_bin/mysqld" ];then
 echo "复制完成"
-cat << EOF > "$mysql5_my_cnf_path"
+cat << EOF > /etc/my.cnf
 [mysql]
 socket=$mysql5_socket_path
 [mysqld]
@@ -60,6 +59,7 @@ lower_case_table_names=1
 max_allowed_packet=16M
 explicit_defaults_for_timestamp=true
 log-error=$mysql5_log_error_path
+pid-file=$mysql5_pid_path
 [mysql.server]
 user=$mysql5_user
 basedir=$mysql5_install_path
@@ -70,13 +70,14 @@ EOF
       fi
   chown -R "$mysql5_user":"$mysql5_user"  "$mysql5_install_path"
   if [ $? -eq 0 ];then
-     sudo chmod 644 "$mysql5_my_cnf_path"
+     sudo chmod 644 /etc/my.cnf
+     sudo chown -R "$mysql5_user":"$mysql5_user" /etc/my.cnf
   fi
 sed -i "\|$mysql5_install_path|d" /etc/profile
 echo "export MYSQL_HOME=$mysql5_install_path">>/etc/profile
 echo "export PATH=$PATH:$mysql5_install_path_bin" >>/etc/profile
 source /etc/profile
-  "$mysql5_install_path_bin"/mysqld --initialize --user="$mysql5_user" --basedir="$mysql5_install_path" --datadir="$mysql5_data_path" --defaults-file="$mysql5_my_cnf_path" --socket="$mysql5_socket_path" &>/dev/null
+  "$mysql5_install_path_bin"/mysqld --initialize  --user="$mysql5_user" --basedir="$mysql5_install_path" --datadir="$mysql5_data_path"  --socket="$mysql5_socket_path"
   if [ $? -eq 0 ];then
     cp -rf "$mysql5_install_path"/support-files/mysql.server /etc/init.d/mysqld
      if [ $? -eq 0 ];then
