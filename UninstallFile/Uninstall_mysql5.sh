@@ -23,13 +23,19 @@ if [ "${#getMysqlProcess_number_1[@]}" != 0 ]; then
 fi
 }
 function DELETE_MYSQL5_FILE() {
+mysql5_install_path=$(echo "/$install_path"/mysql5/ | tr -s '/')
+if [ -n "$mysql5_install_path" ]; then
+  sed -i "\|$mysql5_install_path|d" /etc/profile
+fi
 GET_PACKAGE_MASTER=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PACKAGE_MASTER)
 if which mysql &>/dev/null; then
 "$GET_PACKAGE_MASTER" remove -y mysql* mariadb* &>/dev/null
-systemctl daemon-reload
 fi
 if [ -f /etc/init.d/mysqld ]; then
+   /etc/init.d/mysqld stop
    sudo  rm -rf /etc/init.d/mysqld
+   systemctl stop mysqld &>/dev/null
+   systemctl daemon-reload
 fi
 GET_PATH="$install_path/mysql5/"
 if [ -d "$GET_PATH" ]; then

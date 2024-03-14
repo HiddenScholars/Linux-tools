@@ -21,9 +21,9 @@ trap handle_exit EXIT
 #菜单目录显示控制
 show_use=("退出" "安装" "卸载" "升级" "acme脚本(搭配cloudflare)" "检查更新")
 show_use_function=("exit 0" "show_Soft" "soft_Uninstall" "soft_Upgrade" "setting_ssl" "check_update")
-show_soft=("返回主页面" "nginx" "docker+docker-compose" "docker-compose" "mysql5" "jdk" "一键安装所有")
+show_soft=("返回主页面" "Nginx" "Docker+Docker-compose" "Docker-compose" "Mysql5" "JDK" "一键安装所有")
 show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose" "install_mysql5" "install_jdk" "install_all")
-soft_uninstall=("返回主页面" "nginx卸载" "docker+docker-compose卸载" "mysql5卸载" "tool命令卸载")
+soft_uninstall=("返回主页面" "Nginx卸载" "Docker+Docker-compose卸载" "Mysql5卸载" "tool命令卸载")
 soft_uninstall_function=("return" "uninstall_nginx" "uninstall_docker_docker_compose" "uninstall_mysql5" "uninstall_tool")
 soft_upgrade=("返回主菜单" "Nginx平滑升(降)级")
 soft_upgrade_function=("return" "upgrade_smooth_nginx")
