@@ -205,6 +205,8 @@ function PACKAGE_DOWNLOAD() {
           echo "download failed."
            return 1
         fi
+    elif [ -z "$y" ]; then
+        echo "Skip the installation."
     else
         echo "Input Failed."
         return 1

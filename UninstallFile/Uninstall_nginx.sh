@@ -6,11 +6,12 @@ source /tools/config
 function KILL_NGINX_PROCESS() {
 getNginxProcess_number1=($(pgrep nginx))
 if [ "${#getNginxProcess_number1[@]}" != 0 ]; then
-    echo "检测到Nginx进程，进程ID："
+    printf "检测到Nginx进程，进程ID："
     for i in "${getNginxProcess_number1[@]}"
     do
-      echo "$i"
+      printf "%s\t" "$i"
     done
+    printf "\n"
         for y in "${getNginxProcess_number1[@]}"
             do
               echo "开始kill Nginx进程 $y"
@@ -37,10 +38,14 @@ if [ -d "$GET_PATH" ]; then
     done
     echo  "卸载完成"
 else
-   read -rp "未获取到nginx路径，手动输入：" temp
-   if [ -n "$temp" ] && [ "$temp" != "/" ] && [ -d "$temp" ]; then
-       rm -rf "$temp"
-       echo  "卸载完成"
+   if [ "${#getNginxProcess_number1[@]}" != 0 ]; then
+       read -rp "未获取到nginx路径，手动输入：" temp
+       if [ -n "$temp" ] && [ "$temp" != "/" ] && [ -d "$temp" ]; then
+           rm -rf "$temp"
+           echo  "卸载完成"
+       fi
+  else
+    echo  "卸载完成"
    fi
 fi
 
