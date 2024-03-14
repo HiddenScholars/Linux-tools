@@ -78,18 +78,17 @@ echo "export MYSQL_HOME=$mysql5_install_path">>/etc/profile
 echo "export PATH=$PATH:$mysql5_install_path_bin" >>/etc/profile
 source /etc/profile
 echo "数据初始化..."
-"$mysql5_install_path_bin"/mysqld --initialize  --user="$mysql5_user" --basedir="$mysql5_install_path" --datadir="$mysql5_data_path"  --socket="$mysql5_socket_path"
+set -x
+"$mysql5_install_path_bin"/mysqld --initialize  --user="$mysql5_user" --basedir="$mysql5_install_path" --datadir="$mysql5_data_path"
 GET_initial_PASSWD=$(cat "$mysql5_log_error_path"  | grep 'A temporary password is generated for root@localhost:' | awk '{print $11}')
   if [ -n "$GET_initial_PASSWD" ];then
     cp -rf "$mysql5_install_path"/support-files/mysql.server /etc/init.d/mysqld
     sed -i "s#/usr/local/mysql#$mysql5_install_path#g" /etc/init.d/mysqld
     chmod 777 /etc/init.d/mysqld
-mysql -u root -p'"$GET_initial_PASSWD"' --socket="$mysql5_socket_path" << EOF
-alter user user() identified by "1qaz2wsx#EDC";
-FLUSH PRIVILEGES;
-EOF
-         systemctl daemon-reload
-         /etc/init.d/mysqld start
+    systemctl daemon-reload
+    /etc/init.d/mysqld start
+mysql -u root -p'"$GET_initial_PASSWD"' -e 'alter user user() identified by "1qaz2wsx#EDC";' -S "$mysql5_socket_path"
+mysql -u root -p'"$GET_initial_PASSWD"' -e 'FLUSH PRIVILEGES;' -S "$mysql5_socket_path"
      echo "安装成功."
      echo "root登陆密码：1qaz2wsx#EDC"
   else
