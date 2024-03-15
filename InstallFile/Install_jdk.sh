@@ -9,7 +9,9 @@ GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-to
 GET_PACKAGE_MASTER=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PACKAGE_MASTER)
 
   bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  jdk  $(for i in "${jdk_download_urls[@]}";do printf "%s " "$i";done)
-  tar xvf "$jdk_download_path" -C /tools/unpack_file/"$GET_missing_dirs_nginx" --strip-components 1
+  echo "Start unzipping."
+  tar xvf "$jdk_download_path" -C /tools/unpack_file/"$GET_missing_dirs_nginx" --strip-components 1 &>/dev/null
+  echo "The decompression is complete."
     if [ -d "$jdk_install_path" ];then
       rm -rf "$jdk_install_path"
       mkdir -p "$jdk_install_path"
@@ -25,11 +27,9 @@ GET_PACKAGE_MASTER=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/
     "$GET_PACKAGE_MASTER" remove -y '*openjdk*' java* &>/dev/null
 
      sed -i "\|$jdk_install_path|d" /etc/profile
-cat << EOF >> /etc/profile
-export JAVA_HOME="$jdk_install_path"
-export PATH=\$JAVA_HOME/bin:\$PATH
-export CLASSPATH=.:\$JAVA_HOME/lib/dt.jar:\$JAVA_HOME/lib/tools.jar
-EOF
+     echo "export JAVA_HOME=$jdk_install_path" >>/etc/profile
+     echo "export PATH=$JAVA_HOME/bin:$PATH" >>/etc/profile
+     echo "export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar" >>/etc/profile
         source /etc/profile
         if $(java -version) && $(javac -version) &>/dev/null; then
             echo "安装成功"

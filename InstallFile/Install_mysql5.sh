@@ -74,7 +74,7 @@ EOF
      sudo chown -R "$mysql5_user":"$mysql5_user" /etc/my.cnf
   fi
 sed -i "\|$mysql5_install_path|d" /etc/profile
-echo "export MYSQL_HOME=$mysql5_install_path">>/etc/profile
+echo "export MYSQL_HOME=$mysql5_install_path" >>/etc/profile
 echo "export PATH=$PATH:$mysql5_install_path_bin" >>/etc/profile
 source /etc/profile
 echo "数据初始化..."
