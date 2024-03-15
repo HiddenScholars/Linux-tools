@@ -33,7 +33,7 @@ do
   if [ "$i" == "centos" ] || [ "$i" == "Anolis OS" ]; then
        "$GET_PACKAGE_MASTER" -y install gcc gcc-c++ zlib zlib-devel pcre-devel openssl openssl-devel gd-devel &>/dev/null
   elif [ "$i" == "ubuntu" ] || [ "$i" == "debian" ]; then
-       "$GET_PACKAGE_MASTER" -y install gcc gcc-c++ zlib1g zlib1g-dev libpcre3-dev libssl-dev libgd-dev &>/dev/null
+       "$GET_PACKAGE_MASTER" -y install --ignore-missing gcc gcc-c++ zlib1g zlib1g-dev libpcre3-dev libssl-dev libgd-dev &>/dev/null
   else
     echo "未支持的系统版本"
     exit 1
