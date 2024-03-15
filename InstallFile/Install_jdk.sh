@@ -9,7 +9,9 @@ GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-to
 GET_PACKAGE_MASTER=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PACKAGE_MASTER)
 
   bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  jdk  $(for i in "${jdk_download_urls[@]}";do printf "%s " "$i";done)
-  tar xvf "$jdk_download_path" -C /tools/unpack_file/"$GET_missing_dirs_nginx" --strip-components 1
+  echo "Start unzipping."
+  tar xvf "$jdk_download_path" -C /tools/unpack_file/"$GET_missing_dirs_nginx" --strip-components 1 &>/dev/null
+  echo "The decompression is complete."
     if [ -d "$jdk_install_path" ];then
       rm -rf "$jdk_install_path"
       mkdir -p "$jdk_install_path"
