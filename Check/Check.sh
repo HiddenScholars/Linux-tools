@@ -153,7 +153,7 @@ function PORT_CHECK() {
     GET_PORT=("$@")
     for i in "${GET_PORT[@]}"
     do
-    CHECK_PORT_GET=$(netstat -lnupt | grep -c "$i")
+    CHECK_PORT_GET=$(netstat -tuln | grep -c "$i")
     if [ "$CHECK_PORT_GET" -ne 0 ]; then
         PORT_EXIST+=("$i")
         printf  "%s\t" "$i"
