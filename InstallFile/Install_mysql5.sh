@@ -49,7 +49,7 @@ cat << EOF > /etc/my.cnf
 socket=$mysql5_socket_path
 [mysqld]
 socket=$mysql5_socket_path
-port=3306
+port=$mysql5_initial_port
 basedir=$mysql5_install_path
 datadir=$mysql5_data_path
 max_connections=200

@@ -4,6 +4,7 @@ url_address=raw.githubusercontent.com
 con_branch=main
 nginx_user=nginx
 mysql5_user=mysql
+mysql5_initial_port=3306
 nginx_download_urls=(
 https://nginx.org/download/nginx-1.24.0.tar.gz
 https://nginx.org/download/nginx-1.22.1.tar.gz
