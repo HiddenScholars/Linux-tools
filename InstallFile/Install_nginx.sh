@@ -28,17 +28,15 @@ elif [ -n "$GET_PORT_CHECK" ] &&[ "${#GET_PORT_CHECK[@]}" -ne 0 ]; then
      read -rp "被占用是否继续安装（y/n）：" select
     [ "$select" != "y" ] && exit 0
 fi
-for i in "${GET_SYSTEM_CHECK[@]}"
-do
-  if [ "$i" == "centos" ] || [ "$i" == "Anolis OS" ]; then
+
+  if [ "$GET_SYSTEM_CHECK" == "centos" ] || [ "$GET_SYSTEM_CHECK" == "Anolis OS" ]; then
        "$GET_PACKAGE_MASTER" -y install gcc gcc-c++ zlib zlib-devel pcre-devel openssl openssl-devel gd-devel &>/dev/null
-  elif [ "$i" == "ubuntu" ] || [ "$i" == "debian" ]; then
+  elif [ "$GET_SYSTEM_CHECK" == "ubuntu" ] || [ "$GET_SYSTEM_CHECK" == "debian" ]; then
        "$GET_PACKAGE_MASTER" -y install --ignore-missing gcc gcc-c++ zlib1g zlib1g-dev libpcre3-dev libssl-dev libgd-dev &>/dev/null
   else
     echo "未支持的系统版本"
     exit 1
   fi
-done
 
 set +x
 echo "nginx安装包下载"
