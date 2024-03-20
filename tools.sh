@@ -18,9 +18,6 @@ handle_exit() {
 }
 trap handle_error ERR
 trap handle_exit EXIT
-
-#Linux-tools start check ...
-[ `whoami` != root ] && echo -e "${red}需要使用root权限${plain}" && exit 0
 function CHECK_FILE() {
      source $config_file &>/dev/null #优先使用config中的配置
      [ "$con_branch" == "TestMain" ] && printf "访问测试节点\n"
@@ -68,6 +65,8 @@ function CHECK_FILE() {
     sed '/^$/d' "$config_file" &>/dev/null #删除空行
 }
 function initialize_check() {
+#Linux-tools start check ...
+[ $(whoami) != root ] && echo -e "${red}需要使用root权限${plain}" && exit 0
 source $config_file &>/dev/null
 bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/Link_localhost/install.sh) # tool link install.sh
 # 环境检测
@@ -104,6 +103,12 @@ do
     fi
 done
 }
+function progress_bar() {
+    local total_functions=$1  # 总函数数量
+    local executed_functions=$2  # 已执行的函数数量
+    local progress=$((executed_functions * 100 / total_functions))  # 计算进度百分比
+    printf "\rProgress: [%-50s] %d%%" $(printf '#%.0s' $(seq 1 $((progress / 2)))) $progress
+}
 echo "脚本获取成功，数据处理中，请稍后..."
 case $1 in
 -d)
@@ -124,8 +129,11 @@ case $1 in
   esac
   ;;
 *)
-  CHECK_FILE
-  initialize_check
+        CHECK_FILE
+        progress_bar 2 1
+        initialize_check
+        progress_bar 2 2
+  printf "\n数据处理完成正在获取菜单"
   bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh) # function menu
   bash
   ;;
