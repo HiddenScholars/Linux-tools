@@ -33,12 +33,15 @@ soft_upgrade_function=("return" "upgrade_smooth_nginx")
 function check_update() {
           if [ "$GET_REMOTE_VERSION"  != "$GET_LOCAL_VERSION" ];then
              if bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UpdateFile/UPDATE.sh); then
-             echo "$GET_REMOTE_VERSION" >$version_file
-             sed -i "s/url_address=.*/url_address=$url_address/g" "$config_file" #下载完成后修改仓库地址
-             sed -i "s/con_branch=.*/con_branch=$con_branch/g" "$config_file" #下载完成后修改分支
-             echo -e "${green}已是最新版本${plain}"
-             GET_REMOTE_VERSION=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version)
-             GET_LOCAL_VERSION=$(cat $version_file)
+                 echo "$GET_REMOTE_VERSION" >$version_file
+                 sed -i "s/url_address=.*/url_address=$url_address/g" "$config_file" #下载完成后修改仓库地址
+                 sed -i "s/con_branch=.*/con_branch=$con_branch/g" "$config_file" #下载完成后修改分支
+                 echo -e "${green}已是最新版本${plain}"
+                 GET_REMOTE_VERSION=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version)
+                 GET_LOCAL_VERSION=$(cat $version_file)
+             else
+                 echo -e "${red} 更新失败 ${plain}"
+                 return 1
              fi
           elif [ "$GET_REMOTE_VERSION"  == "$GET_LOCAL_VERSION" ];then
              echo -e "${green}已是最新版本${plain}"
