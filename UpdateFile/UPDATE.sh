@@ -25,7 +25,6 @@ source /tools/config &>/dev/null
             echo "$GET_REMOTE_VERSION" >/tools/version
             echo -e "\033[32m 已是最新版本 \033[0m"
         else
-            echo "download failed..."
             mv /tools/config_bak /tools/config
             echo -e "\033[31m 更新失败 \033[0m"
         fi
