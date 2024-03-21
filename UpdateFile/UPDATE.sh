@@ -4,7 +4,7 @@ function progress_bar() {
     local total_functions=$1  # 总函数数量
     local executed_functions=$2  # 已执行的函数数量
     local progress=$((executed_functions * 100 / total_functions))  # 计算进度百分比
-    printf "\rProgress: [%-50s] %d%%" $(printf '#%.0s' $(seq 1 $((progress / 2)))) $progress
+    printf "\r更新: [%-50s] %d%%" $(printf '#%.0s' $(seq 1 $((progress / 2)))) $progress
 }
 source /tools/config &>/dev/null
      if [ -f /tools/config ]; then

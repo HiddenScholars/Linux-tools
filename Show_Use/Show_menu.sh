@@ -19,7 +19,7 @@ trap handle_error ERR
 trap handle_exit EXIT
 
 #菜单目录显示控制
-show_use=("退出" "安装" "卸载" "升级" "检查更新")
+show_use=("退出" "安装" "卸载" "升级" "更新")
 show_use_function=("exit 0" "show_Soft" "soft_Uninstall" "soft_Upgrade" "check_update")
 show_soft=("返回主页面" "Nginx" "Docker+Docker-compose" "Docker-compose" "Mysql5" "JDK" "acme脚本(搭配cloudflare)" "一键安装所有")
 show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose" "install_mysql5" "install_jdk" "setting_ssl" "install_all")
