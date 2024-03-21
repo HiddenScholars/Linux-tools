@@ -1,5 +1,6 @@
 download_path=/tools/soft/
 install_path=/usr/local/soft/
+country=CN
 url_address=raw.githubusercontent.com
 con_branch=main
 nginx_user=nginx

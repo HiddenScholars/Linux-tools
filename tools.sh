@@ -20,7 +20,7 @@ trap handle_error ERR
 trap handle_exit EXIT
 function CHECK_FILE() {
      source $config_file &>/dev/null #优先使用config中的配置
-     [ "$con_branch" == "TestMain" ] && printf "访问测试节点\n"
+     [ "$con_branch" == "TestMain" ] && printf "正在访问测试节点\n"
      if [ -z "$url_address" ] && [ -z "$con_branch" ] ;then
        set -x
        url_address=raw.githubusercontent.com
@@ -35,7 +35,7 @@ function CHECK_FILE() {
       if [ ! -f ${config_file} ];then
             [ ! -d ${config_path} ] && mkdir ${config_path}
             echo -e "${green} config downloading... ${plain}"
-            wget -P ${config_path} https://$url_address/HiddenScholars/Linux-tools/$con_branch/config
+            wget -O ${config_file} https://$url_address/HiddenScholars/Linux-tools/$con_branch/Config_file/config_"$country"
             [ ! -f ${config_file} ] && echo -e "${red}download failed${plain}" && exit 0
             sed -i "s/url_address=.*/url_address=$url_address/g" "$config_file" #下载完成后修改仓库地址
             sed -i "s/con_branch=.*/con_branch=$con_branch/g" "$config_file" #下载完成后修改分支
