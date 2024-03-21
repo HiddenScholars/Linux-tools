@@ -20,11 +20,16 @@ source /tools/config &>/dev/null
             progress_bar 3 2
             bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) SET_CONFIG
             progress_bar 3 3
+            printf "\n"
+            GET_REMOTE_VERSION=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version)
+            echo "$GET_REMOTE_VERSION" >/tools/version
+            echo -e "\033[32m 已是最新版本 \033[0m"
         else
-            echo "download failed"
+            echo "download failed..."
             mv /tools/config_bak /tools/config
+            echo -e "\033[31m 更新失败 \033[0m"
         fi
     else
-       echo "not found config."
+       echo "not found config..."
        exit 1
     fi
