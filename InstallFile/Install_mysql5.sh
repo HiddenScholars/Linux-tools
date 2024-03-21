@@ -44,13 +44,12 @@ GET_missing_dirs_mysql5=$(curl -sl https://"$url_address"/HiddenScholars/Linux-t
       cp -rf /tools/unpack_file/"$GET_missing_dirs_mysql5"/*  "$mysql5_install_path"
     fi
 if [ -f "$mysql5_install_path_bin/mysqld" ];then
-echo "复制完成"
 cat << EOF > /etc/my.cnf
 [mysql]
 socket=$mysql5_socket_path
 [mysqld]
 socket=$mysql5_socket_path
-port=3306
+port=$mysql5_initial_port
 basedir=$mysql5_install_path
 datadir=$mysql5_data_path
 max_connections=200
@@ -77,25 +76,25 @@ sed -i "\|$mysql5_install_path|d" /etc/profile
 echo "export MYSQL_HOME=$mysql5_install_path" >>/etc/profile
 echo "export PATH=$PATH:$mysql5_install_path_bin" >>/etc/profile
 source /etc/profile
-echo "数据初始化..."
+echo "数据库开始安装"
 "$mysql5_install_path_bin"/mysqld --initialize  --user="$mysql5_user" --basedir="$mysql5_install_path" --datadir="$mysql5_data_path"
-GET_initial_PASSWD=$(cat "$mysql5_log_error_path"  | grep 'A temporary password is generated for root@localhost:' | awk '{print $11}')
-  if [ -n "$GET_initial_PASSWD" ];then
-    cp -rf "$mysql5_install_path"/support-files/mysql.server /etc/init.d/mysqld
-    sed -i "s#/usr/local/mysql#$mysql5_install_path#g" /etc/init.d/mysqld
-    chmod 777 /etc/init.d/mysqld
-    systemctl daemon-reload
-    /etc/init.d/mysqld start
-    mysql -u root -p"$GET_initial_PASSWD" --connect-expired-password -e "alter user user() identified by '1qaz2wsx#EDC';"
-    if [ $? -eq 0 ]; then
-       mysql -u root -p'1qaz2wsx#EDC' --connect-expired-password -e "grant all on *.* to root@'%' identified by '1qaz2wsx#EDC';"
-       mysql -u root -p'1qaz2wsx#EDC' --connect-expired-password -e "flush privileges;"
-    fi
-     echo "安装成功."
-     echo "root登陆密码：1qaz2wsx#EDC"
-  else
-    echo "安装失败"
-  fi
+	cat "$mysql5_log_error_path"
+		GET_initial_PASSWD=$(cat "$mysql5_log_error_path"  | grep 'A temporary password is generated for root@localhost:' | awk '{print $11}')
+		  if [ -n "$GET_initial_PASSWD" ];then
+			echo "安装成功."
+			cp -rf "$mysql5_install_path"/support-files/mysql.server /etc/init.d/mysqld
+			sed -i "s#/usr/local/mysql#$mysql5_install_path#g" /etc/init.d/mysqld
+			chmod 777 /etc/init.d/mysqld
+			systemctl daemon-reload
+			/etc/init.d/mysqld start && echo "启动成功"
+			printf "数据库设置初始化操作... \n1、解决不重新设置密码就不能登陆的问题 \n2、设置root远程登陆权限\n"
+			mysql -u root -p"$GET_initial_PASSWD" --connect-expired-password -e "alter user user() identified by '"$GET_initial_PASSWD"';"
+			mysql -u root -p"$GET_initial_PASSWD" --connect-expired-password -e "grant all on *.* to root@'%' identified by '"$GET_initial_PASSWD"';"
+			mysql -u root -p"$GET_initial_PASSWD" --connect-expired-password -e "flush privileges;"
+
+		  else
+			echo "安装失败"
+		  fi
 else
   printf "复制失败\n安装失败\n"
 fi

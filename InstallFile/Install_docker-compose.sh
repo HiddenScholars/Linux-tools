@@ -11,12 +11,7 @@ bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/
 
   if $(cp -rf "$download_path"/docker-compose/docker-compose /usr/local/bin/);then
     echo "复制完成"
-    sudo chmod +x /usr/local/bin/docker-compose
-    if $(docker-compose --version) &>/dev/null; then
-        echo -e "${green}docker_compose安装完成${plain}"
-    else
-        echo -e "${red}docker_compose安装失败${plain}'"
-    fi
+    sudo chmod +x /usr/local/bin/docker-compose && echo "增加执行权限完成"
   else
     printf "复制失败\n安装失败\n"
   fi
