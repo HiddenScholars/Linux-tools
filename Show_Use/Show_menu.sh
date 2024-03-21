@@ -33,6 +33,8 @@ soft_upgrade_function=("return" "upgrade_smooth_nginx")
 function check_update() {
           if [ "$GET_REMOTE_VERSION"  != "$GET_LOCAL_VERSION" ];then
              bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UpdateFile/UPDATE.sh)
+             #更新完成重新获取本地版本
+             GET_LOCAL_VERSION=$(cat $version_file)
           elif [ "$GET_REMOTE_VERSION"  == "$GET_LOCAL_VERSION" ];then
              echo -e "${green}已是最新版本${plain}"
           else
