@@ -103,7 +103,7 @@ echo -e "${green}   _|      _|    _|  _|    _|  _|      _|_|${plain}"
 echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
     select=''
     printf "****************************************************************************\n"
-                            printf "\t\t**欢迎使用Linux-tools脚本菜单** \t %s\n" "$([ "$GET_REMOTE_VERSION" != "$GET_LOCAL_VERSION" ] && echo -e "${red}有更新内容!!!${plain}")"
+                            printf "\t\t**欢迎使用Linux-tools脚本菜单** %s\n" "$([ "$GET_REMOTE_VERSION" != "$GET_LOCAL_VERSION" ] && echo -e "${red}最新版本：v$GET_REMOTE_VERSION.可更新${plain}")"
     printf "****************************************************************************\n"
                             for i in "${!show_use[@]}"
                             do
