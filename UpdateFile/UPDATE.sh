@@ -9,7 +9,7 @@ function progress_bar() {
 source /tools/config &>/dev/null
      if [ -f /tools/config ]; then
         mv /tools/config /tools/config_bak
-        wget -O /tools/config https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Config_file/config"$country"
+        wget -O /tools/config https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Config_file/config_"$country"
         if [ $? -eq 0 ]; then
             sed -i "s/url_address=.*/url_address=$url_address/g" /tools/config #下载完成后修改仓库地址
             sed -i "s/con_branch=.*/con_branch=$con_branch/g" /tools/config #下载完成后修改分支
