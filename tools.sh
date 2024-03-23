@@ -34,7 +34,7 @@ function CHECK_FILE() {
       fi
       if [ ! -f ${config_file} ];then
             [ ! -d ${config_path} ] && mkdir ${config_path}
-            echo -e "${green} config downloading... ${plain}"
+            echo  " config downloading..."
             wget -O ${config_file} https://$url_address/HiddenScholars/Linux-tools/$con_branch/Config_file/config_"$country"
             [ ! -f ${config_file} ] && echo -e "${red}download failed${plain}" && exit 0
             sed -i "s/url_address=.*/url_address=$url_address/g" "$config_file" #下载完成后修改仓库地址
