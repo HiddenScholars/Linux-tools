@@ -23,8 +23,8 @@ show_use=("退出" "安装" "卸载" "升级" "更新")
 show_use_function=("exit 0" "show_Soft" "soft_Uninstall" "soft_Upgrade" "check_update")
 show_soft=("返回主页面" "Nginx" "Docker+Docker-compose" "Docker-compose" "Mysql5" "JDK" "acme脚本(搭配cloudflare)" "tailscale" "一键执行所有安装脚本")
 show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose" "install_mysql5" "install_jdk" "setting_ssl" "install_tailscale" "install_all")
-soft_uninstall=("返回主页面" "Nginx卸载" "Docker+Docker-compose卸载" "Mysql5卸载" "tool命令卸载")
-soft_uninstall_function=("return" "uninstall_nginx" "uninstall_docker_docker_compose" "uninstall_mysql5" "uninstall_tool")
+soft_uninstall=("返回主页面" "Nginx卸载" "Docker+Docker-compose卸载" "Mysql5卸载" "tailscale卸载" "tool命令卸载")
+soft_uninstall_function=("return" "uninstall_nginx" "uninstall_docker_docker_compose" "uninstall_mysql5" "uninstall_tailscale" "uninstall_tool")
 soft_upgrade=("返回主菜单" "Nginx平滑升(降)级")
 soft_upgrade_function=("return" "upgrade_smooth_nginx")
 
@@ -74,6 +74,9 @@ function uninstall_tool() {
 }
 function uninstall_mysql5() {
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UninstallFile/Uninstall_mysql5.sh)
+}
+function uninstall_tailscale() {
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UninstallFile/Uninstall_tailscale.sh)
 }
 function install_jdk() {
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_jdk.sh)
