@@ -23,7 +23,7 @@ GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-to
     else
       echo "文件复制失败"
     fi
-    "$controls" remove -y '*openjdk*' java* &>/dev/null
+    "$controls" remove java* openjdk*  -y
 
      sed -i "\|$jdk_install_path|d" /etc/profile
      echo "export JAVA_HOME=$jdk_install_path" >>/etc/profile
