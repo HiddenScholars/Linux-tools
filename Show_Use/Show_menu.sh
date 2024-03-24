@@ -92,7 +92,16 @@ do
   fi
 done
 }
-
+function disk_capacity_check() {
+      capacity=($(du -s "$config_path"/soft/ "$config_path"/unpack_file/ | awk '{print $1}'))
+      capacity_path=($(du -s "$config_path"/soft/ "$config_path"/unpack_file/ | awk '{print $2}'))
+      for (( i = 0; i < "${#capacity[@]}"; i++ )); do
+         if [ "${#capacity[$i]}" -ge "$Max_disk_usage" ]; then
+             echo -e "${red}$capacity_path 占用 ${#capacity[$i]} 超过$Max_disk_usage阈值进行删除${plain}"
+             rm -rf "$capacity_path"
+         fi
+      done
+}
 
 #该参数请勿修改
 temp_return_select=0
@@ -200,5 +209,6 @@ function soft_Upgrade() {
 }
 
 while  true ; do
+    disk_capacity_check
     show_Use
 done
