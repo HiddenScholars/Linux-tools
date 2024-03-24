@@ -134,7 +134,7 @@ case $1 in
         initialize_check
         progress_bar 2 2
   printf "\n数据处理完成正在获取菜单"
-  bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh) # function menu
+  bash <(curl -L https://$url_address/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh) # function menu
   bash
   ;;
 esac
