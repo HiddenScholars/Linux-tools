@@ -2,7 +2,9 @@ echo "当操作系统为官网脚本支持的操作系统时，直接执行官�
 # 获取系统版本
 GET_SYSTEM_CHECK=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- SYSTEM_CHECK)
 if [ "$GET_SYSTEM_CHECK" == "centos" ] || [ "$GET_SYSTEM_CHECK" == "ubuntu" ] || [ "$GET_SYSTEM_CHECK" == "debian" ]; then
+   set -x
    sudo curl -sSL https://get.docker.com | sh
+   set +x
 else
     config_path=/tools/
     config_file=/tools/config

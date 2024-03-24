@@ -93,16 +93,18 @@ do
 done
 }
 function disk_capacity_check() {
+  if [ -d $config_path/soft/ ] && [ -d $config_path/unpack_file/ ]; then
       tool_soft_path=$(echo "$config_path"/soft/ | tr -s '/')
       tool_unpack_file=$(echo "$config_path"/unpack_file/ | tr -s '/')
       capacity=($(du -s "$tool_soft_path" "$tool_unpack_file" | awk '{print $1}'))
-      capacity_path=($(du -s "$tool_soft_path" "$tool_unpack_file" | awk '{print $1}'))
+      capacity_path=($(du -s "$tool_soft_path" "$tool_unpack_file" | awk '{print $2}'))
       for (( i = 0; i < "${#capacity[@]}"; i++ )); do
-         if  [ -n "$Max_disk_usage" ] && [ "$Max_disk_usage" -ne 0 ] && [ "${#capacity[$i]}" -ge "$Max_disk_usage" ]; then
-             echo -e "${red}$capacity_path 占用 $((${#capacity[$i]} / 1024 /1024 )) 超过$(("$Max_disk_usage" / 1024 / 1024 )) 阈值进行删除${plain}"
+         if  [ -n "$Max_disk_usage" ] && [ "$Max_disk_usage" -gt "1048576" ] && [ "${#capacity[$i]}" -ge "$Max_disk_usage" ]; then
+             echo -e "${red}${capacity_path[$i]}占用$((${capacity[$i]} / 1024 /1024 ))G超过$((Max_disk_usage / 1024 / 1024 ))G阈值进行删除${plain}"
              rm -rf "$capacity_path"
          fi
       done
+  fi
 }
 
 #该参数请勿修改
