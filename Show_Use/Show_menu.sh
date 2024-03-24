@@ -21,8 +21,8 @@ trap handle_exit EXIT
 #菜单目录显示控制
 show_use=("退出" "安装" "卸载" "升级" "更新")
 show_use_function=("exit 0" "show_Soft" "soft_Uninstall" "soft_Upgrade" "check_update")
-show_soft=("返回主页面" "Nginx" "Docker+Docker-compose" "Docker-compose" "Mysql5" "JDK" "acme脚本(搭配cloudflare)" "一键安装所有")
-show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose" "install_mysql5" "install_jdk" "setting_ssl" "install_all")
+show_soft=("返回主页面" "Nginx" "Docker+Docker-compose" "Docker-compose" "Mysql5" "JDK" "acme脚本(搭配cloudflare)" "tailscale" "一键安装所有")
+show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose" "install_mysql5" "install_jdk" "setting_ssl" "install_tailscale" "install_all")
 soft_uninstall=("返回主页面" "Nginx卸载" "Docker+Docker-compose卸载" "Mysql5卸载" "tool命令卸载")
 soft_uninstall_function=("return" "uninstall_nginx" "uninstall_docker_docker_compose" "uninstall_mysql5" "uninstall_tool")
 soft_upgrade=("返回主菜单" "Nginx平滑升(降)级")
@@ -80,6 +80,9 @@ function install_jdk() {
 }
 function install_mysql5() {
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_mysql5.sh)
+}
+function install_tailscale() {
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_tailscale.sh)
 }
 function install_all() {
 for i in "${show_soft_function[@]}"
@@ -148,6 +151,7 @@ function show_Soft() {
 }
 function soft_Uninstall() {
       select=''
+      uninstall_select=''
       clear
       printf "****************************************************************************\n"
                               printf "\t\t**欢迎使用Linux-tools脚本菜单**\n"
@@ -160,7 +164,10 @@ function soft_Uninstall() {
       read -rp "输入序号【0-"$((${#soft_uninstall[@]}-1))"】：" select
       if [ -n "$select" ] ;then
             if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${soft_uninstall_function[$select]}" ]  ; then
-                eval  "${soft_uninstall_function[$select]}"
+                read -rp "是否卸载请确认（y/n）" uninstall_select
+                if [ "$uninstall_select" == "y" ]; then
+                   eval  "${soft_uninstall_function[$select]}"
+                fi
             else
                echo "不存在的功能"
             fi

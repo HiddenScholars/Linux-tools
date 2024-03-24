@@ -1,6 +1,5 @@
 #!/bin/bash
 
-read -rp "回车后确认卸载："
 source /etc/profile
 source /tools/config
 function KILL_NGINX_PROCESS() {
