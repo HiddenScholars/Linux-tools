@@ -93,11 +93,13 @@ do
 done
 }
 function disk_capacity_check() {
-      capacity=($(du -s "$config_path"/soft/ "$config_path"/unpack_file/ | awk '{print $1}'))
-      capacity_path=($(du -s "$config_path"/soft/ "$config_path"/unpack_file/ | awk '{print $2}'))
+      tool_soft_path=$(echo "$config_path"/soft/ | tr -s '/')
+      tool_unpack_file=$(echo "$config_path"/unpack_file/ | tr -s '/')
+      capacity=($(du -s "$tool_soft_path" tool_unpack_file | awk '{print $1}'))
+      capacity_path=($(du -s "$tool_soft_path" tool_unpack_file | awk '{print $1}'))
       for (( i = 0; i < "${#capacity[@]}"; i++ )); do
-         if  [ -n "$Max_disk_usage" ] && [ "${#capacity[$i]}" -ge "$Max_disk_usage" ]; then
-             echo -e "${red}$capacity_path 占用 ${#capacity[$i]} 超过$Max_disk_usage阈值进行删除${plain}"
+         if  [ -n "$Max_disk_usage" ] && [ "$Max_disk_usage" -ne 0 ] && [ "${#capacity[$i]}" -ge "$Max_disk_usage" ]; then
+             echo -e "${red}$capacity_path 占用 $((${#capacity[$i]} / 1024 /1024 )) 超过$(("$Max_disk_usage" / 1024 / 1024 )) 阈值进行删除${plain}"
              rm -rf "$capacity_path"
          fi
       done
