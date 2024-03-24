@@ -133,7 +133,7 @@ case $1 in
         progress_bar 2 1
         initialize_check
         progress_bar 2 2
-  printf "\n数据处理完成正在获取菜单"
+  printf "\n数据处理完成正在获取菜单\n"
   bash <(curl -L https://$url_address/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh) # function menu
   bash
   ;;
