@@ -21,20 +21,23 @@ GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-to
     cp -rf  /tools/unpack_file/"$GET_missing_dirs_nginx"/* "$jdk_install_path"
     if [ $? -eq 0 ];then
       echo "文件复制完成"
+      "$controls" remove java* openjdk*  -y
+
+       sed -i "\|$jdk_install_path|d" /etc/profile
+       echo "export JAVA_HOME=$jdk_install_path" >>/etc/profile
+       echo "export PATH=$JAVA_HOME/bin:$PATH" >>/etc/profile
+       echo "export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar" >>/etc/profile
+          source /etc/profile
+          if $(java -version) && $(javac -version) &>/dev/null; then
+              echo "安装成功"
+          else
+              echo "安装失败"
+              sed -i "\|$jdk_install_path|d" /etc/profile
+              sed -i "\|JAVA_HOME|d" /etc/profile
+          fi
     else
       echo "文件复制失败"
+      echo "安装失败"
+      sed -i "\|$jdk_install_path|d" /etc/profile
+      sed -i "\|JAVA_HOME|d" /etc/profile
     fi
-    "$controls" remove java* openjdk*  -y
-
-     sed -i "\|$jdk_install_path|d" /etc/profile
-     echo "export JAVA_HOME=$jdk_install_path" >>/etc/profile
-     echo "export PATH=$JAVA_HOME/bin:$PATH" >>/etc/profile
-     echo "export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar" >>/etc/profile
-        source /etc/profile
-        if $(java -version) && $(javac -version) &>/dev/null; then
-            echo "安装成功"
-        else
-            echo "安装失败"
-            sed -i "\|$jdk_install_path|d" /etc/profile
-            sed -i "\|JAVA_HOME|d" /etc/profile
-        fi
