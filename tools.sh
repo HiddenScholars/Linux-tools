@@ -8,11 +8,11 @@ green=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"
 plain=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR plain)
 
 handle_error() {
-    echo "出现运行错误，解决后再次运行！错误码：$?"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 出现运行错误，解决后再次运行！错误码：$?"
     exit 1
 }
 handle_exit() {
-    printf "\n由于用户取消退出...\n"
+    printf "\n%s 由于用户取消退出...\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
     bash
     exit 0
 }
@@ -20,7 +20,7 @@ trap handle_error ERR
 trap handle_exit EXIT
 function CHECK_FILE() {
      source $config_file &>/dev/null #优先使用config中的配置
-     [ "$con_branch" == "TestMain" ] && printf "正在访问测试节点\n"
+     [ "$con_branch" == "TestMain" ] && printf "%s 正在访问测试节点\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
      if [ -z "$url_address" ] && [ -z "$con_branch" ] ;then
        set -x
        url_address=raw.githubusercontent.com
@@ -109,22 +109,22 @@ function progress_bar() {
     local progress=$((executed_functions * 100 / total_functions))  # 计算进度百分比
     printf "\r处理中: [%-50s] %d%%" $(printf '#%.0s' $(seq 1 $((progress / 2)))) $progress
 }
-echo "脚本获取成功，数据处理中，请稍后..."
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] 脚本获取成功，数据处理中，请稍后..."
 case $1 in
 -d)
   case $2 in
   config)
           CHECK_FILE
           if [ -f ${config_file} ];then
-            echo -e "${green}download success ${plain}"
+            echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] ${green}download success ${plain}"
             exit 0
           else
-            echo -e "${red}download failed${plain}"
+            echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] ${red}download failed${plain}"
             exit 0
           fi
           ;;
   *)
-          echo -e "${red}参数错误${plain}"
+          echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] ${red}参数错误${plain}"
           ;;
   esac
   ;;
@@ -133,7 +133,7 @@ case $1 in
         progress_bar 2 1
         initialize_check
         progress_bar 2 2
-  printf "\n数据处理完成正在获取菜单\n"
+  printf "\n%s 数据处理完成正在获取菜单\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
   bash <(curl -L https://$url_address/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh) # function menu
   bash
   ;;

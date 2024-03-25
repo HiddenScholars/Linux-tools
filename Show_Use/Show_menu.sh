@@ -8,11 +8,11 @@ red=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/C
 green=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR green)
 plain=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR plain)
 handle_error() {
-    echo "出现运行错误，解决后再次运行！错误码：$?"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 出现运行错误，解决后再次运行！错误码：$?"
     exit 1
 }
 handle_exit() {
-    printf "\n由于用户取消退出菜单页...\n"
+    printf "\n%s 由于用户取消退出菜单页...\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
     exit 0
 }
 trap handle_error ERR
@@ -44,9 +44,9 @@ function check_update() {
              #更新完成重新获取本地版本
              GET_LOCAL_VERSION=$(cat $version_file)
           elif [ "$GET_REMOTE_VERSION"  == "$GET_LOCAL_VERSION" ];then
-             echo -e "${green}已是最新版本${plain}"
+             echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] ${green}已是最新版本${plain}"
           else
-             echo -e "${red} 版本参数错误 ${plain}"
+             echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] ${red} 版本参数错误 ${plain}"
              return 1
           fi
 }
@@ -109,7 +109,7 @@ function install_1panel() {
     elif [ "$SystemVersion" == debian ]; then
         curl -sSL https://resource.fit2cloud.com/1panel/package/quick_start.sh -o quick_start.sh && bash quick_start.sh
     else
-        echo "未知的系统版本，请前往GitHub-Issue查找/提交问题."
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] 未知的系统版本，请前往GitHub-Issue查找/提交问题."
     fi
 }
 
@@ -140,96 +140,132 @@ function disk_capacity_check() {
 }
 function install_env() {
     select=''
+    install_env_select=''
     clear
     printf "****************************************************************************\n"
-                        printf "\t\t**欢迎使用Linux-tools软件安装脚本菜单**\n"
+                        printf "\t\t**欢迎使用Linux-tools工具脚本菜单**\n"
     printf "****************************************************************************\n"
                             for i in "${!env_install[@]}"
                             do
                             printf "\t\t${green}%s. ${plain}${env_install[$i]}.\n" "${i}"
                             done
     printf "****************************************************************************\n"
-    read -rp   "输入序号【0-"$((${#env_install[@]}-1))"】：" select
+    read -rp   "[$(date '+%Y-%m-%d %H:%M:%S')] 输入序号【0-"$((${#env_install[@]}-1))"】：" select
     if [ -n "$select" ] ;then
             if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${env_install_function[$select]}" ]  ; then
-                eval  "${env_install_function[$select]}"
+                [ "$select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 请确认是否进行环境安装（y/n）" install_env_select
+                if [ "$install_env_select" == "y" ]; then
+                   eval  "${env_install_function[$select]}"
+                elif [ "$select" -eq 0 ]; then
+                   echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消环境安装"
+                   eval  "${env_install_function[$select]}"
+                elif [ -z "$install_env_select" ] || [ "$install_env_select" == "n" ]; then
+                   echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消环境安装"
+                fi
             else
-               echo "不存在的功能"
+               echo "[$(date '+%Y-%m-%d %H:%M:%S')] 不存在的功能"
             fi
     else
-           echo "输入序号才能执行"
+           echo "[$(date '+%Y-%m-%d %H:%M:%S')] 输入序号才能执行"
     fi
 }
 function install_open_source_projects() {
     select=''
+    install_open_source_projects_select=''
     clear
     printf "****************************************************************************\n"
-                        printf "\t\t**欢迎使用Linux-tools软件安装脚本菜单**\n"
+                        printf "\t\t**欢迎使用Linux-tools工具脚本菜单**\n"
     printf "****************************************************************************\n"
                             for i in "${!open_source_projects[@]}"
                             do
                             printf "\t\t${green}%s. ${plain}${open_source_projects[$i]}.\n" "${i}"
                             done
     printf "****************************************************************************\n"
-    read -rp   "输入序号【0-"$((${#open_source_projects[@]}-1))"】：" select
+    read -rp   "[$(date '+%Y-%m-%d %H:%M:%S')] 输入序号【0-"$((${#open_source_projects[@]}-1))"】：" select
     if [ -n "$select" ] ;then
             if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${open_source_projects_function[$select]}" ]  ; then
-                eval  "${open_source_projects_function[$select]}"
+                [ "$select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 请确认是否安装该开源项目（y/n）" install_open_source_projects_select
+                if [ "$install_open_source_projects_select" == "y" ]; then
+                  eval  "${open_source_projects_function[$select]}"
+                elif [ "$select" -eq 0 ]; then
+                  echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消安装该开源项目"
+                  eval  "${open_source_projects_function[$select]}"
+                elif [ -z "$install_open_source_projects_select" ] || [ "$install_open_source_projects_select" == "n" ]; then
+                  echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消安装该开源项目"
+                fi
             else
-               echo "不存在的功能"
+               echo "[$(date '+%Y-%m-%d %H:%M:%S')] 不存在的功能"
             fi
     else
-           echo "输入序号才能执行"
+           echo "[$(date '+%Y-%m-%d %H:%M:%S')] 输入序号才能执行"
     fi
 }
 function install_web_site_install() {
     select=''
+    install_web_site_install_select=''
     clear
     printf "****************************************************************************\n"
-                        printf "\t\t**欢迎使用Linux-tools软件安装脚本菜单**\n"
+                        printf "\t\t**欢迎使用Linux-tools工具脚本菜单**\n"
     printf "****************************************************************************\n"
                             for i in "${!web_site_install[@]}"
                             do
                             printf "\t\t${green}%s. ${plain}${web_site_install[$i]}.\n" "${i}"
                             done
     printf "****************************************************************************\n"
-    read -rp   "输入序号【0-"$((${#web_site_install[@]}-1))"】：" select
+    read -rp   "[$(date '+%Y-%m-%d %H:%M:%S')] 输入序号【0-"$((${#web_site_install[@]}-1))"】：" select
     if [ -n "$select" ] ;then
             if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${web_site_install_function[$select]}" ]  ; then
-                eval  "${web_site_install_function[$select]}"
+                [ "$select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 请确认是否安装该建站工具（y/n）" install_web_site_install_select
+                if [ "$install_web_site_install_select" == "y" ]; then
+                   eval  "${web_site_install_function[$select]}"
+                elif [ "$select" -eq 0 ]; then
+                   echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消安装该建站工具"
+                   eval  "${web_site_install_function[$select]}"
+                elif [ -z "$install_web_site_install_select" ] || [ "$install_web_site_install_select" == "n" ]; then
+                   echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消安装该建站工具"
+                fi
             else
-               echo "不存在的功能"
+               echo "[$(date '+%Y-%m-%d %H:%M:%S')] 不存在的功能"
             fi
     else
-           echo "输入序号才能执行"
+           echo "[$(date '+%Y-%m-%d %H:%M:%S')] 输入序号才能执行"
     fi
 }
 function install_diy() {
     select=''
+    install_diy_select=''
     clear
     printf "****************************************************************************\n"
-                        printf "\t\t**欢迎使用Linux-tools软件安装脚本菜单**\n"
+                        printf "\t\t**欢迎使用Linux-tools工具脚本菜单**\n"
     printf "****************************************************************************\n"
                             for i in "${!diy_install[@]}"
                             do
                             printf "\t\t${green}%s. ${plain}${diy_install[$i]}.\n" "${i}"
                             done
     printf "****************************************************************************\n"
-    read -rp   "输入序号【0-"$((${#diy_install[@]}-1))"】：" select
+    read -rp  "[$(date '+%Y-%m-%d %H:%M:%S')] 输入序号【0-"$((${#diy_install[@]}-1))"】：" select
     if [ -n "$select" ] ;then
             if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${diy_install_function[$select]}" ]  ; then
-                eval  "${diy_install_function[$select]}"
+                 [ "$select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 请确认是否安装该DIY工具（y/n）" install_diy_select
+                 if [ "$install_diy_select" == "y" ]; then
+                    eval  "${diy_install_function[$select]}"
+                 elif [ "$select" -eq 0 ]; then
+                    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消安装该DIY工具"
+                    eval  "${diy_install_function[$select]}"
+                 elif [ -z "$install_diy_select" ] || [ "$install_diy_select" == "n" ]; then
+                     echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消安装该DIY工具"
+                 fi
             else
-               echo "不存在的功能"
+               echo "[$(date '+%Y-%m-%d %H:%M:%S')] 不存在的功能"
             fi
     else
-           echo "输入序号才能执行"
+           echo "[$(date '+%Y-%m-%d %H:%M:%S')] 输入序号才能执行"
     fi
 }
 #该参数请勿修改
 temp_return_select=0
 function show_Use() {
-[ $temp_return_select -ne 0 ] && read -rp "回车返回主菜单"
+[ $temp_return_select -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 回车返回主菜单"
 let temp_return_select++
 select=''
 clear
@@ -247,7 +283,7 @@ echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
                             printf "\t\t${green}%s. ${plain}${show_use[$i]}.➤\n" "${i}"
                             done
     printf "****************************************************************************\n"
-    read -rp "输入序号【0-"$((${#show_use[@]}-1))"】：" select
+    read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 输入序号【0-"$((${#show_use[@]}-1))"】：" select
     if [ -n "$select" ] ;then
         if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${show_use_function[$select]}" ]  ; then
            if [ "${show_use_function[$select]}" == "exit 0" ]; then
@@ -255,32 +291,41 @@ echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
            fi
             eval  "${show_use_function[$select]}"
         else
-           echo "不存在的功能"
+           echo "[$(date '+%Y-%m-%d %H:%M:%S')] 不存在的功能"
         fi
     else
-       echo "输入序号才能执行"
+       echo "[$(date '+%Y-%m-%d %H:%M:%S')] 输入序号才能执行"
     fi
 }
 function show_Soft() {
     select=''
+    install_select=''
     clear
     printf "****************************************************************************\n"
-                        printf "\t\t**欢迎使用Linux-tools软件安装脚本菜单**\n"
+                        printf "\t\t**欢迎使用Linux-tools工具脚本菜单**\n"
     printf "****************************************************************************\n"
                             for i in "${!show_soft[@]}"
                             do
                             printf "\t\t${green}%s. ${plain}${show_soft[$i]}.\n" "${i}"
                             done
     printf "****************************************************************************\n"
-    read -rp   "输入序号【0-"$((${#show_soft[@]}-1))"】：" select
+    read -rp   "[$(date '+%Y-%m-%d %H:%M:%S')] 输入序号【0-"$((${#show_soft[@]}-1))"】：" select
     if [ -n "$select" ] ;then
             if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${show_soft_function[$select]}" ]  ; then
-                eval  "${show_soft_function[$select]}"
+                [ "$select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 请确认是否安装（y/n）" install_select
+                if [ "$install_select" == "y" ]; then
+                  eval  "${show_soft_function[$select]}"
+                elif [ "$select" -eq 0 ]; then
+                  echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消安装"
+                  eval  "${show_soft_function[$select]}"
+                elif [ -z "$install_select" ] || [ "$install_select" == "n" ]; then
+                  echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消安装"
+                fi
             else
-               echo "不存在的功能"
+               echo "[$(date '+%Y-%m-%d %H:%M:%S')] 不存在的功能"
             fi
     else
-           echo "输入序号才能执行"
+           echo "[$(date '+%Y-%m-%d %H:%M:%S')] 输入序号才能执行"
     fi
 
 }
@@ -296,23 +341,29 @@ function soft_Uninstall() {
                             printf "\t\t${green}%s. ${plain}${soft_uninstall[$i]}.\n" "${i}"
                             done
       printf "****************************************************************************\n"
-      read -rp "输入序号【0-"$((${#soft_uninstall[@]}-1))"】：" select
+      read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 输入序号【0-"$((${#soft_uninstall[@]}-1))"】：" select
       if [ -n "$select" ] ;then
             if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${soft_uninstall_function[$select]}" ]  ; then
-                read -rp "是否卸载请确认（y/n）" uninstall_select
+                [ "$select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 是否卸载请确认（y/n）" uninstall_select
                 if [ "$uninstall_select" == "y" ]; then
                    eval  "${soft_uninstall_function[$select]}"
+                elif [ "$select" -eq 0 ]; then
+                   echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消卸载"
+                   eval  "${soft_uninstall_function[$select]}"
+                elif [ -z "$uninstall_select" ] || [ "$uninstall_select" == "n" ]; then
+                   echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消卸载"
                 fi
             else
-               echo "不存在的功能"
+               echo "[$(date '+%Y-%m-%d %H:%M:%S')] 不存在的功能"
             fi
       else
-           echo "输入序号才能执行"
+           echo "[$(date '+%Y-%m-%d %H:%M:%S')] 输入序号才能执行"
       fi
 
 }
 function soft_Upgrade() {
     select=''
+    upgrade_select=''
     clear
     printf "****************************************************************************\n"
                                 printf "\t\t**欢迎使用Linux-tools脚本菜单**\n"
@@ -322,15 +373,23 @@ function soft_Upgrade() {
                             printf "\t\t${green}%s. ${plain}${soft_upgrade[$i]}.\n" "${i}"
                             done
         printf "****************************************************************************\n"
-        read -rp "输入序号【0-"$((${#soft_upgrade[@]}-1))"】：" select
+        read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 输入序号【0-"$((${#soft_upgrade[@]}-1))"】：" select
     if [ -n "$select" ] ;then
             if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${soft_upgrade_function[$select]}" ]  ; then
-                eval  "${soft_upgrade_function[$select]}"
+                [ "$select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 请确认是否进行升级（y/n）" upgrade_select
+                if [ "$upgrade_select" == "y" ]; then
+                    eval  "${soft_upgrade_function[$select]}"
+                elif [ "$select" -eq 0 ];then
+                    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消升级"
+                    eval  "${soft_upgrade_function[$select]}"
+                elif [ -z "$upgrade_select" ] || [ "$upgrade_select" == "n" ]; then
+                    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消升级"
+                fi
             else
-               echo "不存在的功能"
+               echo "[$(date '+%Y-%m-%d %H:%M:%S')] 不存在的功能"
             fi
     else
-           echo "输入序号才能执行"
+           echo "[$(date '+%Y-%m-%d %H:%M:%S')] 输入序号才能执行"
     fi
 }
 
