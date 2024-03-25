@@ -1,12 +1,12 @@
 echo "当操作系统为官网脚本支持的操作系统时，直接执行官网脚本，在config中配置的docker源码下载链接不生效。"
-# 获取系统版本
-GET_SYSTEM_CHECK=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- SYSTEM_CHECK)
-if [ "$GET_SYSTEM_CHECK" == "centos" ] || [ "$GET_SYSTEM_CHECK" == "ubuntu" ] || [ "$GET_SYSTEM_CHECK" == "debian" ]; then
+config_path=/tools/
+config_file=/tools/config
+source $config_file
+if [ "SystemVersion" == "centos" ] || [ "SystemVersion" == "ubuntu" ] || [ "SystemVersion" == "debian" ]; then
+   set -x
    sudo curl -sSL https://get.docker.com | sh
+   set +x
 else
-    config_path=/tools/
-    config_file=/tools/config
-    source $config_file
     GET_missing_dirs_docker=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
     #Docker下载
     bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  docker $(for i in "${docker_download_urls[@]}";do printf "%s " "$i";done)

@@ -5,8 +5,7 @@ jdk_install_path=$(echo "$install_path"/jdk/ | tr -s '/')
 jdk_download_path=$(echo "$download_path"/jdk/jdk | tr -s '/' )
 #解压目录检测
 GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
-# 获取包管理器
-GET_PACKAGE_MASTER=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PACKAGE_MASTER)
+
 
   bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  jdk  $(for i in "${jdk_download_urls[@]}";do printf "%s " "$i";done)
   echo "Start unzipping."
@@ -24,7 +23,7 @@ GET_PACKAGE_MASTER=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/
     else
       echo "文件复制失败"
     fi
-    "$GET_PACKAGE_MASTER" remove -y '*openjdk*' java* &>/dev/null
+    "$controls" remove java* openjdk*  -y
 
      sed -i "\|$jdk_install_path|d" /etc/profile
      echo "export JAVA_HOME=$jdk_install_path" >>/etc/profile

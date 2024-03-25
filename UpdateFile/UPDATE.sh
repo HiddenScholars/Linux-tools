@@ -13,6 +13,10 @@ source /tools/config &>/dev/null
         if [ $? -eq 0 ]; then
             sed -i "s/url_address=.*/url_address=$url_address/g" /tools/config #下载完成后修改仓库地址
             sed -i "s/con_branch=.*/con_branch=$con_branch/g" /tools/config #下载完成后修改分支
+            sed -i "s/Max_disk_usage=.*/Max_disk_usage=$Max_disk_usage/g" /tools/config #下载完成后修改tools下软件路径和解压路径最大占用空间
+            sed -i "s/nginx_user=.*/nginx_user=$nginx_user/g" /tools/config #下载完成后修改nginx用户
+            sed -i "s/mysql5_user=.*/mysql5_user=$mysql5_user/g" /tools/config #下载完成后修改mysql5用户
+            sed -i "s/mysql5_initial_port=.*/mysql5_initial_port=$mysql5_initial_port/g" /tools/config #下载完成后修改mysql5端口
             rm -rf /tools/config_bak
             bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Link_localhost/uninstall.sh) # tool link uninstall.sh
             progress_bar 3 1
@@ -23,10 +27,10 @@ source /tools/config &>/dev/null
             printf "\n"
             GET_REMOTE_VERSION=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version)
             echo "$GET_REMOTE_VERSION" >/tools/version
-            echo -e "\033[32m 已是最新版本 \033[0m"
+            echo -e "\033[32m已是最新版本\033[0m"
         else
             mv /tools/config_bak /tools/config
-            echo -e "\033[31m 更新失败 \033[0m"
+            echo -e "\033[31m更新失败\033[0m"
         fi
     else
        echo "not found config..."

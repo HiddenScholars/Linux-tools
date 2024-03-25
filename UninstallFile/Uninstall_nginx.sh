@@ -1,6 +1,5 @@
 #!/bin/bash
 
-read -rp "回车后确认卸载："
 source /etc/profile
 source /tools/config
 function KILL_NGINX_PROCESS() {
@@ -23,10 +22,9 @@ if [ "${#getNginxProcess_number1[@]}" != 0 ]; then
 fi
 }
 function DELETE_NGINX_FILE() {
-GET_PACKAGE_MASTER=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PACKAGE_MASTER)
 GET_NGINX_SERVICE_PATH=($(find / -name "nginx.service"))
 if which nginx &>/dev/null; then
-"$GET_PACKAGE_MASTER" remove -y nginx
+"$controls" remove -y nginx
 systemctl daemon-reload
 fi
 GET_PATH="$install_path/nginx/"

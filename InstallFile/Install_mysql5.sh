@@ -1,8 +1,6 @@
 #!/bin/bash
 
 source /tools/config
-# 获取包管理器
-GET_PACKAGE_MASTER=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PACKAGE_MASTER)
 # 进程检测
 GET_PROCESS_CHECK=($(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PROCESS_CHECK mysql))
 # 端口检测
@@ -21,7 +19,7 @@ elif [ -n "$GET_PORT_CHECK" ] &&[ "${#GET_PORT_CHECK[@]}" -ne 0 ]; then
      read -rp "被占用是否继续安装（y/n）：" select
     [ "$select" != "y" ] && exit 0
 fi
-"$GET_PACKAGE_MASTER" -y remove mysql* mariadb* &>/dev/null
+"$controls" -y remove mysql* mariadb* &>/dev/null
 
 mysql5_install_path=$(echo "/$install_path"/mysql5/ | tr -s '/')
 mysql5_install_path_bin=$(echo "/$mysql5_install_path"/bin/ | tr -s '/')

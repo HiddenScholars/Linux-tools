@@ -1,6 +1,5 @@
 #!/bin/bash
 
-read -rp "回车后确认卸载："
 source /etc/profile
 source /tools/config
 function KILL_MYSQL5_PROCESS() {
@@ -27,9 +26,9 @@ mysql5_install_path=$(echo "/$install_path"/mysql5/ | tr -s '/')
 if [ -n "$mysql5_install_path" ]; then
   sed -i "\|$mysql5_install_path|d" /etc/profile
 fi
-GET_PACKAGE_MASTER=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PACKAGE_MASTER)
+
 if which mysql &>/dev/null; then
-"$GET_PACKAGE_MASTER" remove -y mysql* mariadb* &>/dev/null
+"$controls" remove -y mysql* mariadb* &>/dev/null
 fi
 if [ -f /etc/init.d/mysqld ]; then
    /etc/init.d/mysqld stop

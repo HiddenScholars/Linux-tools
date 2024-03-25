@@ -12,7 +12,7 @@ handle_error() {
     exit 1
 }
 handle_exit() {
-    echo "脚本退出..."
+    printf "\n由于用户取消退出...\n"
     bash
     exit 0
 }
@@ -107,7 +107,7 @@ function progress_bar() {
     local total_functions=$1  # 总函数数量
     local executed_functions=$2  # 已执行的函数数量
     local progress=$((executed_functions * 100 / total_functions))  # 计算进度百分比
-    printf "\r正在处理: [%-50s] %d%%" $(printf '#%.0s' $(seq 1 $((progress / 2)))) $progress
+    printf "\r处理中: [%-50s] %d%%" $(printf '#%.0s' $(seq 1 $((progress / 2)))) $progress
 }
 echo "脚本获取成功，数据处理中，请稍后..."
 case $1 in
@@ -133,8 +133,8 @@ case $1 in
         progress_bar 2 1
         initialize_check
         progress_bar 2 2
-  printf "\n数据处理完成正在获取菜单"
-  bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh) # function menu
+  printf "\n数据处理完成正在获取菜单\n"
+  bash <(curl -L https://$url_address/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh) # function menu
   bash
   ;;
 esac
