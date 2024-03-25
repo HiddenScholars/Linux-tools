@@ -8,11 +8,11 @@ red=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/C
 green=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR green)
 plain=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR plain)
 handle_error() {
-    echo "出现运行错误，解决后再次运行！错误码：$?"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 出现运行错误，解决后再次运行！错误码：$?"
     exit 1
 }
 handle_exit() {
-    printf "\n由于用户取消退出菜单页...\n"
+    printf "\n%s 由于用户取消退出菜单页...\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
     exit 0
 }
 trap handle_error ERR
@@ -44,9 +44,9 @@ function check_update() {
              #更新完成重新获取本地版本
              GET_LOCAL_VERSION=$(cat $version_file)
           elif [ "$GET_REMOTE_VERSION"  == "$GET_LOCAL_VERSION" ];then
-             echo -e "${green}已是最新版本${plain}"
+             echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] ${green}已是最新版本${plain}"
           else
-             echo -e "${red} 版本参数错误 ${plain}"
+             echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] ${red} 版本参数错误 ${plain}"
              return 1
           fi
 }
