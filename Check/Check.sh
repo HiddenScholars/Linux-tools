@@ -189,7 +189,7 @@ function PACKAGE_DOWNLOAD() {
         fi
     done
     if [ -n "$ServerName"  ] && [ "${#DownloadUrl[@]}" -ne 0 ];then
-      read -rp "Enter Your install service version choice：" y
+      read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] Enter Your install service version choice：" y
     fi
     if [[ "$y" =~ ^[0-9]+$ ]] && [ "$i" -le "${#DownloadUrl[@]}" ] ; then
         tr_s_variable_2=$(echo "$download_path/$ServerName/$ServerName" | tr -s '/')
@@ -202,13 +202,13 @@ function PACKAGE_DOWNLOAD() {
         fi
         wget -O "$tr_s_variable_2" "${DownloadUrl[$y]}"
         if [ $? -ne 0 ] && [ ! -f "$tr_s_variable_2" ];then
-          echo "download failed."
+          echo "[$(date '+%Y-%m-%d %H:%M:%S')] download failed."
            return 1
         fi
     elif [ -z "$y" ]; then
-        echo "Skip the installation."
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Skip the installation."
     else
-        echo "Input Failed."
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Input Failed."
         return 1
     fi
 }
