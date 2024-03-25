@@ -18,7 +18,8 @@ GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-to
     if [ -n "$jdk_install_path" ] && [ ! -d "$jdk_install_path" ];then
       mkdir -p "$jdk_install_path"
     fi
-    if $(cp -rf  /tools/unpack_file/"$GET_missing_dirs_nginx"/* "$jdk_install_path");then
+    cp -rf  /tools/unpack_file/"$GET_missing_dirs_nginx"/* "$jdk_install_path"
+    if [ $? -eq 0 ];then
       echo "文件复制完成"
     else
       echo "文件复制失败"
