@@ -6,8 +6,6 @@ red=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/C
 green=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR green)
 plain=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR plain)
 set -x
-# 获取系统版本
-GET_SYSTEM_CHECK=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- SYSTEM_CHECK)
 # 进程检测
 GET_PROCESS_CHECK=($(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PROCESS_CHECK nginx))
 # 端口检测
@@ -27,9 +25,9 @@ elif [ -n "$GET_PORT_CHECK" ] &&[ "${#GET_PORT_CHECK[@]}" -ne 0 ]; then
     [ "$select" != "y" ] && exit 0
 fi
 
-  if [ "$GET_SYSTEM_CHECK" == "centos" ] || [ "$GET_SYSTEM_CHECK" == "Anolis OS" ]; then
+  if [ "SystemVersion" == "centos" ] || [ "SystemVersion" == "Anolis OS" ]; then
        "$controls" -y install gcc gcc-c++ zlib zlib-devel pcre-devel openssl openssl-devel gd-devel &>/dev/null
-  elif [ "$GET_SYSTEM_CHECK" == "ubuntu" ] || [ "$GET_SYSTEM_CHECK" == "debian" ]; then
+  elif [ "SystemVersion" == "ubuntu" ] || [ "SystemVersion" == "debian" ]; then
        "$controls" -y install --ignore-missing gcc gcc-c++ zlib1g zlib1g-dev libpcre3-dev libssl-dev libgd-dev &>/dev/null
   else
     echo "未支持的系统版本"

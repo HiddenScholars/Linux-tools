@@ -27,10 +27,10 @@ source /tools/config &>/dev/null
             printf "\n"
             GET_REMOTE_VERSION=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version)
             echo "$GET_REMOTE_VERSION" >/tools/version
-            echo -e "\033[32m 已是最新版本 \033[0m"
+            echo -e "\033[32m已是最新版本\033[0m"
         else
             mv /tools/config_bak /tools/config
-            echo -e "\033[31m 更新失败 \033[0m"
+            echo -e "\033[31m更新失败\033[0m"
         fi
     else
        echo "not found config..."
