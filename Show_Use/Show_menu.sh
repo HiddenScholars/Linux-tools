@@ -134,6 +134,9 @@ echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
     read -rp "输入序号【0-"$((${#show_use[@]}-1))"】：" select
     if [ -n "$select" ] ;then
         if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${show_use_function[$select]}" ]  ; then
+           if [ "${show_use_function[$select]}" == "exit 0" ]; then
+               bash
+           fi
             eval  "${show_use_function[$select]}"
         else
            echo "不存在的功能"
