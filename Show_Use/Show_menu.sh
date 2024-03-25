@@ -12,7 +12,7 @@ handle_error() {
     exit 1
 }
 handle_exit() {
-    echo "退出菜单页..."
+    printf "\n由于用户取消退出菜单页...\n"
     exit 0
 }
 trap handle_error ERR
