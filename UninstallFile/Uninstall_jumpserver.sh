@@ -7,7 +7,7 @@ for i in "${docker_id[@]}"
 do
   images_id+=($(docker inspect -f '{{.Image}}' "$i" | awk -F':' '{print $2}'))
 done
-          if [ "${#docker_id@}" -ne 0 ]; then
+          if [ "${#docker_id[@]}" -ne 0 ]; then
               for y in "${docker_id[@]}"
               do
                  docker stop "$y"

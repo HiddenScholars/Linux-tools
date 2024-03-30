@@ -32,7 +32,7 @@ if [ "$edit_config_txt" == "y" ]; then
       read -rp "脚本预备修改操作完成，是否现在重新配置（y/n）" reload_select
       if [ "$reload_select" == "y" ]; then
           docker_id=($(docker ps -aq --filter "name=jms.*"))
-          if [ "${#docker_id@}" -ne 0 ]; then
+          if [ "${#docker_id[@]}" -ne 0 ]; then
               for i in "${docker_id[@]}"
               do
                  docker restart "$i"
