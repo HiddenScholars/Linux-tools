@@ -19,8 +19,8 @@ trap handle_error ERR
 trap handle_exit EXIT
 
 #菜单目录显示控制
-show_use=("关闭脚本菜单" "中间件安装" "中间件卸载" "中间件升级" "环境安装" "开源项目部署" "网站建设" "DIY工具" "config更新")
-show_use_function=("exit 0" "show_Soft" "soft_Uninstall" "soft_Upgrade" "install_env" "install_open_source_projects" "install_web_site_install" "install_diy" "check_update")
+show_use=("关闭脚本菜单" "中间件安装" "中间件卸载" "中间件升级" "环境安装" "开源项目部署" "网站建设" "DIY工具" "系统清理" "config更新")
+show_use_function=("exit 0" "show_Soft" "soft_Uninstall" "soft_Upgrade" "install_env" "install_open_source_projects" "install_web_site_install" "install_diy" "system_clean" "check_update")
 show_soft=("返回主页面" "Nginx" "Docker+Docker-compose" "Docker-compose" "Mysql5" "一键执行全部中间件安装脚本")
 show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose" "install_mysql5" "install_all")
 soft_uninstall=("返回主页面" "Nginx卸载" "Docker+Docker-compose卸载" "Mysql5卸载" "tailscale卸载" "tool命令卸载")
@@ -29,12 +29,14 @@ soft_upgrade=("返回主菜单" "Nginx平滑升(降)级")
 soft_upgrade_function=("return" "upgrade_smooth_nginx")
 env_install=("返回主页面" "JDK")
 env_install_function=("return" "install_jdk")
-open_source_projects=("返回主页面" "jumpserver(社区版)")
+open_source_projects=("返回主页面" "jumpserver(社区版-docker安装)")
 open_source_projects_function=("return" "install_jumpserver_free")
 web_site_install=("返回主页面" "宝塔国际版" "宝塔（中国大陆版本）" "1Panel" "acme脚本(搭配cloudflare)")
 web_site_install_function=("return" "install_aaPanel" "install_bt" "install_1panel" "setting_ssl")
 diy_install=("返回主页面" "tailscale")
 diy_install_function=("return" "install_tailscale")
+system_clean=("返回主页面" "清理jumpserver社区版(只清理相关镜像与文件)")
+system_clean_function=("return" "clean_jumpserver_free")
 
   GET_REMOTE_VERSION=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version)
   GET_LOCAL_VERSION=$(cat $version_file)
@@ -115,7 +117,9 @@ function install_1panel() {
 function install_jumpserver_free() {
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_jumpserver.sh)
 }
-
+function clean_jumpserver_free() {
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UninstallFile/Uninstall_jumpserver.sh)
+}
 
 
 function install_all() {
