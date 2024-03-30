@@ -6,3 +6,6 @@ if [ -f "$jmsctl_path" ]; then
 else
   echo "jmsctl.sh not found"
 fi
+if [ -d /opt/jumpserver/ ]; then
+    rm -rf /opt/jumpserver/*
+fi
