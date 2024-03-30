@@ -9,7 +9,6 @@ green=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"
 plain=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR plain)
 handle_error() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] 出现运行错误，解决后再次运行！错误码：$?"
-    exit 1
 }
 handle_exit() {
     printf "\n%s 由于用户取消退出菜单页...\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
@@ -35,8 +34,8 @@ web_site_install=("返回主页面" "宝塔国际版" "宝塔（中国大陆版�
 web_site_install_function=("return" "install_aaPanel" "install_bt" "install_1panel" "setting_ssl")
 diy_install=("返回主页面" "tailscale")
 diy_install_function=("return" "install_tailscale")
-system_clean=("返回主页面" "清理jumpserver社区版(只清理相关镜像与文件)")
-system_clean_function=("return" "clean_jumpserver_free")
+run_system_clean=("返回主页面" "清理jumpserver社区版(只清理相关镜像与文件)")
+run_system_clean_function=("return" "clean_jumpserver_free")
 
   GET_REMOTE_VERSION=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version)
   GET_LOCAL_VERSION=$(cat $version_file)
@@ -260,6 +259,37 @@ function install_diy() {
                     eval  "${diy_install_function[$select]}"
                  elif [ -z "$install_diy_select" ] || [ "$install_diy_select" == "n" ]; then
                      echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消安装该DIY工具"
+                 fi
+            else
+               echo "[$(date '+%Y-%m-%d %H:%M:%S')] 不存在的功能"
+            fi
+    else
+           echo "[$(date '+%Y-%m-%d %H:%M:%S')] 输入序号才能执行"
+    fi
+}
+function system_clean() {
+    select=''
+    run_system_clean_select=''
+    clear
+    printf "****************************************************************************\n"
+                        printf "\t\t**欢迎使用Linux-tools工具脚本菜单**\n"
+    printf "****************************************************************************\n"
+                            for i in "${!run_system_clean[@]}"
+                            do
+                            printf "\t\t${green}%s. ${plain}${run_system_clean[$i]}.\n" "${i}"
+                            done
+    printf "****************************************************************************\n"
+    read -rp  "[$(date '+%Y-%m-%d %H:%M:%S')] 输入序号【0-"$((${#run_system_clean[@]}-1))"】：" select
+    if [ -n "$select" ] ;then
+            if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${run_system_clean_function[$select]}" ]  ; then
+                 [ "$select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 请确认是否进行清理（y/n）" run_system_clean_select
+                 if [ "$run_system_clean_select" == "y" ]; then
+                    eval  "${run_system_clean_function[$select]}"
+                 elif [ "$select" -eq 0 ]; then
+                    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消清理"
+                    eval  "${run_system_clean_function[$select]}"
+                 elif [ -z "$run_system_clean_select" ] || [ "$run_system_clean_select" == "n" ]; then
+                     echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消清理"
                  fi
             else
                echo "[$(date '+%Y-%m-%d %H:%M:%S')] 不存在的功能"
