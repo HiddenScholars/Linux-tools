@@ -41,7 +41,9 @@ bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/
 GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
 
     [ -d "$install_path"/nginx/ ] && mv "$install_path"/nginx/ "$install_path"/nginx$(date +%Y%m%d)_bak
+    echo ""[$(date '+%Y-%m-%d %H:%M:%S')]" Start unzipping."
     tar xvf "$download_path"/nginx/nginx -C /tools/unpack_file/"$GET_missing_dirs_nginx" --strip-components 1
+    echo ""[$(date '+%Y-%m-%d %H:%M:%S')]" The decompression is complete."
     cd /tools/unpack_file/"$GET_missing_dirs_nginx" && ./configure --prefix="${install_path}"/nginx/ \
                                                 --with-pcre \
                                                 --with-http_ssl_module \
