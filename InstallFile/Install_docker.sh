@@ -1,4 +1,5 @@
-echo "当操作系统为官网脚本支持的操作系统时，直接执行官网脚本，在config中配置的docker源码下载链接不生效。"
+#!/bin/bash
+
 config_path=/tools/
 config_file=/tools/config
 function setting_docker_daemon_json() {
@@ -19,6 +20,7 @@ fi
 }
 source $config_file
 if [ "SystemVersion" == "centos" ] || [ "SystemVersion" == "ubuntu" ] || [ "SystemVersion" == "debian" ]; then
+   echo "当操作系统为官网脚本支持的操作系统，直接执行官网脚本，在config中配置的docker源码下载链接不生效。"
    set -x
    sudo curl -sSL https://get.docker.com | sh
    set +x
