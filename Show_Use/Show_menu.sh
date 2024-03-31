@@ -9,7 +9,6 @@ green=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"
 plain=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR plain)
 handle_error() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] 出现运行错误，解决后再次运行！错误码：$?"
-    exit 1
 }
 handle_exit() {
     printf "\n%s 由于用户取消退出菜单页...\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
@@ -19,8 +18,8 @@ trap handle_error ERR
 trap handle_exit EXIT
 
 #菜单目录显示控制
-show_use=("关闭脚本菜单" "中间件安装" "中间件卸载" "中间件升级" "环境安装" "开源项目部署" "网站建设" "DIY工具" "config更新")
-show_use_function=("exit 0" "show_Soft" "soft_Uninstall" "soft_Upgrade" "install_env" "install_open_source_projects" "install_web_site_install" "install_diy" "check_update")
+show_use=("关闭脚本菜单" "中间件安装" "中间件卸载" "中间件升级" "环境安装" "开源项目部署" "网站建设" "DIY工具" "系统清理" "config更新")
+show_use_function=("exit 0" "show_Soft" "soft_Uninstall" "soft_Upgrade" "install_env" "install_open_source_projects" "install_web_site_install" "install_diy" "system_clean" "check_update")
 show_soft=("返回主页面" "Nginx" "Docker+Docker-compose" "Docker-compose" "Mysql5" "一键执行全部中间件安装脚本")
 show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose" "install_mysql5" "install_all")
 soft_uninstall=("返回主页面" "Nginx卸载" "Docker+Docker-compose卸载" "Mysql5卸载" "tailscale卸载" "tool命令卸载")
@@ -29,12 +28,14 @@ soft_upgrade=("返回主菜单" "Nginx平滑升(降)级")
 soft_upgrade_function=("return" "upgrade_smooth_nginx")
 env_install=("返回主页面" "JDK")
 env_install_function=("return" "install_jdk")
-open_source_projects=("返回主页面")
-open_source_projects_function=("return")
+open_source_projects=("返回主页面" "jumpserver(社区版-docker安装)")
+open_source_projects_function=("return" "install_jumpserver_free")
 web_site_install=("返回主页面" "宝塔国际版" "宝塔（中国大陆版本）" "1Panel" "acme脚本(搭配cloudflare)")
 web_site_install_function=("return" "install_aaPanel" "install_bt" "install_1panel" "setting_ssl")
 diy_install=("返回主页面" "tailscale")
 diy_install_function=("return" "install_tailscale")
+run_system_clean=("返回主页面" "清理jumpserver社区版(只清理相关镜像与文件)")
+run_system_clean_function=("return" "clean_jumpserver_free")
 
   GET_REMOTE_VERSION=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version)
   GET_LOCAL_VERSION=$(cat $version_file)
@@ -112,8 +113,12 @@ function install_1panel() {
         echo "[$(date '+%Y-%m-%d %H:%M:%S')] 未知的系统版本，请前往GitHub-Issue查找/提交问题."
     fi
 }
-
-
+function install_jumpserver_free() {
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_jumpserver.sh)
+}
+function clean_jumpserver_free() {
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UninstallFile/Uninstall_jumpserver.sh)
+}
 
 
 function install_all() {
@@ -254,6 +259,37 @@ function install_diy() {
                     eval  "${diy_install_function[$select]}"
                  elif [ -z "$install_diy_select" ] || [ "$install_diy_select" == "n" ]; then
                      echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消安装该DIY工具"
+                 fi
+            else
+               echo "[$(date '+%Y-%m-%d %H:%M:%S')] 不存在的功能"
+            fi
+    else
+           echo "[$(date '+%Y-%m-%d %H:%M:%S')] 输入序号才能执行"
+    fi
+}
+function system_clean() {
+    select=''
+    run_system_clean_select=''
+    clear
+    printf "****************************************************************************\n"
+                        printf "\t\t**欢迎使用Linux-tools工具脚本菜单**\n"
+    printf "****************************************************************************\n"
+                            for i in "${!run_system_clean[@]}"
+                            do
+                            printf "\t\t${green}%s. ${plain}${run_system_clean[$i]}.\n" "${i}"
+                            done
+    printf "****************************************************************************\n"
+    read -rp  "[$(date '+%Y-%m-%d %H:%M:%S')] 输入序号【0-"$((${#run_system_clean[@]}-1))"】：" select
+    if [ -n "$select" ] ;then
+            if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${run_system_clean_function[$select]}" ]  ; then
+                 [ "$select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 请确认是否进行清理（y/n）" run_system_clean_select
+                 if [ "$run_system_clean_select" == "y" ]; then
+                    eval  "${run_system_clean_function[$select]}"
+                 elif [ "$select" -eq 0 ]; then
+                    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消清理"
+                    eval  "${run_system_clean_function[$select]}"
+                 elif [ -z "$run_system_clean_select" ] || [ "$run_system_clean_select" == "n" ]; then
+                     echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消清理"
                  fi
             else
                echo "[$(date '+%Y-%m-%d %H:%M:%S')] 不存在的功能"

@@ -9,7 +9,7 @@ set -x
 # 进程检测
 GET_PROCESS_CHECK=($(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PROCESS_CHECK nginx))
 # 端口检测
-GET_PORT_CHECK=($(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PORT_CHECK 80 443))
+GET_PORT_CHECK=($(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PORT_CHECK 80))
 if [ -n "$GET_PROCESS_CHECK" ] && [ -n "$GET_PORT_CHECK" ] && [ "${#GET_PROCESS_CHECK[@]}" -ne 0 ]  && [ "${#GET_PORT_CHECK[@]}" -ne 0 ]; then
     read -rp "nginx程序已存在是否继续安装（y/n）：" select
     [ "$select" != "y" ] && exit 0
@@ -25,10 +25,18 @@ elif [ -n "$GET_PORT_CHECK" ] &&[ "${#GET_PORT_CHECK[@]}" -ne 0 ]; then
     [ "$select" != "y" ] && exit 0
 fi
 
-  if [ "SystemVersion" == "centos" ] || [ "SystemVersion" == "Anolis OS" ]; then
-       "$controls" -y install gcc gcc-c++ zlib zlib-devel pcre-devel openssl openssl-devel gd-devel &>/dev/null
-  elif [ "SystemVersion" == "ubuntu" ] || [ "SystemVersion" == "debian" ]; then
-       "$controls" -y install --ignore-missing gcc gcc-c++ zlib1g zlib1g-dev libpcre3-dev libssl-dev libgd-dev &>/dev/null
+  if [ "$SystemVersion" == "centos" ] || [ "$SystemVersion" == "Anolis OS" ]; then
+      yum_package=(gcc gcc-c++ zlib zlib-devel pcre-devel openssl openssl-devel gd-devel)
+      for i in "${yum_package[@]}"
+      do
+       "$controls" -y install  "$i"
+      done
+  elif [ "$SystemVersion" == "ubuntu" ] || [ "$SystemVersion" == "debian" ]; then
+       apt_package=(build-essential gcc gcc-c++ zlib1g zlib1g-dev libpcre3-dev libssl-dev libgd-dev)
+       for y in "${apt_package[@]}"
+       do
+          "$controls" -y install "$y"
+       done
   else
     echo "未支持的系统版本"
     exit 1
@@ -41,7 +49,9 @@ bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/
 GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
 
     [ -d "$install_path"/nginx/ ] && mv "$install_path"/nginx/ "$install_path"/nginx$(date +%Y%m%d)_bak
-    tar xvf "$download_path"/nginx/nginx -C /tools/unpack_file/"$GET_missing_dirs_nginx" --strip-components 1
+    echo ""[$(date '+%Y-%m-%d %H:%M:%S')]" Start unzipping."
+    tar xvf "$download_path"/nginx/nginx -C /tools/unpack_file/"$GET_missing_dirs_nginx" --strip-components 1 &>/dev/null
+    echo ""[$(date '+%Y-%m-%d %H:%M:%S')]" The decompression is complete."
     cd /tools/unpack_file/"$GET_missing_dirs_nginx" && ./configure --prefix="${install_path}"/nginx/ \
                                                 --with-pcre \
                                                 --with-http_ssl_module \
@@ -102,7 +112,6 @@ WantedBy=multi-user.target" > /usr/lib/systemd/system/nginx.service
 chmod +x /usr/lib/systemd/system/nginx.service
 systemctl daemon-reload
 systemctl start nginx.service
-systemctl enable nginx.service
 else
       echo -e "${red}安装失败...${plain}"
       exit 0

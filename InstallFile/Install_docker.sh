@@ -1,11 +1,30 @@
-echo "当操作系统为官网脚本支持的操作系统时，直接执行官网脚本，在config中配置的docker源码下载链接不生效。"
+#!/bin/bash
+
 config_path=/tools/
 config_file=/tools/config
+function setting_docker_daemon_json() {
+if [ "$country" == "CN" ]; then
+cat > /etc/docker/daemon.json <<EOF
+{
+  "data-root": "/var/lib/docker",
+  "live-restore": true,
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-file": "3",
+    "max-size": "10m"
+  },
+  "registry-mirrors": ["https://f2k3b83v.mirror.aliyuncs.com"]
+}
+EOF
+fi
+}
 source $config_file
 if [ "SystemVersion" == "centos" ] || [ "SystemVersion" == "ubuntu" ] || [ "SystemVersion" == "debian" ]; then
+   echo "操作系统为官网脚本支持的操作系统，直接执行官网脚本，在config中配置的docker源码下载链接不生效。"
    set -x
    sudo curl -sSL https://get.docker.com | sh
    set +x
+   setting_docker_daemon_json
 else
     GET_missing_dirs_docker=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
     #Docker下载
@@ -41,6 +60,7 @@ else
     systemctl start docker && echo "启动失败"
     systemctl enable docker
     if $(docker info &>/dev/null); then
+        setting_docker_daemon_json
         echo "Docker安装成功"
     else
         echo "Docker安装失败"
