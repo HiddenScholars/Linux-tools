@@ -7,5 +7,5 @@ else
   echo "jmsctl.sh not found"
 fi
 if [ -d /opt/jumpserver/ ]; then
-    rm -rf /opt/jumpserver/*
+    rm -rf /opt/jumpserver-*
 fi
