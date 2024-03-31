@@ -102,7 +102,6 @@ WantedBy=multi-user.target" > /usr/lib/systemd/system/nginx.service
 chmod +x /usr/lib/systemd/system/nginx.service
 systemctl daemon-reload
 systemctl start nginx.service
-systemctl enable nginx.service
 else
       echo -e "${red}安装失败...${plain}"
       exit 0
