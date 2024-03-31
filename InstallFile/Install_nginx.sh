@@ -90,11 +90,15 @@ GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-to
                if [ $? -ne 0 ];then
                    useradd -s /sbin/nologin "$nginx_user"
                fi
+               source /etc/profile &>/dev/null
                chown -R "$nginx_user":"$nginx_user" "$NGINX_HOME"
            fi
         fi
-
-echo "[Unit]
+if [ ! -f /usr/lib/systemd/system/nginx.service ]; then
+  touch /usr/lib/systemd/system/nginx.service
+fi
+cat <<EOF > /usr/lib/systemd/system/nginx.service
+[Unit]
 Description=The Nginx HTTP Server
 After=network.target remote-fs.target nss-lookup.target
 
@@ -107,7 +111,8 @@ ExecStop=$NGINX_HOME/sbin/nginx -s stop
 PrivateTmp=true
 
 [Install]
-WantedBy=multi-user.target" > /usr/lib/systemd/system/nginx.service
+WantedBy=multi-user.target
+EOF
 
 chmod +x /usr/lib/systemd/system/nginx.service
 systemctl daemon-reload
