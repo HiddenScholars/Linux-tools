@@ -32,7 +32,7 @@ fi
        "$controls" -y install  "$i"
       done
   elif [ "$SystemVersion" == "ubuntu" ] || [ "$SystemVersion" == "debian" ]; then
-       apt_package(build-essential gcc gcc-c++ zlib1g zlib1g-dev libpcre3-dev libssl-dev libgd-dev)
+       apt_package=(build-essential gcc gcc-c++ zlib1g zlib1g-dev libpcre3-dev libssl-dev libgd-dev)
        for i in "${apt_package[@]}"
        do
           "$controls" -y install "$i"
