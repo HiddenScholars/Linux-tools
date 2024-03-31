@@ -19,6 +19,24 @@ elif [ -n "$GET_PORT_CHECK" ] &&[ "${#GET_PORT_CHECK[@]}" -ne 0 ]; then
      read -rp "被占用是否继续安装（y/n）：" select
     [ "$select" != "y" ] && exit 0
 fi
+
+  if [ "$SystemVersion" == "centos" ] || [ "$SystemVersion" == "Anolis OS" ]; then
+      yum_package=(libaio)
+      for i in "${yum_package[@]}"
+      do
+       "$controls" -y install  "$i" &>/dev/null
+      done
+  elif [ "$SystemVersion" == "ubuntu" ] || [ "$SystemVersion" == "debian" ]; then
+       apt_package=(libaio1)
+       for y in "${apt_package[@]}"
+       do
+          "$controls" -y install "$y" &>/dev/null
+       done
+  else
+    echo "未支持的系统版本"
+    exit 1
+  fi
+
 "$controls" -y remove mysql* mariadb* &>/dev/null
 
 mysql5_install_path=$(echo "/$install_path"/mysql5/ | tr -s '/')
@@ -33,14 +51,9 @@ GET_missing_dirs_mysql5=$(curl -sl https://"$url_address"/HiddenScholars/Linux-t
     echo "Start unzipping."
     tar xvf "$mysql5_download_path" -C /tools/unpack_file/"$GET_missing_dirs_mysql5" --strip-components 1 &>/dev/null
     echo "The decompression is complete."
-    if [ -d "$mysql5_install_path" ];then
-      rm -rf "$mysql5_install_path"
+      [ -d "$mysql5_install_path" ] && rm -rf "$mysql5_install_path"
       mkdir -p "$mysql5_install_path" "$mysql5_install_path"/etc/ "$mysql5_install_path"/logs/
-      cp -rf /tools/unpack_file/"$GET_missing_dirs_mysql5"/*  "$mysql5_install_path"
-    elif [ ! -d  "$mysql5_install_path" ]; then
-      mkdir -p "$mysql5_install_path" "$mysql5_install_path"/etc/ "$mysql5_install_path"/logs/
-      cp -rf /tools/unpack_file/"$GET_missing_dirs_mysql5"/*  "$mysql5_install_path"
-    fi
+          mv /tools/unpack_file/"$GET_missing_dirs_mysql5"/* "$mysql5_install_path"
 if [ -f "$mysql5_install_path_bin/mysqld" ];then
 cat << EOF > /etc/my.cnf
 [mysql]
@@ -76,7 +89,7 @@ echo "export PATH=$PATH:$mysql5_install_path_bin" >>/etc/profile
 source /etc/profile
 echo "数据库开始安装"
 "$mysql5_install_path_bin"/mysqld --initialize  --user="$mysql5_user" --basedir="$mysql5_install_path" --datadir="$mysql5_data_path"
-	cat "$mysql5_log_error_path"
+	[ -f "$mysql5_log_error_path" ] && cat "$mysql5_log_error_path"
 		GET_initial_PASSWD=$(cat "$mysql5_log_error_path"  | grep 'A temporary password is generated for root@localhost:' | awk '{print $11}')
 		  if [ -n "$GET_initial_PASSWD" ];then
 			echo "安装成功."

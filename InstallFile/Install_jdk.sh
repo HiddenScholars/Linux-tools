@@ -11,14 +11,9 @@ GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-to
   echo ""[$(date '+%Y-%m-%d %H:%M:%S')]" Start unzipping."
   tar xvf "$jdk_download_path" -C /tools/unpack_file/"$GET_missing_dirs_nginx" --strip-components 1 &>/dev/null
   echo ""[$(date '+%Y-%m-%d %H:%M:%S')]" The decompression is complete."
-    if [ -d "$jdk_install_path" ];then
-      rm -rf "$jdk_install_path"
-      mkdir -p "$jdk_install_path"
-    fi
-    if [ -n "$jdk_install_path" ] && [ ! -d "$jdk_install_path" ];then
-      mkdir -p "$jdk_install_path"
-    fi
-    cp -rf  /tools/unpack_file/"$GET_missing_dirs_nginx"/* "$jdk_install_path"
+    [ ! -d "$jdk_install_path" ] && rm -rf "$jdk_install_path"
+    mkdir -p "$jdk_install_path"
+    mv /tools/unpack_file/"$GET_missing_dirs_nginx"/* "$jdk_install_path"
     if [ $? -eq 0 ];then
       echo ""[$(date '+%Y-%m-%d %H:%M:%S')]" 文件复制完成"
       "$controls" remove java* openjdk*  -y
