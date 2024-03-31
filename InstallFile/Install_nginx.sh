@@ -25,9 +25,9 @@ elif [ -n "$GET_PORT_CHECK" ] &&[ "${#GET_PORT_CHECK[@]}" -ne 0 ]; then
     [ "$select" != "y" ] && exit 0
 fi
 
-  if [ "SystemVersion" == "centos" ] || [ "SystemVersion" == "Anolis OS" ]; then
+  if [ "$SystemVersion" == "centos" ] || [ "$SystemVersion" == "Anolis OS" ]; then
        "$controls" -y install gcc gcc-c++ zlib zlib-devel pcre-devel openssl openssl-devel gd-devel &>/dev/null
-  elif [ "SystemVersion" == "ubuntu" ] || [ "SystemVersion" == "debian" ]; then
+  elif [ "$SystemVersion" == "ubuntu" ] || [ "$SystemVersion" == "debian" ]; then
        "$controls" -y install --ignore-missing gcc gcc-c++ zlib1g zlib1g-dev libpcre3-dev libssl-dev libgd-dev &>/dev/null
   else
     echo "未支持的系统版本"
