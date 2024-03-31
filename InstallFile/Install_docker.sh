@@ -19,7 +19,7 @@ EOF
 fi
 }
 source $config_file
-if [ "SystemVersion" == "centos" ] || [ "SystemVersion" == "ubuntu" ] || [ "SystemVersion" == "debian" ]; then
+if [ "$SystemVersion" == "centos" ] || [ "$SystemVersion" == "ubuntu" ] || [ "$SystemVersion" == "debian" ]; then
    echo "操作系统为官网脚本支持的操作系统，直接执行官网脚本，在config中配置的docker源码下载链接不生效。"
    set -x
    sudo curl -sSL https://get.docker.com | sh
