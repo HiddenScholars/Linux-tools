@@ -33,9 +33,9 @@ fi
       done
   elif [ "$SystemVersion" == "ubuntu" ] || [ "$SystemVersion" == "debian" ]; then
        apt_package=(build-essential gcc gcc-c++ zlib1g zlib1g-dev libpcre3-dev libssl-dev libgd-dev)
-       for i in "${apt_package[@]}"
+       for y in "${apt_package[@]}"
        do
-          "$controls" -y install "$i"
+          "$controls" -y install "$y"
        done
   else
     echo "未支持的系统版本"
