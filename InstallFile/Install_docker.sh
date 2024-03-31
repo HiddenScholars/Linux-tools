@@ -16,6 +16,18 @@ cat > /etc/docker/daemon.json <<EOF
   "registry-mirrors": ["https://f2k3b83v.mirror.aliyuncs.com"]
 }
 EOF
+else
+cat > /etc/docker/daemon.json <<EOF
+{
+  "data-root": "/var/lib/docker",
+  "live-restore": true,
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-file": "3",
+    "max-size": "10m"
+  }
+}
+EOF
 fi
 }
 source $config_file
