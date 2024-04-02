@@ -137,6 +137,9 @@ function install_lnmp_package_lnmpa() {
 function install_lnmp_package_lamp() {
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_lnmp_lamp_lnmpa.sh) lamp
 }
+function install_lnmp_package_mphp() {
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_lnmp_lamp_lnmpa.sh) mphp
+}
 
 function install_all() {
 for (( i = 0; i < "${#show_soft_function[@]}"; i++ )); do
