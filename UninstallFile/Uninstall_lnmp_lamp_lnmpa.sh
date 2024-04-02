@@ -1,7 +1,6 @@
 #!/bin/bash
-set -x
+source /tools/config &>/dev/null
 if [ -n "$GET_missing_dirs_lnmp" ] && [ -f /tools/unpack_file/"$GET_missing_dirs_lnmp"/uninstall.sh ]; then
-   echo "$GET_missing_dirs_lnmp"
    cd /tools/unpack_file/"$GET_missing_dirs_lnmp"/ && bash uninstall.sh
 else
    echo "选择需要lnmp版本的卸载脚本"
