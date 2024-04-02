@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ -f /tools/unpack_file/"$GET_missing_dirs_nginx"/uninstall.sh ]; then
+if [ -f /tools/unpack_file/"$GET_missing_dirs_lnmp"/uninstall.sh ]; then
    cd /tools/unpack_file/"$GET_missing_dirs_lnmp"/ && bash uninstall.sh
 else
    echo "选择需要lnmp版本的卸载脚本"
