@@ -17,4 +17,4 @@ jdk_download_urls=(https://repo.huaweicloud.com/java/jdk/8u152-b16/jdk-8u152-lin
 mysql5_download_urls=(
 https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.44-linux-glibc2.12-`uname -m`.tar.gz
 https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.43-linux-glibc2.12-`uname -m`.tar.gz)
-lnmp_package_urls=(https://soft.lnmp.com/lnmp/lnmp2.0.tar.gz)
+lnmp_package_urls="https://soft.lnmp.com/lnmp/lnmp2.0.tar.gz"
