@@ -146,7 +146,7 @@ for (( i = 0; i < "${#show_soft_function[@]}"; i++ )); do
 continue_select=''
   if [ "${show_soft_function[$i]}" != "install_docker_compose" ] && [ "${show_soft_function[$i]}" != "install_all" ] && [ "${show_soft_function[$i]}" != "return" ]; then
       echo "${show_soft[$i]}准备安装"
-      read -rp "是否跳过该安装(y/n default:n)" continue_select
+      read -rp "是否跳过此次安装(y/n default:n)" continue_select
       if [ "$continue_select" == "y" ];then
         ${show_soft_function[$i]}
       fi
@@ -372,7 +372,7 @@ function show_Soft() {
     read -rp   "[$(date '+%Y-%m-%d %H:%M:%S')] 输入序号【0-"$((${#show_soft[@]}-1))"】：" select
     if [ -n "$select" ] ;then
             if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${show_soft_function[$select]}" ]  ; then
-                [ "$select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 请确认是否安装（y/n）" install_select
+                [ "$select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 请确认是否执行（y/n）" install_select
                 if [ "$install_select" == "y" ]; then
                   eval  "${show_soft_function[$select]}"
                 elif [ "$select" -eq 0 ]; then
