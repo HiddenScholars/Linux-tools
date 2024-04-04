@@ -6,8 +6,8 @@ services:
         ports:
             - '81:5800'
             - '5900:5900'
-        volumes:
-            - '/data/firefox/config:/config:rw'
+        #volumes:
+            #- './data/firefox/config:/config:rw'
         environment:
             - 'TZ=Asia/Hong_Kong'
             - 'DISPLAY_WIDTH=1920'
