@@ -18,12 +18,12 @@ trap handle_error ERR
 trap handle_exit EXIT
 
 #菜单目录显示控制
-show_use=("关闭脚本菜单" "中间件安装" "中间件卸载" "中间件升级" "环境安装" "开源项目部署" "网站建设" "DIY工具" "系统清理" "config更新")
+show_use=("关闭脚本菜单" "中间件安装" "中间件卸载" "中间件升级" "环境安装" "开源项目部署" "网站建设" "DIY工具" "系统清理" "文件更新")
 show_use_function=("exit 0" "show_Soft" "soft_Uninstall" "soft_Upgrade" "install_env" "install_open_source_projects" "install_web_site_install" "install_diy" "system_clean" "check_update")
-show_soft=("返回主页面" "Nginx" "Docker+Docker-compose" "Docker-compose" "Mysql5" "一键执行全部中间件安装脚本")
-show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose" "install_mysql5" "install_all")
-soft_uninstall=("返回主页面" "Nginx卸载" "Docker+Docker-compose卸载" "Mysql5卸载" "tailscale卸载" "tool命令卸载")
-soft_uninstall_function=("return" "uninstall_nginx" "uninstall_docker_docker_compose" "uninstall_mysql5" "uninstall_tailscale" "uninstall_tool")
+show_soft=("返回主页面" "Nginx" "Docker+Docker-compose" "Docker-compose" "Mysql5" "Nginx(lnmp2.0)" "db数据库(lnmp2.0)" "mphp(lnmp2.0)" "lnmp(lnmp2.0)" "lnmpa(lnmp2.0)" "lamp(lnmp2.0)"  "一键执行全部中间件安装脚本")
+show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose" "install_mysql5" "install_lnmp_package_nginx" "install_lnmp_package_db" "install_lnmp_package_mphp" "install_lnmp_package_lnmp" "install_lnmp_package_lnmpa" "install_lnmp_package_lamp" "install_all")
+soft_uninstall=("返回主页面" "Nginx卸载" "Docker+Docker-compose卸载" "Mysql5卸载" "tailscale卸载" "lnmp2.0卸载脚本（包含lnmp,lnmpa,lamp）" "tool命令卸载")
+soft_uninstall_function=("return" "uninstall_nginx" "uninstall_docker_docker_compose" "uninstall_mysql5" "uninstall_tailscale" "uninstall_lnmp2.0" "uninstall_tool")
 soft_upgrade=("返回主菜单" "Nginx平滑升(降)级")
 soft_upgrade_function=("return" "upgrade_smooth_nginx")
 env_install=("返回主页面" "JDK")
@@ -87,6 +87,9 @@ function uninstall_mysql5() {
 function uninstall_tailscale() {
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UninstallFile/Uninstall_tailscale.sh)
 }
+function uninstall_lnmp2.0() {
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UninstallFile/Uninstall_lnmp_lamp_lnmpa.sh)
+}
 function install_jdk() {
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_jdk.sh)
 }
@@ -119,13 +122,34 @@ function install_jumpserver_free() {
 function clean_jumpserver_free() {
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UninstallFile/Uninstall_jumpserver.sh)
 }
-
+function install_lnmp_package_nginx() {
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_lnmp_lamp_lnmpa.sh) nginx
+}
+function install_lnmp_package_db() {
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_lnmp_lamp_lnmpa.sh) db
+}
+function install_lnmp_package_lnmp() {
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_lnmp_lamp_lnmpa.sh) lnmp
+}
+function install_lnmp_package_lnmpa() {
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_lnmp_lamp_lnmpa.sh) lnmpa
+}
+function install_lnmp_package_lamp() {
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_lnmp_lamp_lnmpa.sh) lamp
+}
+function install_lnmp_package_mphp() {
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_lnmp_lamp_lnmpa.sh) mphp
+}
 
 function install_all() {
-for i in "${show_soft_function[@]}"
-do
-  if [ "$i" != "install_docker_compose" ] && [ "$i" != "install_all" ] && [ "$i" != "return" ]; then
-      $i
+for (( i = 0; i < "${#show_soft_function[@]}"; i++ )); do
+continue_select=''
+  if [ "${show_soft_function[$i]}" != "install_docker_compose" ] && [ "${show_soft_function[$i]}" != "install_all" ] && [ "${show_soft_function[$i]}" != "return" ]; then
+      echo "${show_soft[$i]}准备安装"
+      read -rp "是否跳过此次安装(y/n default:n)" continue_select
+      if [ "$continue_select" == "y" ];then
+        ${show_soft_function[$i]}
+      fi
   fi
 done
 }
@@ -312,7 +336,7 @@ echo -e "${green}   _|      _|    _|  _|    _|  _|      _|_|${plain}"
 echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
     select=''
     printf "****************************************************************************\n"
-                            printf "\t\t**欢迎使用Linux-tools脚本菜单** %s\n" "$([ "$GET_REMOTE_VERSION" != "$GET_LOCAL_VERSION" ] && echo -e "${green}有新版本config：v$GET_REMOTE_VERSION.可更新${plain}")"
+                            printf "\t\t**欢迎使用Linux-tools脚本菜单** %s\n" "$([ "$GET_REMOTE_VERSION" != "$GET_LOCAL_VERSION" ] && echo -e "${green}有本地文件需更新，更新版本号v$GET_REMOTE_VERSION.${plain}")"
     printf "****************************************************************************\n"
                             for i in "${!show_use[@]}"
                             do
@@ -348,7 +372,7 @@ function show_Soft() {
     read -rp   "[$(date '+%Y-%m-%d %H:%M:%S')] 输入序号【0-"$((${#show_soft[@]}-1))"】：" select
     if [ -n "$select" ] ;then
             if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${show_soft_function[$select]}" ]  ; then
-                [ "$select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 请确认是否安装（y/n）" install_select
+                [ "$select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 请确认是否执行（y/n）" install_select
                 if [ "$install_select" == "y" ]; then
                   eval  "${show_soft_function[$select]}"
                 elif [ "$select" -eq 0 ]; then
