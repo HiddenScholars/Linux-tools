@@ -52,21 +52,16 @@ function check_update() {
           fi
 }
 function install_nginx() {
-echo "开始安装Nginx"
 bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_nginx.sh)
 }
 function setting_ssl() {
-echo "开始安装证书"
 bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_ssl_acme.sh)
 }
 function install_docker() {
-echo "开始安装Docker"
 bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_docker.sh)
-echo "开始安装Docker-compose"
 bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_docker-compose.sh)
 }
 function install_docker_compose() {
-echo "开始安装Docker-compose"
 bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_docker-compose.sh)
 }
 function upgrade_smooth_nginx(){
@@ -457,7 +452,7 @@ function soft_Upgrade() {
                 if [ "$upgrade_select" == "y" ]; then
                     echo "[$(date '+%Y-%m-%d %H:%M:%S')] 开始升级"
                     eval  "${soft_upgrade_function[$select]}"
-                    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 完成安装"
+                    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 完成升级"
                 elif [ "$select" -eq 0 ];then
                     echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消升级"
                     eval  "${soft_upgrade_function[$select]}"
