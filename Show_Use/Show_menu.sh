@@ -187,7 +187,9 @@ function install_env() {
             if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${env_install_function[$select]}" ]  ; then
                 [ "$select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 请确认是否进行环境安装（y/n）" install_env_select
                 if [ "$install_env_select" == "y" ]; then
+                   echo "[$(date '+%Y-%m-%d %H:%M:%S')] 开始安装"
                    eval  "${env_install_function[$select]}"
+                   echo "[$(date '+%Y-%m-%d %H:%M:%S')] 完成安装"
                 elif [ "$select" -eq 0 ]; then
                    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消环境安装"
                    eval  "${env_install_function[$select]}"
@@ -218,7 +220,9 @@ function install_open_source_projects() {
             if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${open_source_projects_function[$select]}" ]  ; then
                 [ "$select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 请确认是否安装该开源项目（y/n）" install_open_source_projects_select
                 if [ "$install_open_source_projects_select" == "y" ]; then
+                  echo "[$(date '+%Y-%m-%d %H:%M:%S')] 开始安装"
                   eval  "${open_source_projects_function[$select]}"
+                  echo "[$(date '+%Y-%m-%d %H:%M:%S')] 完成安装"
                 elif [ "$select" -eq 0 ]; then
                   echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消安装该开源项目"
                   eval  "${open_source_projects_function[$select]}"
@@ -249,7 +253,9 @@ function install_web_site_install() {
             if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${web_site_install_function[$select]}" ]  ; then
                 [ "$select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 请确认是否安装该建站工具（y/n）" install_web_site_install_select
                 if [ "$install_web_site_install_select" == "y" ]; then
+                   echo "[$(date '+%Y-%m-%d %H:%M:%S')] 开始安装"
                    eval  "${web_site_install_function[$select]}"
+                   echo "[$(date '+%Y-%m-%d %H:%M:%S')] 完成安装"
                 elif [ "$select" -eq 0 ]; then
                    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消安装该建站工具"
                    eval  "${web_site_install_function[$select]}"
@@ -280,7 +286,9 @@ function install_diy() {
             if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${diy_install_function[$select]}" ]  ; then
                  [ "$select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 请确认是否安装该DIY工具（y/n）" install_diy_select
                  if [ "$install_diy_select" == "y" ]; then
+                    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 开始安装"
                     eval  "${diy_install_function[$select]}"
+                    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 完成安装"
                  elif [ "$select" -eq 0 ]; then
                     echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消安装该DIY工具"
                     eval  "${diy_install_function[$select]}"
@@ -311,7 +319,9 @@ function system_clean() {
             if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${run_system_clean_function[$select]}" ]  ; then
                  [ "$select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 请确认是否进行清理（y/n）" run_system_clean_select
                  if [ "$run_system_clean_select" == "y" ]; then
+                    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 开始清理"
                     eval  "${run_system_clean_function[$select]}"
+                    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 清理完成"
                  elif [ "$select" -eq 0 ]; then
                     echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消清理"
                     eval  "${run_system_clean_function[$select]}"
@@ -377,7 +387,9 @@ function show_Soft() {
             if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${show_soft_function[$select]}" ]  ; then
                 [ "$select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 请确认是否执行（y/n）" install_select
                 if [ "$install_select" == "y" ]; then
+                  echo "[$(date '+%Y-%m-%d %H:%M:%S')] 开始安装"
                   eval  "${show_soft_function[$select]}"
+                  echo "[$(date '+%Y-%m-%d %H:%M:%S')] 完成安装"
                 elif [ "$select" -eq 0 ]; then
                   echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消安装"
                   eval  "${show_soft_function[$select]}"
@@ -409,7 +421,9 @@ function soft_Uninstall() {
             if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${soft_uninstall_function[$select]}" ]  ; then
                 [ "$select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 是否卸载请确认（y/n）" uninstall_select
                 if [ "$uninstall_select" == "y" ]; then
+                   echo "[$(date '+%Y-%m-%d %H:%M:%S')] 开始卸载"
                    eval  "${soft_uninstall_function[$select]}"
+                   echo "[$(date '+%Y-%m-%d %H:%M:%S')] 完成卸载"
                 elif [ "$select" -eq 0 ]; then
                    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消卸载"
                    eval  "${soft_uninstall_function[$select]}"
@@ -441,7 +455,9 @@ function soft_Upgrade() {
             if [[ "$select" =~ ^[0-9]+$ ]] && [ -n "${soft_upgrade_function[$select]}" ]  ; then
                 [ "$select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 请确认是否进行升级（y/n）" upgrade_select
                 if [ "$upgrade_select" == "y" ]; then
+                    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 开始升级"
                     eval  "${soft_upgrade_function[$select]}"
+                    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 完成安装"
                 elif [ "$select" -eq 0 ];then
                     echo "[$(date '+%Y-%m-%d %H:%M:%S')] 取消升级"
                     eval  "${soft_upgrade_function[$select]}"
