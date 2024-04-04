@@ -34,8 +34,8 @@ web_site_install=("返回主页面" "宝塔国际版" "宝塔（中国大陆版�
 web_site_install_function=("return" "install_aaPanel" "install_bt" "install_1panel" "setting_ssl")
 diy_install=("返回主页面" "tailscale")
 diy_install_function=("return" "install_tailscale")
-run_system_clean=("返回主页面" "清理jumpserver社区版(只清理相关镜像与文件)")
-run_system_clean_function=("return" "clean_jumpserver_free")
+run_system_clean=("返回主页面" "清理jumpserver社区版(只清理相关镜像与文件)" "jdk环境清理")
+run_system_clean_function=("return" "clean_jumpserver_free" "clean_jdk_file")
 
   GET_REMOTE_VERSION=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version)
   GET_LOCAL_VERSION=$(cat $version_file)
@@ -89,6 +89,9 @@ function uninstall_tailscale() {
 }
 function uninstall_lnmp2.0() {
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UninstallFile/Uninstall_lnmp_lamp_lnmpa.sh)
+}
+function clean_jdk_file() {
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UninstallFile/Uninstall_jdk.sh)
 }
 function install_jdk() {
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_jdk.sh)
