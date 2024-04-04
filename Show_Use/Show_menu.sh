@@ -28,8 +28,8 @@ soft_upgrade=("返回主菜单" "Nginx平滑升(降)级")
 soft_upgrade_function=("return" "upgrade_smooth_nginx")
 env_install=("返回主页面" "JDK")
 env_install_function=("return" "install_jdk")
-open_source_projects=("返回主页面" "jumpserver(社区版-docker安装)")
-open_source_projects_function=("return" "install_jumpserver_free")
+open_source_projects=("返回主页面" "jumpserver(社区版-docker环境安装)" "firefox浏览器(docker环境安装)" "bitwarden密码管理(docker环境安装)")
+open_source_projects_function=("return" "install_jumpserver_free" "install_DockerFirefox" "install_DockerBitwarden")
 web_site_install=("返回主页面" "宝塔国际版" "宝塔（中国大陆版本）" "1Panel" "acme脚本(搭配cloudflare)")
 web_site_install_function=("return" "install_aaPanel" "install_bt" "install_1panel" "setting_ssl")
 diy_install=("返回主页面" "tailscale")
@@ -137,6 +137,12 @@ function install_lnmp_package_lamp() {
 }
 function install_lnmp_package_mphp() {
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_lnmp_lamp_lnmpa.sh) mphp
+}
+function install_DockerBitwarden() {
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Docker-compose_file/Install.sh) bitwareden
+}
+function install_DockerFirefox() {
+    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Docker-compose_file/Install.sh) firefox
 }
 
 function install_all() {

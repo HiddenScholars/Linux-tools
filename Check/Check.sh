@@ -201,9 +201,9 @@ function PACKAGE_DOWNLOAD() {
            fi
         fi
         wget -O "$tr_s_variable_2" "${DownloadUrl[$y]}"
-        if [ $? -ne 0 ] && [ ! -f "$tr_s_variable_2" ];then
+        if [ ! -f "$tr_s_variable_2" ];then
           echo "[$(date '+%Y-%m-%d %H:%M:%S')] download failed."
-           return 1
+          return 1
         fi
     elif [ -z "$y" ]; then
         echo "[$(date '+%Y-%m-%d %H:%M:%S')] Skip the installation."
