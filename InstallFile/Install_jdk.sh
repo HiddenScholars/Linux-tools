@@ -4,7 +4,7 @@
   jdk_install_path=$(echo "$install_path"/jdk/ | tr -s '/')
   jdk_download_path=$(echo "$download_path"/jdk/jdk | tr -s '/' )
   #解压目录检测
-  GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
+  GET_missing_dirs_jdk=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
 
 
     bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  jdk  $(for i in "${jdk_download_urls[@]}";do printf "%s " "$i";done)
@@ -24,7 +24,7 @@
         echo "[$(date '+%Y-%m-%d %H:%M:%S')] 原始路径备份：$install_path/BackupJdk$(date '+%Y%m%d')"
       fi
       mkdir -p "$jdk_install_path"
-      mv /tools/unpack_file/"$GET_missing_dirs_nginx"/* "$jdk_install_path"
+      mv /tools/unpack_file/"$GET_missing_dirs_jdk"/* "$jdk_install_path"
       if [ $? -eq 0 ];then
          echo ""[$(date '+%Y-%m-%d %H:%M:%S')]" 文件复制完成"
         "$controls" remove java* openjdk*  -y &>/dev/null

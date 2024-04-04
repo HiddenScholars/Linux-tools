@@ -45,7 +45,16 @@ bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/
 #解压目录检测
 GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
 
-    [ -d "$install_path"/nginx/ ] && mv "$install_path"/nginx/ "$install_path"/nginx$(date +%Y%m%d)_bak
+        if [ -d "$install_path/BackupNginx$(date '+%Y%m%d')" ]; then
+          for (( i = 1; i < 10000; i++ )); do
+              if [ ! -d "$install_path/BackupNginx$(date '+%Y%m%d')$i" ]; then
+                cd "$install_path" && mv "BackupNginx$(date '+%Y%m%d')" "BackupNginx$i$(date '+%Y%m%d')"
+                i=10000
+              fi
+          done
+        fi
+        cd "$install_path" && mv nginx "BackupJdk$(date '+%Y%m%d')"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 原始路径备份：$install_path/BackupNginx$(date '+%Y%m%d')"
     echo ""[$(date '+%Y-%m-%d %H:%M:%S')]" Start unzipping."
     tar xvf "$download_path"/nginx/nginx -C /tools/unpack_file/"$GET_missing_dirs_nginx" --strip-components 1 &>/dev/null
     echo ""[$(date '+%Y-%m-%d %H:%M:%S')]" The decompression is complete."
