@@ -18,7 +18,7 @@ trap handle_error ERR
 trap handle_exit EXIT
 
 #菜单目录显示控制
-show_use=("关闭脚本菜单" "中间件安装" "中间件卸载" "中间件升级" "环境安装" "开源项目部署" "网站建设" "DIY工具" "系统清理" "config更新")
+show_use=("关闭脚本菜单" "中间件安装" "中间件卸载" "中间件升级" "环境安装" "开源项目部署" "网站建设" "DIY工具" "系统清理" "文件更新")
 show_use_function=("exit 0" "show_Soft" "soft_Uninstall" "soft_Upgrade" "install_env" "install_open_source_projects" "install_web_site_install" "install_diy" "system_clean" "check_update")
 show_soft=("返回主页面" "Nginx" "Docker+Docker-compose" "Docker-compose" "Mysql5" "Nginx(lnmp2.0)" "db数据库(lnmp2.0)" "mphp(lnmp2.0)" "lnmp(lnmp2.0)" "lnmpa(lnmp2.0)" "lamp(lnmp2.0)"  "一键执行全部中间件安装脚本")
 show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose" "install_mysql5" "install_lnmp_package_nginx" "install_lnmp_package_db" "install_lnmp_package_mphp" "install_lnmp_package_lnmp" "install_lnmp_package_lnmpa" "install_lnmp_package_lamp" "install_all")
@@ -336,7 +336,7 @@ echo -e "${green}   _|      _|    _|  _|    _|  _|      _|_|${plain}"
 echo -e "${green}     _|_|    _|_|      _|_|    _|  _|_|_|${plain}"
     select=''
     printf "****************************************************************************\n"
-                            printf "\t\t**欢迎使用Linux-tools脚本菜单** %s\n" "$([ "$GET_REMOTE_VERSION" != "$GET_LOCAL_VERSION" ] && echo -e "${green}有新版本config：v$GET_REMOTE_VERSION.需更新${plain}")"
+                            printf "\t\t**欢迎使用Linux-tools脚本菜单** %s\n" "$([ "$GET_REMOTE_VERSION" != "$GET_LOCAL_VERSION" ] && echo -e "${green}有本地文件需更新，更新版本号v$GET_REMOTE_VERSION.${plain}")"
     printf "****************************************************************************\n"
                             for i in "${!show_use[@]}"
                             do
