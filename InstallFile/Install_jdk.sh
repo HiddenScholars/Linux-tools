@@ -12,16 +12,16 @@ GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-to
   tar xvf "$jdk_download_path" -C /tools/unpack_file/"$GET_missing_dirs_nginx" --strip-components 1 &>/dev/null
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] The decompression is complete."
     if [ -d "$jdk_install_path" ];then
-      if [ -d "BackupJdk$(date '+%Y%m%d')" ]; then
+      if [ -f "$install_path/BackupJdk$(date '+%Y%m%d')" ]; then
         for (( i = 1; i < 10000; i++ )); do
             if [ -f "$install_path/BackupJdk$i.tar.gz" ]; then
-              cd "$install_path" && tar zvf BackupJdk"$i".tar.gz "BackupJdk$(date '+%Y%m%d')"
+              cd "$install_path" && tar zvf BackupJdk"$i".tar.gz "BackupJdk$(date '+%Y%m%d')" &>/dev/null
               i=10000
             fi
         done
       fi
       cd "$install_path" && mv jdk "BackupJdk$(date '+%Y%m%d')"
-      echo "[$(date '+%Y-%m-%d %H:%M:%S')] 原始路径备份：$install_path/BackupMysql5$(date '+%Y%m%d')"
+      echo "[$(date '+%Y-%m-%d %H:%M:%S')] 原始路径备份：$install_path/BackupJdk$(date '+%Y%m%d')"
     fi
     mkdir -p "$jdk_install_path"
     mv /tools/unpack_file/"$GET_missing_dirs_nginx"/* "$jdk_install_path"

@@ -52,10 +52,10 @@ GET_missing_dirs_mysql5=$(curl -sl https://"$url_address"/HiddenScholars/Linux-t
     tar xvf "$mysql5_download_path" -C /tools/unpack_file/"$GET_missing_dirs_mysql5" --strip-components 1 &>/dev/null
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] The decompression is complete."
       if [ -d "$mysql5_install_path" ];then
-        if [ -d "BackupMysql5$(date '+%Y%m%d')" ]; then
+        if [ -d "$install_path/BackupMysql5$(date '+%Y%m%d')" ]; then
         for (( i = 1; i < 10000; i++ )); do
             if [ -f "$install_path/BackupMysql5$i.tar.gz" ]; then
-              cd "$install_path" && tar zvf BackupMysql5"$i".tar.gz "BackupMysql5$(date '+%Y%m%d')"
+              cd "$install_path" && tar zvf BackupMysql5"$i".tar.gz "BackupMysql5$(date '+%Y%m%d')" &>/dev/null
               i=10000
             fi
         done
