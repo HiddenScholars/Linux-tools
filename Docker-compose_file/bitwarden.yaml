@@ -9,7 +9,7 @@ services:
     environment:
       - SIGNUPS_ALLOWED=false
       - WEB_VAULT_ENABLED=false
-      - DOMAIN=https://804707DE2457CA3B20AD9C22E5540A92.blogscloud.top
+      - DOMAIN=https://xxx.xxx.xxx
       - ADMIN_TOKEN=BD7P9-UJG8M-G9JQE-E5WEU-3C0C2
       # 设置日志路径
       - LOG_FILE=./data/access.log
