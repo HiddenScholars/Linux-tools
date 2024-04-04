@@ -8,11 +8,12 @@ GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-to
 
 
   bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  jdk  $(for i in "${jdk_download_urls[@]}";do printf "%s " "$i";done)
-  echo ""[$(date '+%Y-%m-%d %H:%M:%S')]" Start unzipping."
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] Start unzipping."
   tar xvf "$jdk_download_path" -C /tools/unpack_file/"$GET_missing_dirs_nginx" --strip-components 1 &>/dev/null
-  echo ""[$(date '+%Y-%m-%d %H:%M:%S')]" The decompression is complete."
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] The decompression is complete."
     if [ -d "$jdk_install_path" ];then
-      mv "$jdk_install_path" "$jdk_install_path"_$(date '+%Y-%m-%d %H:%M:%S')
+      cd "$install_path" && mv jdk "BackupJdk$(date '+%Y%m%d')"
+      echo "[$(date '+%Y-%m-%d %H:%M:%S')] 原始路径备份：$install_path/BackupMysql5$(date '+%Y%m%d')"
     fi
     mkdir -p "$jdk_install_path"
     mv /tools/unpack_file/"$GET_missing_dirs_nginx"/* "$jdk_install_path"

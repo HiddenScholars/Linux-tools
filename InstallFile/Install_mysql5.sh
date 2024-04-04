@@ -52,7 +52,8 @@ GET_missing_dirs_mysql5=$(curl -sl https://"$url_address"/HiddenScholars/Linux-t
     tar xvf "$mysql5_download_path" -C /tools/unpack_file/"$GET_missing_dirs_mysql5" --strip-components 1 &>/dev/null
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] The decompression is complete."
       if [ -d "$mysql5_install_path" ];then
-        mv "$mysql5_install_path" "$mysql5_install_path_"$(date '+%Y-%m-%d %H:%M:%S')
+        cd "$install_path" && mv mysql5 "BackupMysql5$(date '+%Y%m%d')"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] 原始路径备份：$install_path/BackupJdk$(date '+%Y%m%d')"
       fi
       mkdir -p "$mysql5_install_path" "$mysql5_install_path"/etc/ "$mysql5_install_path"/logs/
           mv /tools/unpack_file/"$GET_missing_dirs_mysql5"/* "$mysql5_install_path"
