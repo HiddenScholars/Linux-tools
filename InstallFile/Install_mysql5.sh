@@ -54,7 +54,7 @@ GET_missing_dirs_mysql5=$(curl -sl https://"$url_address"/HiddenScholars/Linux-t
       if [ -d "$mysql5_install_path" ];then
         if [ -d "$install_path/BackupMysql5$(date '+%Y%m%d')" ]; then
         for (( i = 1; i < 10000; i++ )); do
-            if [ -f "$install_path/BackupMysql5$i.tar.gz" ]; then
+            if [ ! -f "$install_path/BackupMysql5$i.tar.gz" ]; then
               cd "$install_path" && tar zvf BackupMysql5"$i".tar.gz "BackupMysql5$(date '+%Y%m%d')" &>/dev/null
               i=10000
             fi
