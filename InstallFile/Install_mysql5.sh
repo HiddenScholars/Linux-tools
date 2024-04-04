@@ -48,10 +48,12 @@ mysql5_log_error_path=$(echo "/$install_path"/mysql5/logs/mysqld.log | tr -s '/'
 mysql5_pid_path=$(echo "$mysql5_install_path_bin"/mysql5.pid | tr -s '/')
 bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  mysql5  $(for i in "${mysql5_download_urls[@]}";do printf "%s " "$i";done)
 GET_missing_dirs_mysql5=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
-    echo "Start unzipping."
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Start unzipping."
     tar xvf "$mysql5_download_path" -C /tools/unpack_file/"$GET_missing_dirs_mysql5" --strip-components 1 &>/dev/null
-    echo "The decompression is complete."
-      [ -d "$mysql5_install_path" ] && rm -rf "$mysql5_install_path"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] The decompression is complete."
+      if [ -d "$mysql5_install_path" ];then
+        mv "$mysql5_install_path" "$mysql5_install_path_"$(date '+%Y-%m-%d %H:%M:%S')
+      fi
       mkdir -p "$mysql5_install_path" "$mysql5_install_path"/etc/ "$mysql5_install_path"/logs/
           mv /tools/unpack_file/"$GET_missing_dirs_mysql5"/* "$mysql5_install_path"
 if [ -f "$mysql5_install_path_bin/mysqld" ];then

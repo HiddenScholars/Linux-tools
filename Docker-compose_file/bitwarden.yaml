@@ -10,7 +10,7 @@ services:
       - SIGNUPS_ALLOWED=false
       - WEB_VAULT_ENABLED=false
       - DOMAIN=https://xxx.xxx.xxx
-      - ADMIN_TOKEN=BD7P9-UJG8M-G9JQE-E5WEU-3C0C2
+      - ADMIN_TOKEN=xxxx
       # 设置日志路径
       - LOG_FILE=./data/access.log
       # 日志级别选项：trace、debug、info、warn、error 以及 off
