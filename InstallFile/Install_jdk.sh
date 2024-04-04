@@ -6,25 +6,25 @@
   #解压目录检测
   GET_missing_dirs_jdk=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
 
-
     bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  jdk  $(for i in "${jdk_download_urls[@]}";do printf "%s " "$i";done)
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Start unzipping."
-    tar xvf "$jdk_download_path" -C /tools/unpack_file/"$GET_missing_dirs_nginx" --strip-components 1 &>/dev/null
+    tar xvf "$jdk_download_path" -C /tools/unpack_file/"$GET_missing_dirs_jdk" --strip-components 1 &>/dev/null
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] The decompression is complete."
       if [ -d "$jdk_install_path" ];then
         if [ -d "$install_path/BackupJdk$(date '+%Y%m%d')" ]; then
           for (( i = 1; i < 10000; i++ )); do
               if [ ! -d "$install_path/BackupJdk$(date '+%Y%m%d')$i" ]; then
-                cd "$install_path" && mv "BackupJdk$(date '+%Y%m%d')" "BackupJdk$i$(date '+%Y%m%d')"
+                cd "$install_path" && mv "BackupJdk$(date '+%Y%m%d')" "BackupJdk$(date '+%Y%m%d')$i"
                 i=10000
               fi
           done
         fi
         cd "$install_path" && mv jdk "BackupJdk$(date '+%Y%m%d')"
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] 原始路径备份：$install_path/BackupJdk$(date '+%Y%m%d')"
+        bak_path=$(echo "$install_path"/BackupJdk$(date '+%Y%m%d') | tr -s '/')
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] 原始路径备份：$bak_path"
       fi
       mkdir -p "$jdk_install_path"
-      mv /tools/unpack_file/"$GET_missing_dirs_jdk"/* "$jdk_install_path"
+      mv /tools/unpack_file/"$GET_missing_dirs_jdk"/*  "$jdk_install_path"
       if [ $? -eq 0 ];then
          echo ""[$(date '+%Y-%m-%d %H:%M:%S')]" 文件复制完成"
         "$controls" remove java* openjdk*  -y &>/dev/null

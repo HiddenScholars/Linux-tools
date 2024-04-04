@@ -61,7 +61,8 @@ GET_missing_dirs_mysql5=$(curl -sl https://"$url_address"/HiddenScholars/Linux-t
         done
         fi
         cd "$install_path" && mv mysql5 "BackupMysql5$(date '+%Y%m%d')"
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] 原始路径备份：$install_path/BackupMysql5$(date '+%Y%m%d')"
+        bak_path=$(echo "$install_path"/BackupMysql5$(date '+%Y%m%d') | tr -s '/')
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] 原始路径备份：$bak_path"
       fi
       mkdir -p "$mysql5_install_path" "$mysql5_install_path"/etc/ "$mysql5_install_path"/logs/
           mv /tools/unpack_file/"$GET_missing_dirs_mysql5"/* "$mysql5_install_path"

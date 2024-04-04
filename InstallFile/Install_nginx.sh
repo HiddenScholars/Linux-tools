@@ -48,13 +48,14 @@ GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-to
         if [ -d "$install_path/BackupNginx$(date '+%Y%m%d')" ]; then
           for (( i = 1; i < 10000; i++ )); do
               if [ ! -d "$install_path/BackupNginx$(date '+%Y%m%d')$i" ]; then
-                cd "$install_path" && mv "BackupNginx$(date '+%Y%m%d')" "BackupNginx$i$(date '+%Y%m%d')"
+                cd "$install_path" && mv "BackupNginx$(date '+%Y%m%d')" "BackupNginx$(date '+%Y%m%d')$i"
                 i=10000
               fi
           done
         fi
         cd "$install_path" && mv nginx "BackupJdk$(date '+%Y%m%d')"
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 原始路径备份：$install_path/BackupNginx$(date '+%Y%m%d')"
+    bak_path=$(echo "$install_path"/BackupNginx$(date '+%Y%m%d') | tr -s '/')
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 原始路径备份：$bak_path"
     echo ""[$(date '+%Y-%m-%d %H:%M:%S')]" Start unzipping."
     tar xvf "$download_path"/nginx/nginx -C /tools/unpack_file/"$GET_missing_dirs_nginx" --strip-components 1 &>/dev/null
     echo ""[$(date '+%Y-%m-%d %H:%M:%S')]" The decompression is complete."
