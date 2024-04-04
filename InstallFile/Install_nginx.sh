@@ -5,7 +5,6 @@ source /tools/config &>/dev/null
 red=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR red)
 green=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR green)
 plain=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR plain)
-set -x
 # 进程检测
 GET_PROCESS_CHECK=($(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- PROCESS_CHECK nginx))
 # 端口检测
@@ -42,8 +41,6 @@ fi
     exit 1
   fi
 
-set +x
-echo "nginx安装包下载"
 bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  nginx  $(for i in "${nginx_download_urls[@]}";do printf "%s " "$i";done)
 #解压目录检测
 GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
@@ -119,5 +116,5 @@ systemctl daemon-reload
 systemctl start nginx.service
 else
       echo -e "${red}安装失败...${plain}"
-      exit 0
+      exit 1
     fi
