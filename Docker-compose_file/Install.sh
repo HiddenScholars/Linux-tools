@@ -6,9 +6,14 @@ CHECK_DOCKER_PROFILE=($(curl -sl https://"$url_address"/HiddenScholars/Linux-too
 for i in "${CHECK_DOCKER_PROFILE[@]}"
 do
 if [ "$i" == "docker" ]; then
-    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_docker.sh)
-    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_docker-compose.sh)
+   echo "[$(date '+%Y-%m-%d %H:%M:%S')] 开始安装Docker"
+   bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_docker.sh)
+    if [ "$i" == "docker-compose" ]; then
+       echo "[$(date '+%Y-%m-%d %H:%M:%S')] 开始安装docker-compose"
+       bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_docker-compose.sh)
+    fi
 elif [ "$i" == "docker-compose" ]; then
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 开始安装docker-compose"
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/InstallFile/Install_docker-compose.sh)
 fi
 done
