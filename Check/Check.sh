@@ -177,19 +177,19 @@ function PACKAGE_DOWNLOAD() {
         GET_PackageVersion_2=$(echo "${DownloadUrl[$i]}" | grep -oE '[0-9]+\.[0-9]+\.tar.gz+' | sed 's/\.tar\.gz$//')
         GET_PackageVersion_3=$(echo "${DownloadUrl[$i]}" | sed 's/.*\(jdk.*tar\.gz\)/\1/')
         if [ "${#GET_PackageVersion_1}" -ne 0 ]; then
-          echo "[$(date '+%Y-%m-%d %H:%M:%S')] $i : $GET_PackageVersion_1"
+          echo "$i : $GET_PackageVersion_1"
         elif [ "${#GET_PackageVersion_2}" -ne 0  ]; then
-          echo "[$(date '+%Y-%m-%d %H:%M:%S')] $i : $GET_PackageVersion_2"
+          echo "$i : $GET_PackageVersion_2"
         elif [ "${#GET_PackageVersion_3}" -ne 0  ]; then
-          echo "[$(date '+%Y-%m-%d %H:%M:%S')] $i : $GET_PackageVersion_3"
+          echo "$i : $GET_PackageVersion_3"
         else
           if [ -n "$ServerName"  ] && [ "${#DownloadUrl[@]}" -ne 0 ]; then
-              echo "[$(date '+%Y-%m-%d %H:%M:%S')] $i : 未识别的版本"
+              echo "$i : 未识别的版本"
           fi
         fi
     done
     if [ -n "$ServerName"  ] && [ "${#DownloadUrl[@]}" -ne 0 ];then
-      read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] Enter Your install service version choice：" y
+      read -rp "Enter Your install service version choice：" y
     fi
     if [[ "$y" =~ ^[0-9]+$ ]] && [ "$i" -le "${#DownloadUrl[@]}" ] ; then
         tr_s_variable_2=$(echo "$download_path/$ServerName/$ServerName" | tr -s '/')
