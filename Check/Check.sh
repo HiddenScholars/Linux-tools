@@ -7,7 +7,7 @@ controls=''
 config_path=/tools
 config_file=/tools/config
 handle_error() {
-    echo "出现运行错误，解决后再次运行！错误码：$0 : $?"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 出现运行错误，解决后再次运行！错误码：$0 : $?"
     exit 1
 }
 trap handle_error ERR
@@ -109,13 +109,13 @@ function SET_CONFIG() {
         sed -i '/^$/d' $config_file &>/dev/null
    else
      if [ -f "$config_file" ]; then
-        echo "不支持的版本"
-        echo "软件包管理器：$controls"
-        echo "Linux系统版本：$SystemVersion"
-        echo "CPU架构：$CPUArchitecture"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] 不支持的版本"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] 软件包管理器：$controls"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Linux系统版本：$SystemVersion"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] CPU架构：$CPUArchitecture"
         exit 1
     else
-        echo "$config_file not found."
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] $config_file not found."
         exit 1
      fi
    fi
@@ -177,14 +177,14 @@ function PACKAGE_DOWNLOAD() {
         GET_PackageVersion_2=$(echo "${DownloadUrl[$i]}" | grep -oE '[0-9]+\.[0-9]+\.tar.gz+' | sed 's/\.tar\.gz$//')
         GET_PackageVersion_3=$(echo "${DownloadUrl[$i]}" | sed 's/.*\(jdk.*tar\.gz\)/\1/')
         if [ "${#GET_PackageVersion_1}" -ne 0 ]; then
-          echo "$i : $GET_PackageVersion_1"
+          echo "[$(date '+%Y-%m-%d %H:%M:%S')] $i : $GET_PackageVersion_1"
         elif [ "${#GET_PackageVersion_2}" -ne 0  ]; then
-          echo "$i : $GET_PackageVersion_2"
+          echo "[$(date '+%Y-%m-%d %H:%M:%S')] $i : $GET_PackageVersion_2"
         elif [ "${#GET_PackageVersion_3}" -ne 0  ]; then
-          echo "$i : $GET_PackageVersion_3"
+          echo "[$(date '+%Y-%m-%d %H:%M:%S')] $i : $GET_PackageVersion_3"
         else
           if [ -n "$ServerName"  ] && [ "${#DownloadUrl[@]}" -ne 0 ]; then
-              echo "$i : 未识别的版本"
+              echo "[$(date '+%Y-%m-%d %H:%M:%S')] $i : 未识别的版本"
           fi
         fi
     done
@@ -288,7 +288,7 @@ function FIREWALL_MASTER() {
 
                 return 0
             else
-              echo "Get Firewall failed"
+              echo "[$(date '+%Y-%m-%d %H:%M:%S')] Get Firewall failed"
               return 1
             fi
             done
