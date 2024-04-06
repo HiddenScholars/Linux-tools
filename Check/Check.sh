@@ -260,6 +260,7 @@ function SetVariables() {
   variables_path=$2 #/usr/local/sbin/
   variables_file=$3 #file.txt
   if [ -n "$variables_name" ] && [ -n "$variables_path" ] && [ -n "$variables_file" ]; then
+     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Start setting variables..."
      if [ ! -f "$variables_file" ]; then
          mkdir -p "$variables_file"
      fi
@@ -281,10 +282,11 @@ function SetVariables() {
      elif [ -z "$variables_name" ];then
           echo "$variables_name=$variables_path" >>"$variables_file"
      fi
+     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Finish setting variables..."
   else
-     [ -z "$variables_name" ] && echo "variables_name not found."
-     [ -z "$variables_path" ] && echo "variables_path not found."
-     [ -z "$variables_file" ] && echo "variables_file not found."
+     [ -z "$variables_name" ] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] variables_name not found."
+     [ -z "$variables_path" ] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] variables_path not found."
+     [ -z "$variables_file" ] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] variables_file not found."
   fi
 }
 case $1 in
