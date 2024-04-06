@@ -28,7 +28,6 @@
       if [ $? -eq 0 ];then
          echo ""[$(date '+%Y-%m-%d %H:%M:%S')]" 文件复制完成"
         "$controls" remove java* openjdk*  -y &>/dev/null
-
          jdk_install_path_bin=$(echo "$jdk_install_path"/bin | tr -s '/')
          jdk_install_path_lib_dt=$(echo "$jdk_install_path"/lib/dt.jar | tr -s '/')
          jdk_install_path_lib_tools=$(echo "$jdk_install_path"/lib/tools.jar | tr -s '/')

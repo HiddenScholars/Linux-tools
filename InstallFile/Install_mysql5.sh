@@ -99,7 +99,6 @@ EOF
 curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s SetVariables MYSQL5_HOME "$mysql5_install_path" /etc/profile
 curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s SetVariables PATH "$mysql5_install_path_bin" /etc/profile
 
-
 source /etc/profile
 echo "数据库开始安装"
 "$mysql5_install_path_bin"/mysqld --initialize  --user="$mysql5_user" --basedir="$mysql5_install_path" --datadir="$mysql5_data_path"

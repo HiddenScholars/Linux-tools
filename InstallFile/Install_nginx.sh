@@ -85,11 +85,8 @@ GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-to
                                                 --with-stream_ssl_module && make && make install
     if [ -f "$install_path"/nginx/sbin/nginx ]; then
         echo -e "${green}安装完成...${plain}"
+        curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s SetVariables NGINX_HOME "$install_path"/nginx /etc/profile
         source /etc/profile
-        if [ -z "$NGINX_HOME" ];then
-           echo "export NGINX_HOME=$install_path/nginx/" >>/etc/profile
-           echo "export PATH=$PATH:$NGINX_HOME/sbin/" >>/etc/profile
-        fi
         if [ -f "$install_path"/nginx/conf/nginx.conf ]; then
             sed -i "s/#user  nobody/user $nginx_user/g" "$install_path"/nginx/conf/nginx.conf
             if [ -n "$nginx_user" ]; then
