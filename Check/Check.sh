@@ -189,7 +189,7 @@ function PACKAGE_DOWNLOAD() {
         fi
     done
     if [ -n "$ServerName"  ] && [ "${#DownloadUrl[@]}" -ne 0 ];then
-      if [ "$Skip_selecting_version" != "true" ]; then
+      if [ "$Skip_selecting_version" != "true" ] && [ -f "$download_path/$ServerName/$ServerName" ]; then
          read -rp "Enter Your install service version choice：" y
       fi
     fi
@@ -207,7 +207,7 @@ function PACKAGE_DOWNLOAD() {
           echo "[$(date '+%Y-%m-%d %H:%M:%S')] download failed."
           return 1
         fi
-    elif [ -z "$y" ] && [ -f "$download_path/$ServerName/$ServerName" ] ; then
+    elif [ -z "$y" ] && [ -f "$download_path/$ServerName/$ServerName" ]; then
         echo "[$(date '+%Y-%m-%d %H:%M:%S')] Skip the installation."
     else
         echo "[$(date '+%Y-%m-%d %H:%M:%S')] Input Failed."
