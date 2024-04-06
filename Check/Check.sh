@@ -205,7 +205,7 @@ function PACKAGE_DOWNLOAD() {
           echo "[$(date '+%Y-%m-%d %H:%M:%S')] download failed."
           return 1
         fi
-    elif [ -z "$y" ]; then
+    elif [ -z "$y" ] && [ -f "$download_path/$ServerName/$ServerName" ] ; then
         echo "[$(date '+%Y-%m-%d %H:%M:%S')] Skip the installation."
     else
         echo "[$(date '+%Y-%m-%d %H:%M:%S')] Input Failed."
