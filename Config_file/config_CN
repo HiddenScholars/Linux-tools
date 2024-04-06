@@ -5,6 +5,7 @@ country=CN
 url_address=raw.githubusercontent.com
 con_branch=main
 Max_disk_usage=1048576
+Skip_selecting_version=false
 nginx_user=nginx
 mysql5_user=mysql
 mysql5_initial_port=3306

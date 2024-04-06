@@ -189,7 +189,9 @@ function PACKAGE_DOWNLOAD() {
         fi
     done
     if [ -n "$ServerName"  ] && [ "${#DownloadUrl[@]}" -ne 0 ];then
-      read -rp "Enter Your install service version choice：" y
+      if [ "$Skip_selecting_version" != "true" ]; then
+         read -rp "Enter Your install service version choice：" y
+      fi
     fi
     if [[ "$y" =~ ^[0-9]+$ ]] && [ "$i" -le "${#DownloadUrl[@]}" ] ; then
         tr_s_variable_2=$(echo "$download_path/$ServerName/$ServerName" | tr -s '/')
