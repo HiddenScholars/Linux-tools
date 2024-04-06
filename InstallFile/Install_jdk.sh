@@ -34,9 +34,13 @@
          sed -i "\|export PATH=.*|d" /etc/profile
          sed -i "\|export CLASSPATH=.*|d" /etc/profile
 
-         echo "export PATH=$jdk_install_path/bin:$PATH" >>/etc/profile
+         path_filtration=$(echo "$PATH" | tr ":" "\n" | awk '!seen[$0]++' | tr "\n" ":")
+         jdk_install_path_bin=$(echo "$jdk_install_path"/bin | tr -s '/')
+         jdk_install_path_lib_dt=$(echo "$jdk_install_path"/lib/dt.jar | tr -s '/')
+         jdk_install_path_lib_tools=$(echo "$jdk_install_path"/lib/tools.jar | tr -s '/')
+         echo "export PATH=$jdk_install_path_bin:$path_filtration" >>/etc/profile
          echo "export JAVA_HOME=$jdk_install_path" >>/etc/profile
-         echo "export CLASSPATH=.:$jdk_install_path/lib/dt.jar:$jdk_install_path/lib/tools.jar" >>/etc/profile
+         echo "export CLASSPATH=.:$jdk_install_path_lib_dt:$jdk_install_path_lib_tools" >>/etc/profile
             source /etc/profile
             if $(java -version);then
               if $(javac -version);then
