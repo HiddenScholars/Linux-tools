@@ -17,7 +17,8 @@ source /tools/config &>/dev/null
             sed -i "s/nginx_user=.*/nginx_user=$nginx_user/g" /tools/config #下载完成后修改nginx用户
             sed -i "s/mysql5_user=.*/mysql5_user=$mysql5_user/g" /tools/config #下载完成后修改mysql5用户
             sed -i "s/mysql5_initial_port=.*/mysql5_initial_port=$mysql5_initial_port/g" /tools/config #下载完成后修改mysql5端口
-            sed -i "s/docker_compose_file=.*/docker_compose_file=$ocker_compose_file/g" /tools/config #下载完成后修改docker-compose_file存放位置
+            sed -i "s/docker_compose_file=.*/docker_compose_file=$docker_compose_file/g" /tools/config #下载完成后修改docker-compose_file存放位置
+            sed -i "s/Skip_selecting_version=.*/Skip_selecting_version=$Skip_selecting_version=/g" /tools/config #下载完成后修改保存的选择下载开关
 
             rm -rf /tools/config_bak
             bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Link_localhost/uninstall.sh) # tool link uninstall.sh
