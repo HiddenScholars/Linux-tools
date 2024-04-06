@@ -95,9 +95,17 @@ EOF
      sudo chmod 644 /etc/my.cnf
      sudo chown -R "$mysql5_user":"$mysql5_user" /etc/my.cnf
   fi
+source /etc/profile
 sed -i "\|$mysql5_install_path|d" /etc/profile
 echo "export MYSQL_HOME=$mysql5_install_path" >>/etc/profile
-echo "export PATH=$PATH:$mysql5_install_path_bin" >>/etc/profile
+
+sed -i "\|export PATH=.*|d" /etc/profile
+Path_filtering=$(echo "$PATH" | tr ":" "\n" | awk '{gsub(/\/+/,"/"); print}' | awk '!seen[$0]++' | tr "\n" ":")
+path_filtration=$(echo "$Path_filtering" | tr ":" "\n" | awk '!seen[$0]++' | tr "\n" ":")
+echo "export PATH=$mysql5_install_path_bin:$path_filtration" >>/etc/profile
+install_path_filtration=$(echo "$Path_filtering" | tr ":" "\n" | awk '!seen[$0]++' | tr "\n" ":" |  sed 's/:*$//')
+sed -i "s|PATH=.*|PATH=$install_path_filtration|g" /etc/profile
+
 source /etc/profile
 echo "数据库开始安装"
 "$mysql5_install_path_bin"/mysqld --initialize  --user="$mysql5_user" --basedir="$mysql5_install_path" --datadir="$mysql5_data_path"
