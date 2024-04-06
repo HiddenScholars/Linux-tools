@@ -48,6 +48,5 @@ else
 fi
 
 }
-echo "卸载开始”
 KILL_NGINX_PROCESS
 DELETE_NGINX_FILE
