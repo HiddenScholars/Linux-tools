@@ -189,7 +189,7 @@ function PACKAGE_DOWNLOAD() {
         fi
     done
     if [ -n "$ServerName"  ] && [ "${#DownloadUrl[@]}" -ne 0 ];then
-      if [ "$Skip_selecting_version" != "true" ] && [ -f "$download_path/$ServerName/$ServerName" ]; then
+      if [ "$Skip_selecting_version" != "true" ] && [ ! -f "$download_path/$ServerName/$ServerName" ]; then
          read -rp "Enter Your install service version choice：" y
       fi
     fi
