@@ -267,14 +267,15 @@ function SetVariables() {
      variables_path=$(echo "$variables_path" | tr -s '/')
      source "$variables_file"
      if [ -n "$variables_name" ];then
+         variables_temp=$variables_name
          sed -i "/^$variables_name=/d" "$variables_file"
          sed -i "/^export $variables_name=/d" "$variables_file"
          if [ "$variables_name" == "PATH" ]; then
-            echo "$variables_name=$variables_path:$PATH" >>"$variables_file"
+            echo "$variables_name=$variables_path:$variables_temp" >>"$variables_file"
             source "$variables_file"
-            variables_filtering_1=$(echo "$PATH" | tr ":" "\n" | awk '{gsub(/\/+/,"/"); print}' | awk '!seen[$0]++' | tr "\n" ":") #clean  repeat /
-            variables_filtering_2=$(echo "$PATH" | tr ":" "\n" | awk '!seen[$0]++' | tr "\n" ":") #clean repeat path,awk -F ":"
-            variables_filtering_3=$(echo "$PATH" | tr ":" "\n" | awk '!seen[$0]++' | tr "\n" ":" |  sed 's/:*$//') #clean :: ,awk -F ":"
+            variables_filtering_1=$(echo "$variables_temp" | tr ":" "\n" | awk '{gsub(/\/+/,"/"); print}' | awk '!seen[$0]++' | tr "\n" ":") #clean  repeat /
+            variables_filtering_2=$(echo "$variables_temp" | tr ":" "\n" | awk '!seen[$0]++' | tr "\n" ":") #clean repeat path,awk -F ":"
+            variables_filtering_3=$(echo "$variables_temp" | tr ":" "\n" | awk '!seen[$0]++' | tr "\n" ":" |  sed 's/:*$//') #clean :: ,awk -F ":"
             sed -i "s|^${variables_name}=.*|${variables_name}=${variables_filtering_3}|g" "$variables_file"
          else
             echo "$variables_name=$variables_path" >>"$variables_file"
