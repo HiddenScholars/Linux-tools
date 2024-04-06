@@ -255,45 +255,37 @@ else
      return 1
 fi
 }
-function FIREWALL_MASTER() {
-    local GET_FIREWALL_SELECT=("$1") #add/remove
-    local GET_FIREWALL_SELECT_ServiceAndPort=("$2") #service/port
-    GET_FIREWALL_SELECT_Port=("$@")
-    local GET_FIREWALL_MASTER=("firewall" "ufw" "iptables")
-    for i in "${GET_FIREWALL_MASTER[@]}"
-    do
-        if which "$i" &>/dev/null && [ "$(pgrep $i | wc -l)" -ne 0 ];then
-            for i in "${GET_FIREWALL_SELECT_Port[@]}"
-            do
-            if [ "$i" == "firewall" ];then
-                --query-port=8080/tcp
-
-
-                if [ "$1" == "add" ] && [ "$2" == "port" ]; then
-                    firewall-cmd --permenent --zone=public --add-port="$i"
-                elif [ "$1" == "add" ] && [ "$2" == "service" ];then
-                    firewall-cmd --permenent --zone=public --add-service="$i"
-                elif [ "$1" == "remove" ] && [ "$2" == "port" ]; then
-                    firewall-cmd --permenent --zone=public --remove-port="$i"
-                elif [ "$1" == "remove" ] && [ "$2" == "service" ];then
-                    firewall-cmd --permenent --zone=public --remove-service="$i"
-                fi
-                firewall-cmd --reload
-                return 0
-            elif [ "$i" == "ufw" ];then
-
-
-                return 0
-            elif [ "$i" == "iptables" ];then
-
-                return 0
-            else
-              echo "[$(date '+%Y-%m-%d %H:%M:%S')] Get Firewall failed"
-              return 1
-            fi
-            done
-        fi
-    done
+function SetVariables() {
+  variables_name=$1 #PATH
+  variables_path=$2 #/usr/local/sbin/
+  variables_file=$3 #file.txt
+  if [ -n "$variables_name" ] && [ -n "$variables_path" ] && [ -n "$variables_file" ]; then
+     if [ ! -f "$variables_file" ]; then
+         mkdir -p "$variables_file"
+     fi
+     variables_path=$(echo "$variables_path" | tr -s '/')
+     source "$variables_file"
+     if [ -n "$variables_name" ];then
+         sed -i "/^$variables_name=/d" "$variables_file"
+         sed -i "/^export $variables_name=/d" "$variables_file"
+         if [ "$variables_name" == "PATH" ]; then
+            echo "$variables_name=$variables_path:$PATH" >>"$variables_file"
+            source "$variables_file"
+            variables_filtering_1=$(echo "$PATH" | tr ":" "\n" | awk '{gsub(/\/+/,"/"); print}' | awk '!seen[$0]++' | tr "\n" ":") #clean  repeat /
+            variables_filtering_2=$(echo "$PATH" | tr ":" "\n" | awk '!seen[$0]++' | tr "\n" ":") #clean repeat path,awk -F ":"
+            variables_filtering_3=$(echo "$PATH" | tr ":" "\n" | awk '!seen[$0]++' | tr "\n" ":" |  sed 's/:*$//') #clean :: ,awk -F ":"
+            sed -i "s|^${variables_name}=.*|${variables_name}=${variables_filtering_3}|g" "$variables_file"
+         else
+            echo "$variables_name=$variables_path" >>"$variables_file"
+         fi
+     elif [ -z "$variables_name" ];then
+          echo "$variables_name=$variables_path" >>"$variables_file"
+     fi
+  else
+     [ -z "$variables_name" ] && echo "variables_name not found."
+     [ -z "$variables_path" ] && echo "variables_path not found."
+     [ -z "$variables_file" ] && echo "variables_file not found."
+  fi
 }
 case $1 in
 DIRECTIVES_CHECK)
@@ -339,6 +331,10 @@ CPUArchitecture)
                   shift
                   SYSTEM_CHECK
                   echo "$CPUArchitecture"
+                  ;;
+SetVariables)
+                  shift
+                  SetVariables "$@"
                   ;;
 *)
                   echo "failed 404"
