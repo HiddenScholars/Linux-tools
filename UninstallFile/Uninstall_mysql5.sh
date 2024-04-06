@@ -31,7 +31,7 @@ if which mysql &>/dev/null; then
 "$controls" remove -y mysql* mariadb* &>/dev/null
 fi
 if [ -f /etc/init.d/mysqld ]; then
-   /etc/init.d/mysqld stop
+   /etc/init.d/mysqld stop &>/dev/null
    sudo  rm -rf /etc/init.d/mysqld
    systemctl stop mysqld &>/dev/null
    systemctl daemon-reload
