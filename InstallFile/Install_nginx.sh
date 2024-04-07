@@ -23,7 +23,7 @@ elif [ -n "$GET_PORT_CHECK" ] &&[ "${#GET_PORT_CHECK[@]}" -ne 0 ]; then
      read -rp "被占用是否继续安装（y/n）：" select
     [ "$select" != "y" ] && exit 0
 fi
-
+bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  nginx  $(for i in "${nginx_download_urls[@]}";do printf "%s " "$i";done)
   if [ "$SystemVersion" == "centos" ] || [ "$SystemVersion" == "Anolis OS" ]; then
       yum_package=(gcc gcc-c++ zlib zlib-devel pcre-devel openssl openssl-devel gd-devel)
       for i in "${yum_package[@]}"
@@ -41,7 +41,6 @@ fi
     exit 1
   fi
 
-bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  nginx  $(for i in "${nginx_download_urls[@]}";do printf "%s " "$i";done)
 #解压目录检测
 GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
 
