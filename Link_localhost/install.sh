@@ -1,7 +1,7 @@
 #!/bin/bash
 source /tools/config &>/dev/null
 
-function setTool(){
+function SetTool(){
   cat > /tools/tool << 'EOF'
   source /tools/config &>/dev/null
   if [ -z $url_address ];then
@@ -18,10 +18,5 @@ function setTool(){
 EOF
   chmod +x /tools/tool
 }
-
-if  [  ! -f /tools/tool ];then
-  setTool
-fi
-if [ ! -L /usr/bin/tool ]; then
-  ln -s /tools/tool /usr/bin/
-fi
+SetTool
+curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s SetVariables PATH /tools/ /etc/profile
