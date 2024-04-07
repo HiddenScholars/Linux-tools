@@ -3,9 +3,6 @@
 config_path=/tools/
 config_file=/tools/config
 version_file=$config_path/version
-red=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR red)
-green=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR green)
-plain=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR plain)
 
 handle_error() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] 出现运行错误，解决后再次运行！错误码：$?"
@@ -36,7 +33,7 @@ function CHECK_FILE() {
             [ ! -d ${config_path} ] && mkdir ${config_path}
             echo  " config downloading..."
             wget -O ${config_file} https://$url_address/HiddenScholars/Linux-tools/$con_branch/Config_file/config_"$country"
-            [ ! -f ${config_file} ] && echo -e "${red}download failed${plain}" && exit 0
+            [ ! -f ${config_file} ] && echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] download failed" && exit 0
             sed -i "s/url_address=.*/url_address=$url_address/g" "$config_file" #下载完成后修改仓库地址
             sed -i "s/con_branch=.*/con_branch=$con_branch/g" "$config_file" #下载完成后修改分支
       fi
@@ -64,39 +61,54 @@ function CHECK_FILE() {
     fi
     sed '/^$/d' "$config_file" &>/dev/null #删除空行
 }
+function SetTool(){
+  cat > $config_path/tool << 'EOF'
+  source $config_file &>/dev/null
+  if [ -z $url_address ];then
+  set -x
+  url_address=raw.githubusercontent.com
+  set +x
+  fi
+  if [ -z $con_branch ];then
+   set -x
+   con_branch=main
+   set +x
+  fi
+  bash <(curl -Ls https://$url_address/HiddenScholars/Linux-tools/$con_branch/tools.sh)
+EOF
+  chmod +x /tools/tool
+}
 function initialize_check() {
 #Linux-tools start check ...
-[ $(whoami) != root ] && echo -e "${red}需要使用root权限${plain}" && exit 0
+[ $(whoami) != root ] && echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] 需要使用root权限" && exit 1
 source $config_file &>/dev/null
-bash <(curl -sL https://$url_address/HiddenScholars/Linux-tools/$con_branch/Link_localhost/install.sh) # tool link install.sh
+SetTool
 # 环境检测
 bash <(curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh) SET_CONFIG
-# 获取包管理器
-GET_PACKAGE_MASTER=$(curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh | bash -s -- PACKAGE_MASTER)
-# 获取系统版本
-GET_SYSTEM_CHECK=$(curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh | bash -s -- SYSTEM_CHECK)
+curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s SetVariables PATH /tools/ /etc/profile
+
 # 必装命令检测
 GET_DIRECTIVES_CHECK=($(curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh | bash -s -- DIRECTIVES_CHECK 0 "wget" "netstat" "pgrep" "find" "md5sum"))
 for i in "${GET_DIRECTIVES_CHECK[@]}"
 do
     if [ "$i" == "netstat" ]; then
-        "$GET_PACKAGE_MASTER" -y install net-tools
+        "$controls" -y install net-tools
     elif [ "$i" == "pgrep" ]; then
-        case "$GET_SYSTEM_CHECK" in
+        case "$SystemVersion" in
         debian)
-              "$GET_PACKAGE_MASTER" -y install procps
+              "$controls" -y install procps
               ;;
         ubuntu)
-              "$GET_PACKAGE_MASTER" -y install procps
+              "$controls" -y install procps
               ;;
         centos)
-              "$GET_PACKAGE_MASTER" -y install procps-ng
+              "$controls" -y install procps-ng
               ;;
         kali_Linux)
-              "$GET_PACKAGE_MASTER" -y install procps
+              "$controls" -y install procps
               ;;
         *)
-              echo "SYSTEM_CHECK NOT FOUND"
+              echo "[$(date '+%Y-%m-%d %H:%M:%S')] SYSTEM_CHECK NOT FOUND"
               return 1
               ;;
         esac
@@ -116,15 +128,15 @@ case $1 in
   config)
           CHECK_FILE
           if [ -f ${config_file} ];then
-            echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] ${green}download success ${plain}"
+            echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] download success"
             exit 0
           else
-            echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] ${red}download failed${plain}"
+            echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] [$(date '+%Y-%m-%d %H:%M:%S')] download failed"
             exit 0
           fi
           ;;
   *)
-          echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] ${red}参数错误${plain}"
+          echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] [$(date '+%Y-%m-%d %H:%M:%S')] 参数错误"
           ;;
   esac
   ;;
