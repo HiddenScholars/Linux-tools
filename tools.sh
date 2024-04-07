@@ -62,8 +62,8 @@ function CHECK_FILE() {
     sed '/^$/d' "$config_file" &>/dev/null #删除空行
 }
 function SetTool(){
-  cat > $config_path/tool << 'EOF'
-  source $config_file &>/dev/null
+  cat > /tools/tool << 'EOF'
+  source /tools/config &>/dev/null
   if [ -z $url_address ];then
   set -x
   url_address=raw.githubusercontent.com
@@ -85,8 +85,6 @@ source $config_file &>/dev/null
 SetTool
 # 环境检测
 bash <(curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh) SET_CONFIG
-curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s SetVariables PATH /tools/ /etc/profile
-
 # 必装命令检测
 GET_DIRECTIVES_CHECK=($(curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh | bash -s -- DIRECTIVES_CHECK 0 "wget" "netstat" "pgrep" "find" "md5sum"))
 for i in "${GET_DIRECTIVES_CHECK[@]}"
@@ -141,10 +139,11 @@ case $1 in
   esac
   ;;
 *)
-        CHECK_FILE
-        progress_bar 2 1
-        initialize_check
-        progress_bar 2 2
+  CHECK_FILE
+  progress_bar 2 1
+  initialize_check
+  progress_bar 2 2
+  curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s SetVariables PATH /tools/ /etc/profile
   printf "\n%s 数据处理完成正在获取菜单\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
   bash <(curl -L https://$url_address/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh) # function menu
   bash
