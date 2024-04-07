@@ -62,6 +62,15 @@ function CHECK_FILE() {
     sed '/^$/d' "$config_file" &>/dev/null #删除空行
 }
 function SetTool(){
+  if [  -f /etc/init.d/tool ];then
+    rm -rf /etc/init.d/tool && [ -L /usr/bin/tool ] && rm -rf /usr/bin/tool
+    echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] 删除tool指令"
+  elif [ -f /tools/tool ];then
+    rm -rf /tools/tool && [ -L /usr/bin/tool ] && rm -rf /usr/bin/tool
+  elif [ -L /usr/bin/tool ];then
+    rm -rf /usr/bin/tool
+    echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] 删除tool软连接"
+  fi
   cat > /tools/tool << 'EOF'
   source /tools/config &>/dev/null
   if [ -z $url_address ];then

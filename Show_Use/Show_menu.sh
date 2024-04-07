@@ -18,12 +18,12 @@ trap handle_error ERR
 trap handle_exit EXIT
 
 #菜单目录显示控制
-show_use=("关闭脚本菜单" "中间件安装" "中间件卸载" "中间件升级" "环境安装" "开源项目部署" "网站建设" "DIY工具" "系统清理" "文件更新")
+show_use=("关闭脚本菜单" "中间件安装" "中间件卸载" "中间件升级" "环境安装" "开源项目部署" "网站建设" "第三方脚本" "系统清理" "文件更新")
 show_use_function=("exit 0" "show_Soft" "soft_Uninstall" "soft_Upgrade" "install_env" "install_open_source_projects" "install_web_site_install" "install_diy" "system_clean" "check_update")
-show_soft=("返回主页面" "Nginx" "Docker+Docker-compose" "Docker-compose" "Mysql5" "Nginx(lnmp2.0)" "db数据库(lnmp2.0)" "mphp(lnmp2.0)" "lnmp(lnmp2.0)" "lnmpa(lnmp2.0)" "lamp(lnmp2.0)"  "一键执行全部中间件安装脚本")
-show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose" "install_mysql5" "install_lnmp_package_nginx" "install_lnmp_package_db" "install_lnmp_package_mphp" "install_lnmp_package_lnmp" "install_lnmp_package_lnmpa" "install_lnmp_package_lamp" "install_all")
-soft_uninstall=("返回主页面" "Nginx卸载" "Docker+Docker-compose卸载" "Mysql5卸载" "tailscale卸载" "lnmp2.0卸载脚本（包含lnmp,lnmpa,lamp）" "tool命令卸载")
-soft_uninstall_function=("return" "uninstall_nginx" "uninstall_docker_docker_compose" "uninstall_mysql5" "uninstall_tailscale" "uninstall_lnmp2.0" "uninstall_tool")
+show_soft=("返回主页面" "Nginx" "Docker+Docker-compose" "Docker-compose" "Mysql5" "一键执行全部中间件安装脚本")
+show_soft_function=("return" "install_nginx" "install_docker" "install_docker_compose" "install_mysql5" "install_all")
+soft_uninstall=("返回主页面" "Nginx卸载" "Docker+Docker-compose卸载" "Mysql5卸载" "tailscale卸载" "lnmp2.0卸载脚本（包含lnmp,lnmpa,lamp")
+soft_uninstall_function=("return" "uninstall_nginx" "uninstall_docker_docker_compose" "uninstall_mysql5" "uninstall_tailscale" "uninstall_lnmp2.0")
 soft_upgrade=("返回主菜单" "Nginx平滑升(降)级")
 soft_upgrade_function=("return" "upgrade_smooth_nginx")
 env_install=("返回主页面" "JDK")
@@ -32,8 +32,8 @@ open_source_projects=("返回主页面" "jumpserver(社区版-docker环境安装
 open_source_projects_function=("return" "install_jumpserver_free" "install_DockerFirefox" "install_DockerBitwarden")
 web_site_install=("返回主页面" "宝塔国际版" "宝塔（中国大陆版本）" "1Panel" "acme脚本(搭配cloudflare)")
 web_site_install_function=("return" "install_aaPanel" "install_bt" "install_1panel" "setting_ssl")
-diy_install=("返回主页面" "tailscale")
-diy_install_function=("return" "install_tailscale")
+diy_install=("返回主页面" "tailscale" "Nginx(lnmp2.0)" "db数据库(lnmp2.0)" "mphp(lnmp2.0)" "lnmp(lnmp2.0)" "lnmpa(lnmp2.0)" "lamp(lnmp2.0)")
+diy_install_function=("return" "install_tailscale" "install_lnmp_package_nginx" "install_lnmp_package_db" "install_lnmp_package_mphp" "install_lnmp_package_lnmp" "install_lnmp_package_lnmpa" "install_lnmp_package_lamp")
 run_system_clean=("返回主页面" "清理jumpserver社区版(只清理相关镜像与文件)" "jdk环境清理")
 run_system_clean_function=("return" "clean_jumpserver_free" "clean_jdk_file")
 
@@ -72,9 +72,6 @@ function uninstall_nginx() {
 }
 function uninstall_docker_docker_compose() {
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UninstallFile/Uninstall_docker_docker_compose.sh)
-}
-function uninstall_tool() {
-    bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Link_localhost/uninstall.sh)
 }
 function uninstall_mysql5() {
     bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UninstallFile/Uninstall_mysql5.sh)
