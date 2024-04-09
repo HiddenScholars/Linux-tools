@@ -8,7 +8,7 @@ handle_error() {
     exit 1
 }
 handle_exit() {
-    printf "\n%s 由于用户取消退出...\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
+    printf "\n%s 由于执行错误或用户取消而退出...\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
     bash
     exit 0
 }
