@@ -76,6 +76,12 @@ function SetTool(){
      sed -i "s/con_branch=.*/con_branch=$con_branch/g" $config_file
      sed -i "s/url_address=.*/url_address=$url_address/g" $config_file
   fi
+  if [ -f /tools/config ]; then
+      rm -rf /tools/config
+  fi
+  if [ -f /tools/version ]; then
+      rm -rf /tools/version
+  fi
 }
 function initialize_check() {
 #Linux-tools start check ...
