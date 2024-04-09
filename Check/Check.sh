@@ -1,9 +1,5 @@
 #!/bin/bash
 
-SystemCategory=''
-SystemVersion=''
-CPUArchitecture=''
-controls=''
 config_path=/tools
 config_file=/tools/config
 handle_error() {
