@@ -7,7 +7,7 @@
     </paths>
     <parameters>
         <country>CN</country>
-        <url_address>raw.githubusercontent.com</url_address>
+        <url_address>raw.yzuu.cf</url_address>
         <con_branch>main</con_branch>
         <Max_disk_usage>1048576</Max_disk_usage>
         <Skip_selecting_version>false</Skip_selecting_version>
