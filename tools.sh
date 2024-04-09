@@ -1,8 +1,7 @@
 #!/bin/bash
 
 config_path=/tools/
-config_file=/tools/config
-version_file=$config_path/version
+config_file=/tools/config.xml
 
 handle_error() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] 出现运行错误，解决后再次运行！错误码：$?"
@@ -16,7 +15,9 @@ handle_exit() {
 trap handle_error ERR
 trap handle_exit EXIT
 function CHECK_FILE() {
-     source $config_file &>/dev/null #优先使用config中的配置
+con_branch=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<con_branch>/{print $3}')
+url_address=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<url_address>/{print $3}')
+country=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<country>/{print $3}')
      [ "$con_branch" == "TestMain" ] && printf "%s 正在访问测试节点\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
      if [ -z "$url_address" ] && [ -z "$con_branch" ] ;then
        set -x
@@ -24,52 +25,50 @@ function CHECK_FILE() {
        con_branch=main
        set +x
      fi
-      if [  ! -f $version_file ]; then
-          [ ! -d ${config_path} ] && mkdir ${config_path}
-          GET_REMOTE_VERSION=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version)
-          echo "$GET_REMOTE_VERSION" > $version_file
-      fi
       if [ ! -f ${config_file} ];then
-            [ ! -d ${config_path} ] && mkdir ${config_path}
+            [ ! -d ${config_path} ] && mkdir -p ${config_path}
             echo  " config downloading..."
             wget -O ${config_file} https://$url_address/HiddenScholars/Linux-tools/$con_branch/Config_file/config_"$country"
             [ ! -f ${config_file} ] && echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] download failed" && exit 0
-            sed -i "s/url_address=.*/url_address=$url_address/g" "$config_file" #下载完成后修改仓库地址
-            sed -i "s/con_branch=.*/con_branch=$con_branch/g" "$config_file" #下载完成后修改分支
+            sed -i "s|<url_address>.*</url_address>|<url_address>$url_address</url_address>|g" $config_file
+            sed -i "s|<con_branch>.*</con_branch>|<con_branch>$con_branch</con_branch>|g" $config_file
       fi
 
-    GET_DOWNLOAD_PATH=$(grep -c download_path $config_file)
-    source $config_file &>/dev/null
-    if [ -z "$download_path" ] && [ "$GET_DOWNLOAD_PATH" == 1 ]; then
-       sed -i "s/download_path=.*/download_path=/tools/soft/g" $config_file
-    elif [ -z "$download_path" ] && [ "$GET_DOWNLOAD_PATH" == 0 ]; then
-      echo -e "\n" >> "$config_file"
-      echo "download_path=/tools/soft" >>$config_file
+    GET_DOWNLOAD_PATH=$(awk -v RS="</paths>" '/<paths>/{gsub(/.*<paths>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<download_path>/{print $3}')
+    if [ -z "$GET_DOWNLOAD_PATH" ]; then
+       sed -i "s|<download_path>.*</download_path>|<download_path>/tools/soft/</download_path>|g" $config_file
+       echo "[$(date '+%Y-%m-%d %H:%M:%S')] setting download_path /tools/soft/."
     fi
-    GET_INSTALL_PATH=$(grep -c install_path $config_file)
-    if [ -z "$install_path" ] && [ "$GET_INSTALL_PATH" == 1 ]; then
-       sed -i "s/install_path=.*/install_path=/usr/local/soft/g" $config_file
-    elif [ -z "$install_path" ] && [ "$GET_INSTALL_PATH" == 0 ];then
-      echo -e "\n" >> "$config_file"
-      echo "install_path=/usr/local/soft/" >>$config_file
+    GET_INSTALL_PATH=$(awk -v RS="</paths>" '/<paths>/{gsub(/.*<paths>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<install_path>/{print $3}')
+    if [ -z "$GET_INSTALL_PATH" ];then
+       sed -i "s|<install_path>.*</install_path>|<install_path>/usr/local/soft/</install_path>|g" $config_file
+       echo "[$(date '+%Y-%m-%d %H:%M:%S')] setting install_path /usr/local/soft/."
     fi
-    if [ -n "$download_path" ] && [ ! -d "$download_path" ]; then
-        mkdir -p "$download_path"
+
+    GET_DOWNLOAD_PATH=$(awk -v RS="</paths>" '/<paths>/{gsub(/.*<paths>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<download_path>/{print $3}')
+    GET_INSTALL_PATH=$(awk -v RS="</paths>" '/<paths>/{gsub(/.*<paths>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<install_path>/{print $3}')
+    # check PATH
+    if [ -n "$GET_INSTALL_PATH" ] && [ -n "$GET_DOWNLOAD_PATH" ]; then
+        if [ ! -d "$GET_DOWNLOAD_PATH" ]; then
+            mkdir -p "$GET_DOWNLOAD_PATH"
+        fi
+        if [ ! -d "$GET_INSTALL_PATH" ]; then
+            mkdir -p "$GET_INSTALL_PATH"
+        fi
+    else
+      echo "[$(date '+%Y-%m-%d %H:%M:%S')] The read install_path or download_path is incorrect. "
+      exit 1
     fi
-    if [ -n "$install_path" ] && [ ! -d "$install_path" ]; then
-        mkdir -p "$install_path"
-    fi
-    sed '/^$/d' "$config_file" &>/dev/null #删除空行
 }
 function SetTool(){
   if [  -f /etc/init.d/tool ];then
     rm -rf /etc/init.d/tool && [ -L /usr/bin/tool ] && rm -rf /usr/bin/tool
-    echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] 删除tool指令"
+    echo  "[$(date '+%Y-%m-%d %H:%M:%S')] 删除tool指令"
   elif [ -f /tools/tool ];then
     rm -rf /tools/tool && [ -L /usr/bin/tool ] && rm -rf /usr/bin/tool
   elif [ -L /usr/bin/tool ];then
     rm -rf /usr/bin/tool
-    echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] 删除tool软连接"
+    echo  "[$(date '+%Y-%m-%d %H:%M:%S')] 删除tool软连接"
   fi
   cat > /tools/tool << 'EOF'
   source /tools/config &>/dev/null
@@ -90,11 +89,8 @@ EOF
 function initialize_check() {
 #Linux-tools start check ...
 [ $(whoami) != root ] && echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] 需要使用root权限" && exit 1
-source $config_file &>/dev/null
 SetTool
-# 环境检测
 bash <(curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh) SET_CONFIG
-# 必装命令检测
 GET_DIRECTIVES_CHECK=($(curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh | bash -s -- DIRECTIVES_CHECK 0 "wget" "netstat" "pgrep" "find" "md5sum"))
 for i in "${GET_DIRECTIVES_CHECK[@]}"
 do
@@ -115,7 +111,7 @@ do
               "$controls" -y install procps
               ;;
         *)
-              echo "[$(date '+%Y-%m-%d %H:%M:%S')] SYSTEM_CHECK NOT FOUND"
+              echo "[$(date '+%Y-%m-%d %H:%M:%S')] SystemVersion NOT FOUND"
               return 1
               ;;
         esac

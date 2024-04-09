@@ -30,8 +30,8 @@
             <url>https://repo.huaweicloud.com/java/jdk/8u152-b16/jdk-8u152-linux-x64.tar.gz</url>
         </jdk_download_urls>
         <mysql5_download_urls>
-            <url>https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.44-linux-glibc2.12-`uname -m`.tar.gz</url>
-            <url>https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.43-linux-glibc2.12-`uname -m`.tar.gz</url>
+            <url>https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.44-linux-glibc2.12-X86.tar.gz</url>
+            <url>https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.43-linux-glibc2.12-x86.tar.gz</url>
         </mysql5_download_urls>
         <lnmp_package_urls>
             <url>http://soft1.vpser.net/lnmp/lnmp2.0.tar.gz</url>

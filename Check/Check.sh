@@ -1,7 +1,7 @@
 #!/bin/bash
 
 config_path=/tools
-config_file=/tools/config
+config_file=/tools/config.xml
 handle_error() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] 出现运行错误，解决后再次运行！错误码：$0 : $?"
     exit 1
@@ -79,30 +79,37 @@ function DIRECTIVES_CHECK() {
 
 }
 function SET_CONFIG() {
-   source $config_file &>/dev/null
    if [ "$controls" != "N/A" ] && [ "$SystemVersion" != "N/A" ] && [ "$CPUArchitecture" == "x86_64" ] && [ -f "$config_file" ]; then
-        GET_LOCAL_CONTROLS=$(grep -c 'controls=' $config_file)
-        if [ "$GET_LOCAL_CONTROLS" == "1" ]; then
-           sed -i "s/controls=.*/controls='$controls'/g" $config_file
-        else
-           echo -e "\n" >> "$config_file"
-           echo "controls='$controls'" >> "$config_file"
+        GET_LOCAL_CONTROLS=($(awk -v RS="</system>" '/<system>/{gsub(/.*<system>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<controls>/{print $3}'))
+        GET_LOCAL_CPUArchitecture=($(awk -v RS="</system>" '/<system>/{gsub(/.*<system>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<CPUArchitecture>/{print $3}'))
+        GET_LOCAL_SystemVersion=($(awk -v RS="</system>" '/<system>/{gsub(/.*<system>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<SystemVersion>/{print $3}'))
+        if [ -n "$GET_LOCAL_CONTROLS" ] && [ -n "$GET_LOCAL_CPUArchitecture" ] && [ -n "$GET_LOCAL_SystemVersion" ];then
+           if [ "${#GET_LOCAL_CONTROLS[@]}" == 1 ] && [ "${#GET_LOCAL_CPUArchitecture[@]}" == 1 ] && [ "${#GET_LOCAL_SystemVersion[@]}" == 1 ]  ; then
+              sed -i "s|<controls>.*</controls>|<controls>$controls</controls>|g" $config_file
+              sed -i "s|<CPUArchitecture>.*</CPUArchitecture>|<CPUArchitecture>$CPUArchitecture</CPUArchitecture>|g" $config_file
+              sed -i "s|<SystemVersion>.*</SystemVersion>|<SystemVersion>$SystemVersion</SystemVersion>|g" $config_file
+           else
+               echo "[$(date '+%Y-%m-%d %H:%M:%S')] read $config_file system failed."
+               exit 1
+           fi
+        elif [ -z "$GET_LOCAL_CONTROLS" ] && [ -z "$GET_LOCAL_CPUArchitecture" ] && [ -z "$GET_LOCAL_SystemVersion" ];then
+cat <<EOF >> $config_file
+<system>
+    <controls>yum</controls>
+    <CPUArchitecture>x86_64</CPUArchitecture>
+    <SystemVersion>centos</SystemVersion>
+</system>
+EOF
+        elif [ -z "$GET_LOCAL_CONTROLS" ] || [ -z "$GET_LOCAL_CPUArchitecture" ] || [ -z "$GET_LOCAL_SystemVersion" ] ; then
+            sed -i '/<system>/,/<\/system>/d' $config_file
+cat <<EOF >> $config_file
+<system>
+    <controls>yum</controls>
+    <CPUArchitecture>x86_64</CPUArchitecture>
+    <SystemVersion>centos</SystemVersion>
+</system>
+EOF
         fi
-        GET_LOCAL_CPUArchitecture=$(grep -c 'CPUArchitecture=' $config_file)
-        if [ "$GET_LOCAL_CPUArchitecture" == "1" ]; then
-            sed -i "s/CPUArchitecture=.*/CPUArchitecture='$CPUArchitecture'/g" $config_file
-        else
-            echo -e "\n" >> "$config_file"
-            echo "CPUArchitecture='$CPUArchitecture'" >> $config_file
-        fi
-        GET_LOCAL_SystemVersion=$(grep -c 'SystemVersion=' $config_file)
-        if [ "$GET_LOCAL_SystemVersion" == "1" ]; then
-            sed -i "s/SystemVersion=.*/SystemVersion='$SystemVersion'/g" $config_file
-        else
-            echo -e "\n" >> "$config_file"
-            echo "SystemVersion='$SystemVersion'" >> $config_file
-        fi
-        sed -i '/^$/d' $config_file &>/dev/null
    else
      if [ -f "$config_file" ]; then
         echo "[$(date '+%Y-%m-%d %H:%M:%S')] 不支持的版本"
@@ -160,9 +167,9 @@ function PORT_CHECK() {
     fi
 }
 function PACKAGE_DOWNLOAD() {
-    source $config_file &>/dev/null
     local ServerName=$1
     shift
+    local download_path=$(awk -v RS="</paths>" '/<paths>/{gsub(/.*<paths>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<download_path>/{print $3}')
     DownloadUrl=("$@")
     tr_s_variable_1=$(echo "/$download_path/$ServerName/" | tr -s '/')
     if [ -n "$tr_s_variable_1" ] && [ ! -d "$tr_s_variable_1" ];then
@@ -185,7 +192,8 @@ function PACKAGE_DOWNLOAD() {
         fi
     done
     if [ -n "$ServerName"  ] && [ "${#DownloadUrl[@]}" -ne 0 ];then
-      if [ "$Skip_selecting_version" != "true" ] && [ ! -f "$download_path/$ServerName/$ServerName" ]; then
+      Get_Skip_selecting_version=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' config | awk -F'[><]' '/<Skip_selecting_version>/{print $3}')
+      if [ "$Get_Skip_selecting_version" != "true" ] && [ ! -f "$download_path/$ServerName/$ServerName" ]; then
          read -rp "Enter Your install service version choice：" y
       fi
     fi
@@ -224,15 +232,15 @@ function check_unpack_file_path() {
     # 存放不存在的目录的变量
     missing_dirs=""
     # 检测并创建目录
-    for ((i=1; i<=100; i++)); do
+    for ((i=1; i<=1000; i++)); do
         dir=$i
         if [ -d "$config_path/unpack_file/$dir"  ] && [ "$(find $config_path/unpack_file/"$dir" |  wc -l )" -eq 1 ]; then
             missing_dirs=$dir
-            let i+=100
+            let i+=1000
         elif [ ! -d "$config_path/unpack_file/$dir" ]; then
             mkdir "$config_path/unpack_file/$dir"
             missing_dirs=$dir
-            let i+=100
+            let i+=1000
         fi
     done
 }
