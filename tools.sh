@@ -75,6 +75,8 @@ function SetTool(){
   fi
   cat > /tools/tool << 'EOF'
   source /tools/config &>/dev/null
+  con_branch=$con_branch
+  url_address=$url_address
   if [ -z $url_address ];then
   set -x
   url_address=raw.githubusercontent.com
