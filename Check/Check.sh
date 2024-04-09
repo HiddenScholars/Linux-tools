@@ -1,13 +1,9 @@
 #!/bin/bash
 
-SystemCategory=''
-SystemVersion=''
-CPUArchitecture=''
-controls=''
 config_path=/tools
-config_file=/tools/config
+config_file=/tools/config.xml
 handle_error() {
-    echo "出现运行错误，解决后再次运行！错误码：$0 : $?"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 出现运行错误，解决后再次运行！错误码：$0 : $?"
     exit 1
 }
 trap handle_error ERR
@@ -83,39 +79,46 @@ function DIRECTIVES_CHECK() {
 
 }
 function SET_CONFIG() {
-   source $config_file &>/dev/null
    if [ "$controls" != "N/A" ] && [ "$SystemVersion" != "N/A" ] && [ "$CPUArchitecture" == "x86_64" ] && [ -f "$config_file" ]; then
-        GET_LOCAL_CONTROLS=$(grep -c 'controls=' $config_file)
-        if [ "$GET_LOCAL_CONTROLS" == "1" ]; then
-           sed -i "s/controls=.*/controls='$controls'/g" $config_file
-        else
-           echo -e "\n" >> "$config_file"
-           echo "controls='$controls'" >> "$config_file"
+        GET_LOCAL_CONTROLS=($(awk -v RS="</system>" '/<system>/{gsub(/.*<system>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<controls>/{print $3}'))
+        GET_LOCAL_CPUArchitecture=($(awk -v RS="</system>" '/<system>/{gsub(/.*<system>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<CPUArchitecture>/{print $3}'))
+        GET_LOCAL_SystemVersion=($(awk -v RS="</system>" '/<system>/{gsub(/.*<system>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<SystemVersion>/{print $3}'))
+        if [ -n "$GET_LOCAL_CONTROLS" ] && [ -n "$GET_LOCAL_CPUArchitecture" ] && [ -n "$GET_LOCAL_SystemVersion" ];then
+           if [ "${#GET_LOCAL_CONTROLS[@]}" == 1 ] && [ "${#GET_LOCAL_CPUArchitecture[@]}" == 1 ] && [ "${#GET_LOCAL_SystemVersion[@]}" == 1 ]  ; then
+              sed -i "s|<controls>.*</controls>|<controls>$controls</controls>|g" $config_file
+              sed -i "s|<CPUArchitecture>.*</CPUArchitecture>|<CPUArchitecture>$CPUArchitecture</CPUArchitecture>|g" $config_file
+              sed -i "s|<SystemVersion>.*</SystemVersion>|<SystemVersion>$SystemVersion</SystemVersion>|g" $config_file
+           else
+               echo "[$(date '+%Y-%m-%d %H:%M:%S')] read $config_file system failed."
+               exit 1
+           fi
+        elif [ -z "$GET_LOCAL_CONTROLS" ] && [ -z "$GET_LOCAL_CPUArchitecture" ] && [ -z "$GET_LOCAL_SystemVersion" ];then
+cat <<EOF >> $config_file
+<system>
+    <controls>yum</controls>
+    <CPUArchitecture>x86_64</CPUArchitecture>
+    <SystemVersion>centos</SystemVersion>
+</system>
+EOF
+        elif [ -z "$GET_LOCAL_CONTROLS" ] || [ -z "$GET_LOCAL_CPUArchitecture" ] || [ -z "$GET_LOCAL_SystemVersion" ] ; then
+            sed -i '/<system>/,/<\/system>/d' $config_file
+cat <<EOF >> $config_file
+<system>
+    <controls>yum</controls>
+    <CPUArchitecture>x86_64</CPUArchitecture>
+    <SystemVersion>centos</SystemVersion>
+</system>
+EOF
         fi
-        GET_LOCAL_CPUArchitecture=$(grep -c 'CPUArchitecture=' $config_file)
-        if [ "$GET_LOCAL_CPUArchitecture" == "1" ]; then
-            sed -i "s/CPUArchitecture=.*/CPUArchitecture='$CPUArchitecture'/g" $config_file
-        else
-            echo -e "\n" >> "$config_file"
-            echo "CPUArchitecture='$CPUArchitecture'" >> $config_file
-        fi
-        GET_LOCAL_SystemVersion=$(grep -c 'SystemVersion=' $config_file)
-        if [ "$GET_LOCAL_SystemVersion" == "1" ]; then
-            sed -i "s/SystemVersion=.*/SystemVersion='$SystemVersion'/g" $config_file
-        else
-            echo -e "\n" >> "$config_file"
-            echo "SystemVersion='$SystemVersion'" >> $config_file
-        fi
-        sed -i '/^$/d' $config_file &>/dev/null
    else
      if [ -f "$config_file" ]; then
-        echo "不支持的版本"
-        echo "软件包管理器：$controls"
-        echo "Linux系统版本：$SystemVersion"
-        echo "CPU架构：$CPUArchitecture"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] 不支持的版本"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] 软件包管理器：$controls"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Linux系统版本：$SystemVersion"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] CPU架构：$CPUArchitecture"
         exit 1
     else
-        echo "$config_file not found."
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] $config_file not found."
         exit 1
      fi
    fi
@@ -164,9 +167,9 @@ function PORT_CHECK() {
     fi
 }
 function PACKAGE_DOWNLOAD() {
-    source $config_file &>/dev/null
     local ServerName=$1
     shift
+    local download_path=$(awk -v RS="</paths>" '/<paths>/{gsub(/.*<paths>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<download_path>/{print $3}')
     DownloadUrl=("$@")
     tr_s_variable_1=$(echo "/$download_path/$ServerName/" | tr -s '/')
     if [ -n "$tr_s_variable_1" ] && [ ! -d "$tr_s_variable_1" ];then
@@ -189,7 +192,10 @@ function PACKAGE_DOWNLOAD() {
         fi
     done
     if [ -n "$ServerName"  ] && [ "${#DownloadUrl[@]}" -ne 0 ];then
-      read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] Enter Your install service version choice：" y
+      Get_Skip_selecting_version=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<Skip_selecting_version>/{print $3}')
+      if [ "$Get_Skip_selecting_version" != "true" ] || [ "$Get_Skip_selecting_version" == "true" ] && [ ! -f "$download_path/$ServerName/$ServerName" ]; then
+         read -rp "Enter Your install service version choice：" y
+      fi
     fi
     if [[ "$y" =~ ^[0-9]+$ ]] && [ "$i" -le "${#DownloadUrl[@]}" ] ; then
         tr_s_variable_2=$(echo "$download_path/$ServerName/$ServerName" | tr -s '/')
@@ -205,7 +211,7 @@ function PACKAGE_DOWNLOAD() {
           echo "[$(date '+%Y-%m-%d %H:%M:%S')] download failed."
           return 1
         fi
-    elif [ -z "$y" ]; then
+    elif [ -z "$y" ] && [ -f "$download_path/$ServerName/$ServerName" ]; then
         echo "[$(date '+%Y-%m-%d %H:%M:%S')] Skip the installation."
     else
         echo "[$(date '+%Y-%m-%d %H:%M:%S')] Input Failed."
@@ -226,15 +232,15 @@ function check_unpack_file_path() {
     # 存放不存在的目录的变量
     missing_dirs=""
     # 检测并创建目录
-    for ((i=1; i<=100; i++)); do
+    for ((i=1; i<=1000; i++)); do
         dir=$i
         if [ -d "$config_path/unpack_file/$dir"  ] && [ "$(find $config_path/unpack_file/"$dir" |  wc -l )" -eq 1 ]; then
             missing_dirs=$dir
-            let i+=100
+            let i+=1000
         elif [ ! -d "$config_path/unpack_file/$dir" ]; then
             mkdir "$config_path/unpack_file/$dir"
             missing_dirs=$dir
-            let i+=100
+            let i+=1000
         fi
     done
 }
@@ -255,45 +261,43 @@ else
      return 1
 fi
 }
-function FIREWALL_MASTER() {
-    local GET_FIREWALL_SELECT=("$1") #add/remove
-    local GET_FIREWALL_SELECT_ServiceAndPort=("$2") #service/port
-    GET_FIREWALL_SELECT_Port=("$@")
-    local GET_FIREWALL_MASTER=("firewall" "ufw" "iptables")
-    for i in "${GET_FIREWALL_MASTER[@]}"
-    do
-        if which "$i" &>/dev/null && [ "$(pgrep $i | wc -l)" -ne 0 ];then
-            for i in "${GET_FIREWALL_SELECT_Port[@]}"
-            do
-            if [ "$i" == "firewall" ];then
-                --query-port=8080/tcp
-
-
-                if [ "$1" == "add" ] && [ "$2" == "port" ]; then
-                    firewall-cmd --permenent --zone=public --add-port="$i"
-                elif [ "$1" == "add" ] && [ "$2" == "service" ];then
-                    firewall-cmd --permenent --zone=public --add-service="$i"
-                elif [ "$1" == "remove" ] && [ "$2" == "port" ]; then
-                    firewall-cmd --permenent --zone=public --remove-port="$i"
-                elif [ "$1" == "remove" ] && [ "$2" == "service" ];then
-                    firewall-cmd --permenent --zone=public --remove-service="$i"
-                fi
-                firewall-cmd --reload
-                return 0
-            elif [ "$i" == "ufw" ];then
-
-
-                return 0
-            elif [ "$i" == "iptables" ];then
-
-                return 0
-            else
-              echo "Get Firewall failed"
-              return 1
+function SetVariables() {
+  variables_name=$1 #PATH
+  variables_path=$2 #/usr/local/sbin/
+  variables_file=$3 #file.txt
+  if [ -n "$variables_name" ] && [ -n "$variables_path" ] && [ -n "$variables_file" ]; then
+     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Start setting variables..."
+     if [ ! -f "$variables_file" ]; then
+         mkdir -p "$variables_file"
+     fi
+     variables_path=$(echo "$variables_path" | tr -s '/')
+     source "$variables_file"
+     if [ -n "$variables_name" ];then
+         sed -i "/^$variables_name=/d" "$variables_file"
+         sed -i "/^export $variables_name=/d" "$variables_file"
+         if [ "$variables_name" == "PATH" ]; then
+            if [ -n "$PATH" ]; then
+               echo "$variables_name=$variables_path:$PATH" >>"$variables_file"
+               source "$variables_file"
+               variables_filtering_1=$(echo "$PATH" | tr ":" "\n" | awk '{gsub(/\/+/,"/"); print}' | awk '!seen[$0]++' | tr "\n" ":") #clean  repeat /
+               variables_filtering_2=$(echo "$variables_filtering_1" | tr ":" "\n" | awk '!seen[$0]++' | tr "\n" ":") #clean repeat path,awk -F ":"
+               variables_filtering_3=$(echo "$variables_filtering_2" | tr ":" "\n" | awk '!seen[$0]++' | tr "\n" ":" |  sed 's/:*$//') #clean :: ,awk -F ":"
+               sed -i "s|^${variables_name}=.*|${variables_name}=${variables_filtering_3}|g" "$variables_file"
+            elif [ -z "$PATH" ]; then
+                 echo "[$(date '+%Y-%m-%d %H:%M:%S')] variables PATH not found"
             fi
-            done
-        fi
-    done
+         else
+            echo "$variables_name=$variables_path" >>"$variables_file"
+         fi
+     elif [ -z "$variables_name" ];then
+          echo "$variables_name=$variables_path" >>"$variables_file"
+     fi
+     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Finish setting variables..."
+  else
+     [ -z "$variables_name" ] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] variables_name not found."
+     [ -z "$variables_path" ] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] variables_path not found."
+     [ -z "$variables_file" ] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] variables_file not found."
+  fi
 }
 case $1 in
 DIRECTIVES_CHECK)
@@ -339,6 +343,10 @@ CPUArchitecture)
                   shift
                   SYSTEM_CHECK
                   echo "$CPUArchitecture"
+                  ;;
+SetVariables)
+                  shift
+                  SetVariables "$@"
                   ;;
 *)
                   echo "failed 404"

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-source /tools/config
+config_path=/tools/
+config_file=/tools/config.xml
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] 开始检测环境"
 CHECK_DOCKER_PROFILE=($(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- DIRECTIVES_CHECK docker docker-compose))
 for i in "${CHECK_DOCKER_PROFILE[@]}"
@@ -18,7 +19,7 @@ elif [ "$i" == "docker-compose" ]; then
 fi
 done
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] 检测环境完成"
-
+docker_compose_file_path=$(awk -v RS="</paths>" '/<paths>/{gsub(/.*<paths>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<docker_compose_file_path>/{print $3}')
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] docker-compose文件路径：$docker_compose_file_path"
 case $1 in
 bitwareden)

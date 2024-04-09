@@ -1,7 +1,15 @@
 #!/bin/bash
 
 config_path=/tools/
-config_file=/tools/config
+config_file=/tools/config.xml
+con_branch=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<con_branch>/{print $3}')
+url_address=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<url_address>/{print $3}')
+country=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<country>/{print $3}')
+download_path=$(awk -v RS="</paths>" '/<paths>/{gsub(/.*<paths>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<download_path>/{print $3}')
+install_path=$(awk -v RS="</paths>" '/<paths>/{gsub(/.*<paths>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<install_path>/{print $3}')
+docker_download_urls=($(awk '/<download_urls>/,/<\/download_urls>/' $config_file | awk '/<docker_download_urls>/,/<\/docker_download_urls>/' | awk -F '[<>]' '/<url>/{print $3}'))
+SystemVersion=$(awk -v RS="</system>" '/<system>/{gsub(/.*<system>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<SystemVersion>/{print $3}')
+
 function setting_docker_daemon_json() {
 if [ "$country" == "CN" ]; then
 cat > /etc/docker/daemon.json <<EOF
@@ -30,7 +38,7 @@ cat > /etc/docker/daemon.json <<EOF
 EOF
 fi
 }
-source $config_file
+
 if [ "$SystemVersion" == "centos" ] || [ "$SystemVersion" == "ubuntu" ] || [ "$SystemVersion" == "debian" ]; then
    echo "操作系统为官网脚本支持的操作系统，直接执行官网脚本，在config中配置的docker源码下载链接不生效。"
    set -x

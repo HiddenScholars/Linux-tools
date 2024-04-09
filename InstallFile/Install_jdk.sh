@@ -1,5 +1,16 @@
 #!/bin/bash
-  source /tools/config
+
+
+#! /bin/bash
+
+config_path=/tools/
+config_file=/tools/config.xml
+con_branch=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<con_branch>/{print $3}')
+url_address=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<url_address>/{print $3}')
+download_path=$(awk -v RS="</paths>" '/<paths>/{gsub(/.*<paths>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<download_path>/{print $3}')
+install_path=$(awk -v RS="</paths>" '/<paths>/{gsub(/.*<paths>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<install_path>/{print $3}')
+jdk_download_urls=($(awk '/<download_urls>/,/<\/download_urls>/' $config_file | awk '/<jdk_download_urls>/,/<\/jdk_download_urls>/' | awk -F '[<>]' '/<url>/{print $3}'))
+controls=$(awk -v RS="</system>" '/<system>/{gsub(/.*<system>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<controls>/{print $3}')
   select=''
   jdk_install_path=$(echo "$install_path"/jdk/ | tr -s '/')
   jdk_download_path=$(echo "$download_path"/jdk/jdk | tr -s '/' )
@@ -28,15 +39,12 @@
       if [ $? -eq 0 ];then
          echo ""[$(date '+%Y-%m-%d %H:%M:%S')]" 文件复制完成"
         "$controls" remove java* openjdk*  -y &>/dev/null
-
-         source /etc/profile
-         sed -i "\|export JAVA_HOME=$jdk_install_path|d" /etc/profile
-         sed -i "\|export PATH=.*|d" /etc/profile
-         sed -i "\|export CLASSPATH=.*|d" /etc/profile
-
-         echo "export PATH=$jdk_install_path/bin:$PATH" >>/etc/profile
-         echo "export JAVA_HOME=$jdk_install_path" >>/etc/profile
-         echo "export CLASSPATH=.:$jdk_install_path/lib/dt.jar:$jdk_install_path/lib/tools.jar" >>/etc/profile
+         jdk_install_path_bin=$(echo "$jdk_install_path"/bin | tr -s '/')
+         jdk_install_path_lib_dt=$(echo "$jdk_install_path"/lib/dt.jar | tr -s '/')
+         jdk_install_path_lib_tools=$(echo "$jdk_install_path"/lib/tools.jar | tr -s '/')
+         curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s SetVariables JAVA_HOME "$jdk_install_path" /etc/profile
+         curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s SetVariables PATH "$jdk_install_path_bin" /etc/profile
+         curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s SetVariables CLASSPATH "$jdk_install_path_lib_dt:$jdk_install_path_lib_tools" /etc/profile
             source /etc/profile
             if $(java -version);then
               if $(javac -version);then

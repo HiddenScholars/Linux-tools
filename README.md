@@ -47,20 +47,3 @@ config下载
 ```shell
 export con_branch=main export url_address=raw.githubusercontent.com  export  && bash <(curl -L https://${url_address}/HiddenScholars/Linux-tools/${con_branch}/tools.sh) -d config
 ```
-config 修改注释
-```text
-download_path= #下载路径
-install_path= #安装路径  如：$install_path/soft/serverName
-country=  #国家代码 如：CN 选择config配置文件，使用较快的下载链接
-url_address= # github仓库raw访问链接
-con_branch= # github仓库 项目分支
-Max_disk_usage= # $download_path 和 /tools//unpack_file/占用最磁盘空间 kb
-nginx_user= #nginx 用户
-mysql5_user= # mysql5 用户
-mysql5_initial_port=  #mysql5数据库端口
-nginx_download_urls=() # nginx下载链接
-docker_download_urls=() #docker下载链接
-docker_compose_download_urls=() #docker-compose 下载链接
-jdk_download_urls=() #jdk下载链接
-mysql5_download_urls=() #mysql5下载链接
-```

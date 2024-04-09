@@ -1,7 +1,10 @@
 #!/bin/bash
 
 source /etc/profile
-source /tools/config
+config_path=/tools/
+config_file=/tools/config.xml
+controls=$(awk -v RS="</system>" '/<system>/{gsub(/.*<system>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<controls>/{print $3}')
+install_path=$(awk -v RS="</paths>" '/<paths>/{gsub(/.*<paths>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<install_path>/{print $3}')
 function KILL_NGINX_PROCESS() {
 getNginxProcess_number1=($(pgrep nginx))
 if [ "${#getNginxProcess_number1[@]}" != 0 ]; then
@@ -48,6 +51,5 @@ else
 fi
 
 }
-echo "卸载开始”
 KILL_NGINX_PROCESS
 DELETE_NGINX_FILE

@@ -1,7 +1,15 @@
 #!/bin/bash
+
 config_path=/tools/
-config_file=/tools/config
-source /tools/config &>/dev/null
+config_file=/tools/config.xml
+con_branch=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<con_branch>/{print $3}')
+url_address=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<url_address>/{print $3}')
+download_path=$(awk -v RS="</paths>" '/<paths>/{gsub(/.*<paths>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<download_path>/{print $3}')
+install_path=$(awk -v RS="</paths>" '/<paths>/{gsub(/.*<paths>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<install_path>/{print $3}')
+nginx_user=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<nginx_user>/{print $3}')
+nginx_download_urls=($(awk '/<download_urls>/,/<\/download_urls>/' $config_file | awk '/<nginx_download_urls>/,/<\/nginx_download_urls>/' | awk -F '[<>]' '/<url>/{print $3}'))
+controls=$(awk -v RS="</system>" '/<system>/{gsub(/.*<system>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<controls>/{print $3}')
+SystemVersion=$(awk -v RS="</system>" '/<system>/{gsub(/.*<system>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<SystemVersion>/{print $3}')
 red=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR red)
 green=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR green)
 plain=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR plain)
@@ -23,7 +31,7 @@ elif [ -n "$GET_PORT_CHECK" ] &&[ "${#GET_PORT_CHECK[@]}" -ne 0 ]; then
      read -rp "被占用是否继续安装（y/n）：" select
     [ "$select" != "y" ] && exit 0
 fi
-
+bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  nginx  $(for i in "${nginx_download_urls[@]}";do printf "%s " "$i";done)
   if [ "$SystemVersion" == "centos" ] || [ "$SystemVersion" == "Anolis OS" ]; then
       yum_package=(gcc gcc-c++ zlib zlib-devel pcre-devel openssl openssl-devel gd-devel)
       for i in "${yum_package[@]}"
@@ -41,7 +49,6 @@ fi
     exit 1
   fi
 
-bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) PACKAGE_DOWNLOAD  nginx  $(for i in "${nginx_download_urls[@]}";do printf "%s " "$i";done)
 #解压目录检测
 GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- check_unpack_file_path)
 
@@ -85,11 +92,8 @@ GET_missing_dirs_nginx=$(curl -sl https://"$url_address"/HiddenScholars/Linux-to
                                                 --with-stream_ssl_module && make && make install
     if [ -f "$install_path"/nginx/sbin/nginx ]; then
         echo -e "${green}安装完成...${plain}"
+        curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s SetVariables NGINX_HOME "$install_path"/nginx /etc/profile
         source /etc/profile
-        if [ -z "$NGINX_HOME" ];then
-           echo "export NGINX_HOME=$install_path/nginx/" >>/etc/profile
-           echo "export PATH=$PATH:$NGINX_HOME/sbin/" >>/etc/profile
-        fi
         if [ -f "$install_path"/nginx/conf/nginx.conf ]; then
             sed -i "s/#user  nobody/user $nginx_user/g" "$install_path"/nginx/conf/nginx.conf
             if [ -n "$nginx_user" ]; then

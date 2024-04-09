@@ -1,6 +1,8 @@
 #!/bin/bash
 
-source /tools/config
+config_path=/tools/
+config_file=/tools/config.xml
+country=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<country>/{print $3}')
 if [ "$country" == "CN" ]; then
    curl -sSL https://resource.fit2cloud.com/jumpserver/jumpserver/releases/latest/download/quick_start.sh | bash
 else

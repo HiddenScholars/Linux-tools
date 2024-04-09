@@ -1,7 +1,11 @@
 #!/bin/bash
 
 source /etc/profile
-source /tools/config
+config_path=/tools/
+config_file=/tools/config.xml
+controls=$(awk -v RS="</system>" '/<system>/{gsub(/.*<system>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<controls>/{print $3}')
+install_path=$(awk -v RS="</paths>" '/<paths>/{gsub(/.*<paths>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<install_path>/{print $3}')
+
 function KILL_MYSQL5_PROCESS() {
 getMysqlProcess_number_1=($(pgrep mysql))
 if [ "${#getMysqlProcess_number_1[@]}" != 0 ]; then
@@ -31,7 +35,7 @@ if which mysql &>/dev/null; then
 "$controls" remove -y mysql* mariadb* &>/dev/null
 fi
 if [ -f /etc/init.d/mysqld ]; then
-   /etc/init.d/mysqld stop
+   /etc/init.d/mysqld stop &>/dev/null
    sudo  rm -rf /etc/init.d/mysqld
    systemctl stop mysqld &>/dev/null
    systemctl daemon-reload
