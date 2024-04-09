@@ -73,9 +73,12 @@ function SetTool(){
     rm -rf /usr/bin/tool
     echo  "[$(date '+%Y-%m-%d %H:%M:%S')] 删除tool软连接"
   fi
-  sed -i "s/con_branch=.*/con_branch=$con_branch/g" $config_file
-  sed -i "s/url_address=.*/url_address=$url_address/g" $config_file
-  chmod +x $config_path/tool
+
+  if [ -f  $config_path/tool ]; then
+     chmod +x $config_path/tool
+     sed -i "s/con_branch=.*/con_branch=$con_branch/g" $config_file
+     sed -i "s/url_address=.*/url_address=$url_address/g" $config_file
+  fi
 }
 function initialize_check() {
 #Linux-tools start check ...
