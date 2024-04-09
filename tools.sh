@@ -73,21 +73,8 @@ function SetTool(){
     rm -rf /usr/bin/tool
     echo  "[$(date '+%Y-%m-%d %H:%M:%S')] 删除tool软连接"
   fi
-  cat > /tools/tool << 'EOF'
-  con_branch=$con_branch
-  url_address=$url_address
-  if [ -z $url_address ];then
-  set -x
-  url_address=raw.githubusercontent.com
-  set +x
-  fi
-  if [ -z $con_branch ];then
-   set -x
-   con_branch=main
-   set +x
-  fi
-  bash <(curl -Ls https://$url_address/HiddenScholars/Linux-tools/$con_branch/tools.sh)
-EOF
+  sed -i "s/con_branch=.*/con_branch=$con_branch/g" $config_file
+  sed -i "s/url_address=.*/url_address=$url_address/g" $config_file
   chmod +x /tools/tool
 }
 function initialize_check() {

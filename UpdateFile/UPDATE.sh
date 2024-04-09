@@ -44,6 +44,9 @@ country=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t 
             mv /tools/config_bak /tools/config
             echo -e "\033[31m更新失败\033[0m"
         fi
+        if [ -f /tools/version ]; then
+            rm -rf /tools/version
+        fi
     else
        echo "not found config..."
        exit 1
