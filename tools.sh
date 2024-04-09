@@ -74,7 +74,6 @@ function SetTool(){
     echo  "[$(date '+%Y-%m-%d %H:%M:%S')] 删除tool软连接"
   fi
   cat > /tools/tool << 'EOF'
-  source /tools/config &>/dev/null
   con_branch=$con_branch
   url_address=$url_address
   if [ -z $url_address ];then
@@ -133,7 +132,7 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] 脚本获取成功，数据处理中，请�
 case $1 in
 -d)
   case $2 in
-  config)
+  config.xml)
           CHECK_FILE
           if [ -f ${config_file} ];then
             echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] download success"
