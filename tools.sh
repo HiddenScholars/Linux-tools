@@ -15,7 +15,6 @@ handle_exit() {
 trap handle_error ERR
 trap handle_exit EXIT
 function CHECK_FILE() {
-country=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<country>/{print $3}')
      [ "$con_branch" == "TestMain" ] && printf "%s 正在访问测试节点\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
      if [ -z "$url_address" ] && [ -z "$con_branch" ] ;then
        set -x
