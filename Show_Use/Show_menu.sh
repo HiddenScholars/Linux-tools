@@ -1,9 +1,10 @@
 #!/bin/bash
 
 config_path=/tools/
-config_file=/tools/config
-version_file=$config_path/version
-source $config_file &>/dev/null
+config_file=/tools/config.xml
+con_branch=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<con_branch>/{print $3}')
+url_address=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<url_address>/{print $3}')
+Max_disk_usage=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<Max_disk_usage>/{print $3}')
 red=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR red)
 green=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR green)
 plain=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s -- COLOR plain)
@@ -38,12 +39,12 @@ run_system_clean=("返回主页面" "清理jumpserver社区版(只清理相关�
 run_system_clean_function=("return" "clean_jumpserver_free" "clean_jdk_file")
 
   GET_REMOTE_VERSION=$(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/version)
-  GET_LOCAL_VERSION=$(cat $version_file)
+  GET_LOCAL_VERSION=$(grep -oP '(?<=<\?xml version=")[^"]+' $config_file)
 function check_update() {
           if [ "$GET_REMOTE_VERSION"  != "$GET_LOCAL_VERSION" ];then
              bash <(curl -sL https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/UpdateFile/UPDATE.sh)
              #更新完成重新获取本地版本
-             GET_LOCAL_VERSION=$(cat $version_file)
+             GET_LOCAL_VERSION=$(grep -oP '(?<=<\?xml version=")[^"]+' $config_file)
           elif [ "$GET_REMOTE_VERSION"  == "$GET_LOCAL_VERSION" ];then
              echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] ${green}已是最新版本${plain}"
           else

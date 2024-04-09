@@ -1,5 +1,16 @@
 #!/bin/bash
-  source /tools/config
+
+
+#! /bin/bash
+
+config_path=/tools/
+config_file=/tools/config.xml
+con_branch=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<con_branch>/{print $3}')
+url_address=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<url_address>/{print $3}')
+download_path=$(awk -v RS="</paths>" '/<paths>/{gsub(/.*<paths>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<download_path>/{print $3}')
+install_path=$(awk -v RS="</paths>" '/<paths>/{gsub(/.*<paths>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<install_path>/{print $3}')
+jdk_download_urls=($(awk '/<download_urls>/,/<\/download_urls>/' $config_file | awk '/<jdk_download_urls>/,/<\/jdk_download_urls>/' | awk -F '[<>]' '/<url>/{print $3}'))
+controls=$(awk -v RS="</system>" '/<system>/{gsub(/.*<system>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<controls>/{print $3}')
   select=''
   jdk_install_path=$(echo "$install_path"/jdk/ | tr -s '/')
   jdk_download_path=$(echo "$download_path"/jdk/jdk | tr -s '/' )

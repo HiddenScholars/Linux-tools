@@ -192,8 +192,8 @@ function PACKAGE_DOWNLOAD() {
         fi
     done
     if [ -n "$ServerName"  ] && [ "${#DownloadUrl[@]}" -ne 0 ];then
-      Get_Skip_selecting_version=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' config | awk -F'[><]' '/<Skip_selecting_version>/{print $3}')
-      if [ "$Get_Skip_selecting_version" != "true" ] && [ ! -f "$download_path/$ServerName/$ServerName" ]; then
+      Get_Skip_selecting_version=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<Skip_selecting_version>/{print $3}')
+      if [ "$Get_Skip_selecting_version" != "true" ] || [ "$Get_Skip_selecting_version" == "true" ] && [ ! -f "$download_path/$ServerName/$ServerName" ]; then
          read -rp "Enter Your install service version choice：" y
       fi
     fi

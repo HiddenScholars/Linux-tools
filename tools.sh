@@ -14,9 +14,9 @@ handle_exit() {
 }
 trap handle_error ERR
 trap handle_exit EXIT
-function CHECK_FILE() {
 con_branch=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<con_branch>/{print $3}')
 url_address=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<url_address>/{print $3}')
+function CHECK_FILE() {
 country=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<country>/{print $3}')
      [ "$con_branch" == "TestMain" ] && printf "%s 正在访问测试节点\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
      if [ -z "$url_address" ] && [ -z "$con_branch" ] ;then
@@ -59,6 +59,9 @@ country=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t 
       echo "[$(date '+%Y-%m-%d %H:%M:%S')] The read install_path or download_path is incorrect. "
       exit 1
     fi
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] tool write. "
+    curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Command/tool > $config_path/tool
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] tool write is complete. "
 }
 function SetTool(){
   if [  -f /etc/init.d/tool ];then

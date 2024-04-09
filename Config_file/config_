@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="2.0" encoding="UTF-8"?>
 <configuration>
     <paths>
         <download_path>/tools/soft/</download_path>
@@ -21,10 +21,10 @@
             <url>https://nginx.org/download/nginx-1.22.1.tar.gz</url>
         </nginx_download_urls>
         <docker_download_urls>
-            <url>https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/static/stable/`uname -m`/docker-17.03.0-ce.tgz</url>
+            <url>https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/static/stable/x86_64/docker-17.03.0-ce.tgz</url>
         </docker_download_urls>
         <docker_compose_download_urls>
-            <url>https://github.com/docker/compose/releases/download/v2.23.3/docker-compose-`uname -s`-`uname -m`</url>
+            <url>https://github.com/docker/compose/releases/download/v2.23.3/docker-compose-Linux-x86_64</url>
         </docker_compose_download_urls>
         <jdk_download_urls>
             <url>https://repo.huaweicloud.com/java/jdk/8u152-b16/jdk-8u152-linux-x64.tar.gz</url>

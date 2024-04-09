@@ -1,6 +1,8 @@
 #!/bin/bash
 
-source /tools/config
+config_path=/tools/
+config_file=/tools/config.xml
+controls=$(awk -v RS="</system>" '/<system>/{gsub(/.*<system>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<controls>/{print $3}')
 
 "$controls" remove tailscale
 
