@@ -153,7 +153,7 @@ case $1 in
   initialize_check
   progress_bar 2 2
   printf "\n"
-  curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh | bash -s SetVariables PATH /tools/ /etc/profile
+  bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) SetVariables PATH /tools/ /etc/profile
   printf "\n%s 数据处理完成正在获取菜单\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
   bash <(curl -L https://$url_address/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh) # function menu
   bash
