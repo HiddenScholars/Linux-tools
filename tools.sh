@@ -19,6 +19,7 @@ url_address=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\
 function CHECK_FILE() {
      if [ -z "$url_address" ] && [ -z "$con_branch" ] ;then
      [ "$con_branch" == "TestMain" ] && printf "%s 正在访问测试节点\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
+     [ "$con_branch" == "main" ] && printf "%s 正在访问主节点\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
        set -x
        url_address=raw.githubusercontent.com
        con_branch=main
@@ -58,7 +59,6 @@ function CHECK_FILE() {
       echo "[$(date '+%Y-%m-%d %H:%M:%S')] The read install_path or download_path is incorrect. "
       exit 1
     fi
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] tool write. "
     curl -s -o /tools/tool https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Command/tool
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] tool write is complete. "
 }
@@ -66,6 +66,7 @@ function SetTool(){
   if [ -f  /tools/tool ]; then
      chmod +x /tools/tool
      if [ -n "$url_address" ] && [ -n "$con_branch" ]; then
+       echo "[$(date '+%Y-%m-%d %H:%M:%S')] url_address：$url_address  con_branch：$con_branch"
        sed -i "s/GetUrlAddress=.*/GetUrlAddress=$url_address/g" /tools/tool
        sed -i "s/ConBranch=.*/ConBranch=$con_branch/g" /tools/tool
      fi
@@ -74,7 +75,6 @@ function SetTool(){
 function initialize_check() {
 #Linux-tools start check ...
 [ $(whoami) != root ] && echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] 需要使用root权限" && exit 1
-SetTool
 bash <(curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh) SET_CONFIG
 GET_DIRECTIVES_CHECK=($(curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Check/Check.sh | bash -s -- DIRECTIVES_CHECK 0 "wget" "netstat" "pgrep" "find" "md5sum"))
 for i in "${GET_DIRECTIVES_CHECK[@]}"
@@ -125,10 +125,10 @@ case $1 in
 *)
   initialize_check
   CHECK_FILE
-  printf "\n"
+  SetTool
   bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) SetVariables PATH /tools/ /etc/profile
   printf "%s 数据处理完成正在获取菜单\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
-  bash <(curl -L https://$url_address/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh) # function menu
+  bash <(curl -sl https://$url_address/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh) # function menu
   bash
   ;;
 esac
