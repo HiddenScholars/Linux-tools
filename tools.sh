@@ -17,11 +17,11 @@ trap handle_exit EXIT
 if [ -f "$config_file" ]; then
    con_branch=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<con_branch>/{print $3}')
    url_address=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<url_address>/{print $3}')
+   [ "$con_branch" == "TestMain" ] && printf "%s 正在访问测试节点\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
+   [ "$con_branch" == "main" ] && printf "%s 正在访问主节点\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
 fi
 function CHECK_FILE() {
      if [ -z "$url_address" ] && [ -z "$con_branch" ] ;then
-     [ "$con_branch" == "TestMain" ] && printf "%s 正在访问测试节点\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
-     [ "$con_branch" == "main" ] && printf "%s 正在访问主节点\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
        set -x
        url_address=raw.githubusercontent.com
        con_branch=main
