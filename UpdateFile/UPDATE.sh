@@ -47,6 +47,19 @@ country=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t 
         if [ -f /tools/version ]; then
             rm -rf /tools/version
         fi
+        if [  -f /etc/init.d/tool ];then
+          rm -rf /etc/init.d/tool && [ -L /usr/bin/tool ] && rm -rf /usr/bin/tool
+          echo  "[$(date '+%Y-%m-%d %H:%M:%S')] 删除tool指令"
+        elif [ -L /usr/bin/tool ];then
+          rm -rf /usr/bin/tool
+          echo  "[$(date '+%Y-%m-%d %H:%M:%S')] 删除tool软连接"
+        fi
+        if [ -f /tools/config ]; then
+           rm -rf /tools/config
+        fi
+        if [ -f /tools/version ]; then
+           rm -rf /tools/version
+        fi
     else
        echo "not found config..."
        exit 1

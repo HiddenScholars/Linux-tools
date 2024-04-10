@@ -1,13 +1,13 @@
 #! /bin/bash
 
-url_address=
-con_branch=
-  if [ -z $url_address ];then
+GetUrlAddress=
+ConBranch=
+  if [ -z "$GetUrlAddress" ];then
      set -x
      url_address=raw.githubusercontent.com
      set +x
   fi
-  if [ -z $con_branch ];then
+  if [ -z "$ConBranch" ];then
    set -x
    con_branch=main
    set +x

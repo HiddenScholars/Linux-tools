@@ -14,9 +14,11 @@ handle_exit() {
 }
 trap handle_error ERR
 trap handle_exit EXIT
+con_branch=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<con_branch>/{print $3}')
+url_address=$(awk -v RS="</parameters>" '/<parameters>/{gsub(/.*<parameters>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<url_address>/{print $3}')
 function CHECK_FILE() {
-     [ "$con_branch" == "TestMain" ] && printf "%s 正在访问测试节点\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
      if [ -z "$url_address" ] && [ -z "$con_branch" ] ;then
+     [ "$con_branch" == "TestMain" ] && printf "%s 正在访问测试节点\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
        set -x
        url_address=raw.githubusercontent.com
        con_branch=main
@@ -45,11 +47,11 @@ function CHECK_FILE() {
     GET_DOWNLOAD_PATH=$(awk -v RS="</paths>" '/<paths>/{gsub(/.*<paths>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<download_path>/{print $3}')
     GET_INSTALL_PATH=$(awk -v RS="</paths>" '/<paths>/{gsub(/.*<paths>[\r\n\t ]*|[\r\n\t ]*$/,"");print}' $config_file | awk -F'[><]' '/<install_path>/{print $3}')
     # check PATH
-    if [ -n "$GET_INSTALL_PATH" ] && [ -n "$GET_DOWNLOAD_PATH" ]; then
-        if [ ! -d "$GET_DOWNLOAD_PATH" ]; then
+    if [ -n "$GET_INSTALL_PATH" ] && [ -n "$GET_DOWNLOAD_PATH" ];then
+        if [ ! -d "$GET_DOWNLOAD_PATH" ];then
             mkdir -p "$GET_DOWNLOAD_PATH"
         fi
-        if [ ! -d "$GET_INSTALL_PATH" ]; then
+        if [ ! -d "$GET_INSTALL_PATH" ];then
             mkdir -p "$GET_INSTALL_PATH"
         fi
     else
@@ -57,30 +59,16 @@ function CHECK_FILE() {
       exit 1
     fi
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] tool write. "
-    curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Command/tool > $config_path/tool
+    curl -s -o /tools/tool https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Command/tool
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] tool write is complete. "
 }
 function SetTool(){
-  if [  -f /etc/init.d/tool ];then
-    rm -rf /etc/init.d/tool && [ -L /usr/bin/tool ] && rm -rf /usr/bin/tool
-    echo  "[$(date '+%Y-%m-%d %H:%M:%S')] 删除tool指令"
-  elif [ -f /tools/tool ];then
-    rm -rf /tools/tool && [ -L /usr/bin/tool ] && rm -rf /usr/bin/tool
-  elif [ -L /usr/bin/tool ];then
-    rm -rf /usr/bin/tool
-    echo  "[$(date '+%Y-%m-%d %H:%M:%S')] 删除tool软连接"
-  fi
-
-  if [ -f  $config_path/tool ]; then
-     chmod +x $config_path/tool
-     sed -i "s/con_branch=.*/con_branch=$con_branch/g" $config_file
-     sed -i "s/url_address=.*/url_address=$url_address/g" $config_file
-  fi
-  if [ -f /tools/config ]; then
-      rm -rf /tools/config
-  fi
-  if [ -f /tools/version ]; then
-      rm -rf /tools/version
+  if [ -f  /tools/tool ]; then
+     chmod +x /tools/tool
+     if [ -n "$url_address" ] && [ -n "$con_branch" ]; then
+       sed -i "s/GetUrlAddress=.*/GetUrlAddress=$url_address/g" /tools/tool
+       sed -i "s/ConBranch=.*/ConBranch=$con_branch/g" /tools/tool
+     fi
   fi
 }
 function initialize_check() {
@@ -115,12 +103,6 @@ do
     fi
 done
 }
-function progress_bar() {
-    local total_functions=$1  # 总函数数量
-    local executed_functions=$2  # 已执行的函数数量
-    local progress=$((executed_functions * 100 / total_functions))  # 计算进度百分比
-    printf "\r处理中: [%-50s] %d%%" $(printf '#%.0s' $(seq 1 $((progress / 2)))) $progress
-}
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] 脚本获取成功，数据处理中，请稍后..."
 case $1 in
 -d)
@@ -141,13 +123,11 @@ case $1 in
   esac
   ;;
 *)
-  CHECK_FILE
-  progress_bar 2 1
   initialize_check
-  progress_bar 2 2
+  CHECK_FILE
   printf "\n"
   bash <(curl -sl https://"$url_address"/HiddenScholars/Linux-tools/"$con_branch"/Check/Check.sh) SetVariables PATH /tools/ /etc/profile
-  printf "\n%s 数据处理完成正在获取菜单\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
+  printf "%s 数据处理完成正在获取菜单\n" "[$(date '+%Y-%m-%d %H:%M:%S')]"
   bash <(curl -L https://$url_address/HiddenScholars/Linux-tools/$con_branch/Show_Use/Show_menu.sh) # function menu
   bash
   ;;
