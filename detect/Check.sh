@@ -1,33 +1,36 @@
 #!/bin/bash
 
-script_dir=$(cd "$(dirname "$0")" && pwd)
-source "$script_dir"/install.conf
+originate_dir=$(pwd | awk -F '/Linux-tools' '{print $1 "/Linux-tools/"}')
+script_dir=$(pwd | awk -F '/Linux-tools' '{print $1 "/Linux-tools" $2}')
+source "$originate_dir"/install.conf
 
 function ProcessCheck() {
     local process=("$@")
     if [ "${#process[@]}" -ne 0 ];then
         for pro in "${process[@]}"
         do
-          printf "残留进程检测\t\t"
-          local check_outcome=($("$script_dir"/Command/"$os_arch"/"$os"/pgrep "$pro"))
-          if [ "${check_outcome[@]}" -ne 0 ]; then
+          printf "{$process}进程检测\t\t"
+          local check_outcome=($("$originate_dir"/Command/"$os_arch"/"$os"/pgrep "$pro"))
+          if [ "${#check_outcome[@]}" -ne 0 ]; then
               if docker info &>/dev/null; then
                 for docker_pid in $(docker ps -qa)
                 do
                     GET_DockerServicePID+=("$docker_pid")
                 done
                 if [ "${#GET_DockerServicePID[@]}" -ne 0 ]; then
+                    temp_num=0
                     for ((i=0;i < "${#GET_DockerServicePID[@]}";i++))
                     do
+
                        DockerCheckOutcome=$(docker inspect --format '{{ .State.Pid }}' "${GET_DockerServicePID[$i]}")
-                       if [ "$DockerCheckOutcome" != "$pro" ];then
-                          unset "GET_DockerServicePID[$i]"
+                       if [ "$DockerCheckOutcome" == "$check_outcome" ];then
+                          let temp_num++
                        fi
                     done
-                    if [ "${#GET_DockerServicePID[@]}" == 0 ];then
+                    if [ "$temp_num" == 0 ];then
                        printf "\033[0;31m[✘]\033[0m\n"
-                       echo "[$(date '+%Y-%m-%d %H:%M:%S')] 有残留进程卸载后再次执行脚本"
-                       exit 1
+                       echo "[$(date '+%Y-%m-%d %H:%M:%S')] 有{$process}进程存在卸载后再次执行脚本"
+                       return 1
                     else
                        printf "\033[0;32m[✔]\033[0m\n"
                     fi
@@ -35,12 +38,14 @@ function ProcessCheck() {
               else
                 printf "\033[0;31m[✘]\033[0m\n"
                 echo "[$(date '+%Y-%m-%d %H:%M:%S')] 有残留进程卸载后再次执行脚本"
-                exit 1
+                return 1
               fi
           else
               printf "\033[0;32m[✔]\033[0m\n"
           fi
         done
+    else
+      echo "[$(date '+%Y-%m-%d %H:%M:%S')] 未检测到进程"
     fi
 }
 function PortCheck() {
@@ -48,57 +53,85 @@ function PortCheck() {
     if [ "${#ports[@]}" -ne 0 ]; then
         for port in "${ports[@]}"
         do
-          printf "端口占用检测\t\t"
-          local PortCheckOutcome=($("$script_dir"/Command/"$os_arch"/"$os"/netstat -anp | grep "$port" | grep -v grep))
+          printf "{$port}端口检测\t\t"
+          local PortCheckOutcome=($("$originate_dir"/Command/"$os_arch"/"$os"/netstat -anp | grep "$port" | grep -v grep))
           if [ "${#check_outcome[@]}" -ne 0 ]; then
               printf "\033[0;31m[✘]\033[0m\n"
               echo "[$(date '+%Y-%m-%d %H:%M:%S')] 端口被占用检查后再次执行脚本"
-              exit 1
+              return 1
           else
               printf "\033[0;32m[✔]\033[0m\n"
           fi
         done
+    else
+      echo "[$(date '+%Y-%m-%d %H:%M:%S')] 未检测到端口"
     fi
 }
 function PathCheck() {
     local paths=("$@")
     for i in "${paths[@]}"
     do
+      i=$(echo "$i" | tr -s '/')
       printf "$i\t\t"
       if [ -d "$i" ]; then
          printf "\033[0;31m[✘]\033[0m\n"
          echo "[$(date '+%Y-%m-%d %H:%M:%S')] 使用的目录已存在，请提前备份或执行卸载脚本清除环境"
+         return 1
       elif [ ! -d "$i" ]; then
           mkdir -p "$i"
           printf "\033[0;32m[✔]\033[0m\n"
       fi
     done
 }
-function check_unpack_file_path() {
-    if [ ! -d "$config_path"/unpack_file ];then
-      mkdir -p "$config_path"/unpack_file
-    fi
-    getUnpackNumber=$(find "$config_path/unpack_file/" -maxdepth 1 -type f -o -type d | wc -l)
-    if [ "$getUnpackNumber" -gt  11 ];then
-      source $config_file &>/dev/null
-      cd "$config_path"/ && tar cvf unpack_file_bak"$time".tar.gz unpack_file/*
-      rm -rf unpack_file/*
-      mv "$config_path"/unpack_file_bak* unpack_file/
-    fi
-    # 存放不存在的目录的变量
-    missing_dirs=""
-    # 检测并创建目录
-    for ((i=1; i<=1000; i++)); do
-        dir=$i
-        if [ -d "$config_path/unpack_file/$dir"  ] && [ "$(find $config_path/unpack_file/"$dir" |  wc -l )" -eq 1 ]; then
-            missing_dirs=$dir
-            let i+=1000
-        elif [ ! -d "$config_path/unpack_file/$dir" ]; then
-            mkdir "$config_path/unpack_file/$dir"
-            missing_dirs=$dir
-            let i+=1000
+function check_package_version() {
+   local name=$1  # nginx,mysql,jdk,docker,docker-compose...
+   if [ ! -d "$originate_dir"/soft/package/"$os_arch"/"$name"/ ]; then
+       echo "[$(date '+%Y-%m-%d %H:%M:%S')] 安装包目录不存在"
+       return 1
+   fi
+   local packages_name=($(find "$originate_dir"/soft/package/"$os_arch"/"$name"/ | grep tar.gz | awk -F "/$name/" '{print $2}'))
+   if [ "${#packages_name[@]}" -ne 0 ]; then
+       for ((i=0;i<"${#packages_name[@]}";i++))
+       do
+          GET_PackageVersion_1=$(echo "${packages_name[$i]}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          GET_PackageVersion_2=$(echo "${packages_name[$i]}" | grep -oE '[0-9]+\.[0-9]+\.tar.gz+' | sed 's/\.tar\.gz$//')
+          GET_PackageVersion_3=$(echo "${packages_name[$i]}" | sed 's/.*\(jdk.*tar\.gz\)/\1/')
+          if [ "${#GET_PackageVersion_1}" -ne 0 ]; then
+            echo "$i : $GET_PackageVersion_1"
+          elif [ "${#GET_PackageVersion_2}" -ne 0  ]; then
+            echo "$i : $GET_PackageVersion_2"
+          elif [ "${#GET_PackageVersion_3}" -ne 0  ]; then
+            echo "$i : $GET_PackageVersion_3"
+          else
+            if [ -n "$name"  ] && [ "${#packages_name[@]}" -ne 0 ]; then
+                echo "$i : 未识别的版本"
+            fi
+          fi
+          read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] Enter Your install service version choice：" y
+          nginx_package=$(find "$originate_dir"/soft/package/"$os_arch"/"$name"/ | grep tar.gz | grep "${packages_name[$i]}" )
+          nginx_package=$(echo "$nginx_package" | tr -s '/')
+          echo "[$(date '+%Y-%m-%d %H:%M:%S')] Start unzipping $nginx_package"
+          tar xf "$nginx_package" -C "$originate_dir"/tmp/ --strip-components 1
+          if [ $? -eq 0 ]; then
+             echo "[$(date '+%Y-%m-%d %H:%M:%S')] The decompression is complete"
+          else
+             echo "[$(date '+%Y-%m-%d %H:%M:%S')] Failed to decompress"
+              return 1
+          fi
+       done
+   else
+      echo "[$(date '+%Y-%m-%d %H:%M:%S')] 不存在安装包"
+      return 1
+   fi
+}
+function clean_tmp() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 清理临时目录"
+    if [ -f "$originate_dir"/tmp/ ]; then
+        local tmp_files=$(find "$originate_dir"/tmp/ | awk -F'/tmp/' '{print $2}' | grep -v '^$' | wc -l)
+        if [ "$tmp_files" != 0 ]; then
+            rm -rf "$originate_dir"/tmp/*
         fi
-    done
+    fi
 }
 function COLOR() {
 red='\033[31m'
@@ -169,10 +202,13 @@ PathCheck)
                   shift
                   PathCheck "$@"
                   ;;
-check_unpack_file_path)
+clean_tmp)
                   shift
-                  check_unpack_file_path
-                  echo "$missing_dirs"
+                  clean_tmp
+                  ;;
+check_package_version)
+                  shift
+                  check_package_version "$@"
                   ;;
 COLOR)
                  shift
@@ -184,5 +220,5 @@ SetVariables)
                   ;;
 *)
                   echo "failed 404"
-                  exit 1;
+                  ;;
 esac

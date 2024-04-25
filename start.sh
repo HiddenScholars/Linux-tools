@@ -77,11 +77,7 @@ function SYSTEM_CHECK() {
     exit 1
   fi
 }
-function check_file(){
-  if [ ! -f "$script_dir"/install.conf ]; then
-      printf
-  fi
-}
+
 function menu() {
     # 获取传入的数组参数
     local array1=("${!1}")
@@ -177,8 +173,12 @@ function main() {
 
 SYSTEM_CHECK
 source "$script_dir"/install.conf
-chmod +x "$script_dir"/Command/"$os_arch"/"$os"/*
-chmod -R +x "$script_dir"/soft/sbin/"$os_arch"/"$os"/
+for i in $(find "$script_dir"/Command/"$os_arch"/"$os"/)
+do
+   if [ ! -x "$i" ];then
+      chmod +x "$i"
+   fi
+done
 temp_return_select=0
 while true; do
 [ "$temp_return_select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 回车返回主菜单"
