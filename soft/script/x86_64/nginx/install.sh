@@ -26,9 +26,9 @@ function install() {
         progress=$((count * 100 / total))
         echo -ne "依赖安装: $progress%   \r"
         if [ "$os" == "centos_7" ]; then
-            rpm -Uvh --force "$rpm" &>/dev/null
+            rpm -Uvh --force "$rpm" 2>&1 | while IFS= read -r line; do echo "[$(date +'%Y-%m-%d %H:%M:%S')] $line"; done >> "$script_dir"/install.log
         elif [ "$os" == "ubuntu" ]; then
-            dpkg -i "$rpm" &>/dev/null
+            dpkg -i "$rpm" 2>&1 | while IFS= read -r line; do echo "[$(date +'%Y-%m-%d %H:%M:%S')] $line"; done >> "$script_dir"/install.log
         fi
     done
     printf "\n"
@@ -37,20 +37,28 @@ function install() {
     [ $? -ne 0 ] && exit 1
     cd "$originate_dir"/tmp/
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Start install... "
-    ./configure --prefix="$install_path"/nginx "$nginx_compile_parameter" && make && make install &&>dev/null
+    useradd -s /sbin/nologin "$nginx_user"
+    nginx_install=$(echo "$install_path"/nginx/ | tr -s '/')
+    set -x
+    ./configure --prefix="$nginx_install" --user="$nginx_user" --group="$nginx_user" "${nginx_compile_parameter[@]}" && make && make install
+    set +x
     if [ $? -eq 0 ]; then
        echo "[$(date '+%Y-%m-%d %H:%M:%S')] The installation is complete"
     else
        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Failed to install"
        exit 1
     fi
-    useradd -s /sbin/nologin "$nginx_user"
     chown -R "$nginx_user":"$nginx_user" "$install_path"/nginx/
     bash "$originate_dir"/detect/Check.sh SetVariables PATH "$install_path"/nginx/sbin/ /etc/profile
     source /etc/profile
     if nginx -v &>/dev/null;then
       echo "安装成功"
       cp -rf "$originate_dir"/soft/systemd/nginx/nginx.service /etc/systemd/system/
+      ExecStartPre=$(echo "$install_path"/nginx/sbin/nginx | tr -s '/')
+      sed -i "s|ExecStartPre=.*|ExecStartPre=$ExecStartPre -t|g" /etc/systemd/system/nginx.service
+      sed -i "s|ExecStart=.*|ExecStart=$ExecStartPre|g" /etc/systemd/system/nginx.service
+      sed -i "s|ExecReload=.*|ExecReload=$ExecStartPre -s reload|g" /etc/systemd/system/nginx.service
+      sed -i "s|ExecStop=.*|ExecStop=$ExecStartPre -s stop|g" /etc/systemd/system/nginx.service
       systemctl daemon-reload
       systemctl start nginx
       if [ $? -eq 0 ]; then

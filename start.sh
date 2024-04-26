@@ -114,7 +114,7 @@ function script_run() {
     local script_name=$(echo "$args" | awk -F '_'  '{print $3}')
     if [ "$install_uninstall" == "install" ]; then
        if [ "$script_path" == "soft" ]; then
-         "$script_dir"/Command/"$os_arch"/"$os"/figlet -f "$script_dir"/Command/font/slant.flf  "$script_name"
+         "$script_dir"/Command/"$os_arch"/"$os"/figlet -f "$script_dir"/Command/font/slant.flf  install "$script_name" | tee -a >(while IFS= read -r line; do echo "[$(date +'%Y-%m-%d %H:%M:%S')]  $line"; done) > "$script_dir"/install.log
           printf "$script_dir/$script_path/script/$os_arch/$script_name/install.sh\t\t"
           if [ -f "$script_dir/$script_path/script/$os_arch/$script_name/install.sh" ] && [ -x "$script_dir/$script_path/script/$os_arch/$script_name/install.sh" ]; then
               printf "\033[0;32m[✔]\033[0m\n"
@@ -136,7 +136,7 @@ function script_run() {
        fi
     elif [ "$install_uninstall" == "uninstall" ]; then
        if [ "$script_path" == "soft" ]; then
-         "$script_dir"/Command/"$os_arch"/"$os"/figlet -f "$script_dir"/Command/font/slant.flf "$script_name"
+         "$script_dir"/Command/"$os_arch"/"$os"/figlet -f "$script_dir"/Command/font/slant.flf uninstall "$script_name" | tee -a >(while IFS= read -r line; do echo "[$(date +'%Y-%m-%d %H:%M:%S')] $line"; done) > "$script_dir"/install.log
          printf "$script_dir/$script_path/script/$os_arch/$script_name/uninstall.sh\t\t"
           if [ -f "$script_dir/$script_path/script/$os_arch/$script_name/uninstall.sh" ] && [ -x "$script_dir/$script_path/script/$os_arch/$script_name/uninstall.sh" ]; then
               printf "\033[0;32m[✔]\033[0m\n"
