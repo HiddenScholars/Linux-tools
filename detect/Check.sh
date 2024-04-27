@@ -126,11 +126,13 @@ function check_package_version() {
 }
 function clean_tmp() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] 清理临时目录"
-    if [ -f "$originate_dir"/tmp/ ]; then
+    if [ -d "$originate_dir"/tmp/ ]; then
         local tmp_files=$(find "$originate_dir"/tmp/ | awk -F'/tmp/' '{print $2}' | grep -v '^$' | wc -l)
         if [ "$tmp_files" != 0 ]; then
             rm -rf "$originate_dir"/tmp/*
         fi
+    elif [ ! -d "$originate_dir"/tmp/ ]; then
+        mkdir "$originate_dir"/tmp/
     fi
 }
 function COLOR() {
@@ -188,7 +190,47 @@ function SetVariables() {
      [ -z "$variables_file" ] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] variables_file not found."
   fi
 }
-
+function install_depend(){
+    service_name=$1
+    # 依赖安装
+    ## 循环计数器
+    local count=0
+    # 统计软件包数量
+    local total=$(find "$originate_dir"/soft/depend/"$os_arch"/"$os"/"$service_name"/ | tail -n +2 | wc -l)
+    # 查找软件包并循环安装
+    for rpm in $(find "$originate_dir"/soft/depend/"$os_arch"/"$os"/"$service_name"/ | tail -n +2); do
+        ((count++))
+        # 更新进度条
+        progress=$((count * 100 / total))
+        echo -ne "依赖安装: $progress%   \r"
+        if [ "$os" == "centos_7" ]; then
+            rpm -Uvh --force "$rpm" 2>&1 | while IFS= read -r line; do echo "[$(date +'%Y-%m-%d %H:%M:%S')] $line"; done >> "$script_dir"/install.log
+        elif [ "$os" == "ubuntu" ]; then
+            dpkg -i "$rpm" 2>&1 | while IFS= read -r line; do echo "[$(date +'%Y-%m-%d %H:%M:%S')] $line"; done >> "$script_dir"/install.log
+        fi
+    done
+    printf "\n"
+}
+function check_user_group(){
+    local user=$1
+    local group=$2
+    printf "用户组{$group}"
+    groupadd $group &>/dev/null
+    if [ $? -eq 0 ];then
+       printf "\033[0;32m[✔]\033[0m\n"
+    else
+       printf "\033[0;31m[✘]\033[0m\n"
+       return 1
+    fi
+    printf "用户{$user}"
+    if ! id $user &>/dev/null;then
+       useradd -s /sbin/nologin -g $group -N $user
+        printf "\033[0;32m[✔]\033[0m\n"
+    elif id $user &>/dev/null;then
+       usermod -a -G $group $user
+        printf "\033[0;32m[✔]\033[0m\n"
+    fi
+}
 case $1 in
 PortCheck)
                   shift
@@ -217,6 +259,14 @@ COLOR)
 SetVariables)
                   shift
                   SetVariables "$@"
+                  ;;
+install_depend)
+                  shift
+                  install_depend "$@"
+                  ;;
+check_user_group)
+                  shift
+                  check_user_group "$@"
                   ;;
 *)
                   echo "failed 404"
