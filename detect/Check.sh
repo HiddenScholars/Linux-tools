@@ -215,10 +215,15 @@ function check_user_group(){
     local user=$1
     local group=$2
     printf "用户组{$group}"
-    groupadd $group &>/dev/null
+    getent  group $group &>/dev/null
     if [ $? -eq 0 ];then
        printf "\033[0;32m[✔]\033[0m\n"
     else
+       groupadd $group
+       getent  group $group &>/dev/null
+       if [ $? -eq 0 ];then
+          printf "\033[0;32m[✔]\033[0m\n"
+       fi
        printf "\033[0;31m[✘]\033[0m\n"
        return 1
     fi
