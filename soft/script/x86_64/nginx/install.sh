@@ -59,4 +59,5 @@ function install_nginx() {
     fi
 
 }
-install
+check
+install_nginx
