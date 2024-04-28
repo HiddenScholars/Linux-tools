@@ -192,13 +192,16 @@ function SetVariables() {
 }
 function install_depend(){
     service_name=$1
+    #清理临时目录
+    clean_tmp
     # 依赖安装
+    tar xf "$originate_dir"/soft/depend/"$os_arch"/"$os"/"$service_name"/"$service_name"_depend.tar.gz -C "$originate_dir"/tmp/ --strip-components 1
     ## 循环计数器
     local count=0
     # 统计软件包数量
-    local total=$(find "$originate_dir"/soft/depend/"$os_arch"/"$os"/"$service_name"/ | tail -n +2 | wc -l)
+    local total=$(find "$originate_dir"/tmp/ | tail -n +2 | wc -l)
     # 查找软件包并循环安装
-    for rpm in $(find "$originate_dir"/soft/depend/"$os_arch"/"$os"/"$service_name"/ | tail -n +2); do
+    for rpm in $(find "$originate_dir"/tmp/| tail -n +2); do
         ((count++))
         # 更新进度条
         progress=$((count * 100 / total))
@@ -215,12 +218,12 @@ function check_user_group(){
     local user=$1
     local group=$2
     printf "用户组{$group}"
-    getent  group $group &>/dev/null
+    getent  group "$group" &>/dev/null
     if [ $? -eq 0 ];then
        printf "\033[0;32m[✔]\033[0m\n"
     else
-       groupadd $group
-       getent  group $group &>/dev/null
+       groupadd "$group"
+       getent  group "$group" &>/dev/null
        if [ $? -eq 0 ];then
           printf "\033[0;32m[✔]\033[0m\n"
        fi
@@ -228,11 +231,11 @@ function check_user_group(){
        return 1
     fi
     printf "用户{$user}"
-    if ! id $user &>/dev/null;then
-       useradd -s /sbin/nologin -g $group -N $user
+    if ! id "$user" &>/dev/null;then
+       useradd -s /sbin/nologin -g "$group" -N "$user"
         printf "\033[0;32m[✔]\033[0m\n"
-    elif id $user &>/dev/null;then
-       usermod -a -G $group $user
+    elif id "$user" &>/dev/null;then
+       usermod -a -G "$group" "$user"
         printf "\033[0;32m[✔]\033[0m\n"
     fi
 }
