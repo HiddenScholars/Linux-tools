@@ -10,7 +10,7 @@ function ProcessCheck() {
         for pro in "${process[@]}"
         do
           printf "{$process}进程检测\t\t"
-          local check_outcome=($("$originate_dir"/Command/"$os_arch"/"$os"/pgrep "$pro"))
+          local check_outcome=($(pgrep "$pro"))
           if [ "${#check_outcome[@]}" -ne 0 ]; then
               if docker info &>/dev/null; then
                 for docker_pid in $(docker ps -qa)
@@ -54,7 +54,7 @@ function PortCheck() {
         for port in "${ports[@]}"
         do
           printf "{$port}端口检测\t\t"
-          local PortCheckOutcome=($("$originate_dir"/Command/"$os_arch"/"$os"/netstat -anp | grep "$port" | grep -v grep))
+          local PortCheckOutcome=($(netstat -anp | grep "$port" | grep -v grep))
           if [ "${#check_outcome[@]}" -ne 0 ]; then
               printf "\033[0;31m[✘]\033[0m\n"
               echo "[$(date '+%Y-%m-%d %H:%M:%S')] 端口被占用检查后再次执行脚本"
@@ -83,58 +83,47 @@ function PathCheck() {
       fi
     done
 }
-function check_package_version() {
-   local name=$1  # nginx,mysql,jdk,docker,docker-compose...
-   if [ ! -d "$originate_dir"/soft/package/"$os_arch"/"$name"/ ]; then
-       echo "[$(date '+%Y-%m-%d %H:%M:%S')] 安装包目录不存在"
-       return 1
-   fi
-   local packages_name=($(find "$originate_dir"/soft/package/"$os_arch"/"$name"/ | grep tar.gz | awk -F "/$name/" '{print $2}'))
-   if [ "${#packages_name[@]}" -ne 0 ]; then
-       for ((i=0;i<"${#packages_name[@]}";i++))
-       do
-          GET_PackageVersion_1=$(echo "${packages_name[$i]}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
-          GET_PackageVersion_2=$(echo "${packages_name[$i]}" | grep -oE '[0-9]+\.[0-9]+\.tar.gz+' | sed 's/\.tar\.gz$//')
-          GET_PackageVersion_3=$(echo "${packages_name[$i]}" | sed 's/.*\(jdk.*tar\.gz\)/\1/')
-          if [ "${#GET_PackageVersion_1}" -ne 0 ]; then
-            echo "$i : $GET_PackageVersion_1"
-          elif [ "${#GET_PackageVersion_2}" -ne 0  ]; then
-            echo "$i : $GET_PackageVersion_2"
-          elif [ "${#GET_PackageVersion_3}" -ne 0  ]; then
-            echo "$i : $GET_PackageVersion_3"
-          else
-            if [ -n "$name"  ] && [ "${#packages_name[@]}" -ne 0 ]; then
-                echo "$i : 未识别的版本"
-            fi
-          fi
-          read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] Enter Your install service version choice：" y
-          nginx_package=$(find "$originate_dir"/soft/package/"$os_arch"/"$name"/ | grep tar.gz | grep "${packages_name[$i]}" )
-          nginx_package=$(echo "$nginx_package" | tr -s '/')
-          echo "[$(date '+%Y-%m-%d %H:%M:%S')] Start unzipping $nginx_package"
-          tar xf "$nginx_package" -C "$originate_dir"/tmp/ --strip-components 1
-          if [ $? -eq 0 ]; then
-             echo "[$(date '+%Y-%m-%d %H:%M:%S')] The decompression is complete"
-          else
-             echo "[$(date '+%Y-%m-%d %H:%M:%S')] Failed to decompress"
-              return 1
-          fi
-       done
-   else
-      echo "[$(date '+%Y-%m-%d %H:%M:%S')] 不存在安装包"
-      return 1
-   fi
-}
-function clean_tmp() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 清理临时目录"
-    if [ -d "$originate_dir"/tmp/ ]; then
-        local tmp_files=$(find "$originate_dir"/tmp/ | awk -F'/tmp/' '{print $2}' | grep -v '^$' | wc -l)
-        if [ "$tmp_files" != 0 ]; then
-            rm -rf "$originate_dir"/tmp/*
-        fi
-    elif [ ! -d "$originate_dir"/tmp/ ]; then
-        mkdir "$originate_dir"/tmp/
-    fi
-}
+# function check_package_version() {
+#    local name=$1  # nginx,mysql,jdk,docker,docker-compose...
+#    if [ ! -d "$originate_dir"/soft/package/"$os_arch"/"$name"/ ]; then
+#        echo "[$(date '+%Y-%m-%d %H:%M:%S')] 安装包目录不存在"
+#        return 1
+#    fi
+#    local packages_name=($(find "$originate_dir"/soft/package/"$os_arch"/"$name"/ | grep tar.gz | awk -F "/$name/" '{print $2}'))
+#    if [ "${#packages_name[@]}" -ne 0 ]; then
+#        for ((i=0;i<"${#packages_name[@]}";i++))
+#        do
+#           GET_PackageVersion_1=$(echo "${packages_name[$i]}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+#           GET_PackageVersion_2=$(echo "${packages_name[$i]}" | grep -oE '[0-9]+\.[0-9]+\.tar.gz+' | sed 's/\.tar\.gz$//')
+#           GET_PackageVersion_3=$(echo "${packages_name[$i]}" | sed 's/.*\(jdk.*tar\.gz\)/\1/')
+#           if [ "${#GET_PackageVersion_1}" -ne 0 ]; then
+#             echo "$i : $GET_PackageVersion_1"
+#           elif [ "${#GET_PackageVersion_2}" -ne 0  ]; then
+#             echo "$i : $GET_PackageVersion_2"
+#           elif [ "${#GET_PackageVersion_3}" -ne 0  ]; then
+#             echo "$i : $GET_PackageVersion_3"
+#           else
+#             if [ -n "$name"  ] && [ "${#packages_name[@]}" -ne 0 ]; then
+#                 echo "$i : 未识别的版本"
+#             fi
+#           fi
+#           read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] Enter Your install service version choice：" y
+#           nginx_package=$(find "$originate_dir"/soft/package/"$os_arch"/"$name"/ | grep tar.gz | grep "${packages_name[$i]}" )
+#           nginx_package=$(echo "$nginx_package" | tr -s '/')
+#           echo "[$(date '+%Y-%m-%d %H:%M:%S')] Start unzipping $nginx_package"
+#           tar xf "$nginx_package" -C "$originate_dir"/tmp/ --strip-components 1
+#           if [ $? -eq 0 ]; then
+#              echo "[$(date '+%Y-%m-%d %H:%M:%S')] The decompression is complete"
+#           else
+#              echo "[$(date '+%Y-%m-%d %H:%M:%S')] Failed to decompress"
+#               return 1
+#           fi
+#        done
+#    else
+#       echo "[$(date '+%Y-%m-%d %H:%M:%S')] 不存在安装包"
+#       return 1
+#    fi
+# }
 function COLOR() {
 red='\033[31m'
 green='\033[32m'
@@ -190,26 +179,113 @@ function SetVariables() {
      [ -z "$variables_file" ] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] variables_file not found."
   fi
 }
-function install_depend(){
-    service_name=$1
-    # 依赖安装
-    ## 循环计数器
-    local count=0
-    # 统计软件包数量
-    local total=$(find "$originate_dir"/soft/depend/"$os_arch"/"$os"/"$service_name"/ | tail -n +2 | wc -l)
-    # 查找软件包并循环安装
-    for rpm in $(find "$originate_dir"/soft/depend/"$os_arch"/"$os"/"$service_name"/ | tail -n +2); do
-        ((count++))
-        # 更新进度条
-        progress=$((count * 100 / total))
-        echo -ne "依赖安装: $progress%   \r"
-        if [ "$os" == "centos_7" ]; then
-            rpm -Uvh --force "$rpm" 2>&1 | while IFS= read -r line; do echo "[$(date +'%Y-%m-%d %H:%M:%S')] $line"; done >> "$script_dir"/install.log
-        elif [ "$os" == "ubuntu" ]; then
-            dpkg -i "$rpm" 2>&1 | while IFS= read -r line; do echo "[$(date +'%Y-%m-%d %H:%M:%S')] $line"; done >> "$script_dir"/install.log
-        fi
-    done
-    printf "\n"
+# function install_depend(){
+#     service_name=$1
+#     # 依赖安装
+#     ## 循环计数器
+#     local count=0
+#     # 统计软件包数量
+#     local total=$(find "$originate_dir"/soft/depend//"$os"/"$service_name"/ | tail -n +2 | wc -l)
+#     # 查找软件包并循环安装
+#     for rpm in $(find "$originate_dir"/soft/depend/"$os_arch"/"$os"/"$service_name"/ | tail -n +2); do
+#         ((count++))
+#         # 更新进度条
+#         progress=$((count * 100 / total))
+#         echo -ne "依赖安装: $progress%   \r"
+#         if [ "$os" == "centos_7" ]; then
+#             rpm -Uvh --force "$rpm" 2>&1 | while IFS= read -r line; do echo "[$(date +'%Y-%m-%d %H:%M:%S')] $line"; done >> "$script_dir"/install.log
+#         elif [ "$os" == "ubuntu" ]; then
+#             dpkg -i "$rpm" 2>&1 | while IFS= read -r line; do echo "[$(date +'%Y-%m-%d %H:%M:%S')] $line"; done >> "$script_dir"/install.log
+#         fi
+#     done
+#     printf "\n"
+# }
+function download(){
+local download_address_name=$1
+source $originate_dir/download/download.env
+if [ -n $download_address_name ];then
+get_url_arrays="$download_address_name"_download_urls
+DownloadUrl=(${$(get_url_arrays)[@]})
+      for (( i = 0; url < "${#DownloadUrl[@]}"; i++ )); do
+          GET_PackageVersion_1=$(echo "${DownloadUrl[$url]}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          GET_PackageVersion_2=$(echo "${DownloadUrl[$url]}" | grep -oE '[0-9]+\.[0-9]+\.tar.gz+' | sed 's/\.tar\.gz$//')
+          GET_PackageVersion_3=$(echo "${DownloadUrl[$url]}" | sed 's/.*\(jdk.*tar\.gz\)/\1/')
+          if [ "${#GET_PackageVersion_1}" -ne 0 ]; then
+            echo "$i : $GET_PackageVersion_1"
+          elif [ "${#GET_PackageVersion_2}" -ne 0  ]; then
+            echo "$i : $GET_PackageVersion_2"
+          elif [ "${#GET_PackageVersion_3}" -ne 0  ]; then
+            echo "$i : $GET_PackageVersion_3"
+          else
+            if [ -n "$ServerName"  ] && [ "${#DownloadUrl[@]}" -ne 0 ]; then
+                echo "$i : 未识别的版本"
+            fi
+          fi
+      done
+      if  [ "${#DownloadUrl[@]}" -ne 0 ];then
+          read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] select Your install service version：" y
+      fi
+      if [[ "$y" =~ ^[0-9]+$ ]] && [ -n "$url" ] ; then
+           wget -P "$originate_dir/package" "${DownloadUrl[$y]}"
+           if [ $? -eq 0 ];then
+            echo "[$(date '+%Y-%m-%d %H:%M:%S')] 下载成功."
+            sed -i 's|info=.*|info=$download_address_name|g' "$originate_dir/soft/script/$download_address_name/.env"
+           else
+            echo "[$(date '+%Y-%m-%d %H:%M:%S')] 下载失败."
+            return 1
+          fi
+      else
+          echo "[$(date '+%Y-%m-%d %H:%M:%S')] 输入错误."
+          echo "[$(date '+%Y-%m-%d %H:%M:%S')] 下载失败."
+          return 1
+      fi
+elif [ -z $download_address_name ];then
+     unset download_address_name
+     download_address_name=($(find $originate_dir/download/download_address/ -mindepth 1 -type d   | awk -F '/download_address/' '{print $2}'))
+     for ((i=0;i<${#download_address_name[@]};i++))
+     do
+         echo "$i : ${download_address_name[$i]}"
+     done
+     read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] select Your download service package ：" download_address_name_select
+     if [[ "$download_address_name_select" =~ ^[0-9]+$ ]] && [ -n "${download_address_name[$download_address_name_select]}" ] ; then
+        download_address_name=${download_address_name[$download_address_name_select]}
+        get_url_arrays="$download_address_name"_download_urls
+        DownloadUrl=(${$(get_url_arrays)[@]})
+      for (( i = 0; url < "${#DownloadUrl[@]}"; i++ )); do
+          GET_PackageVersion_1=$(echo "${DownloadUrl[$url]}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          GET_PackageVersion_2=$(echo "${DownloadUrl[$url]}" | grep -oE '[0-9]+\.[0-9]+\.tar.gz+' | sed 's/\.tar\.gz$//')
+          GET_PackageVersion_3=$(echo "${DownloadUrl[$url]}" | sed 's/.*\(jdk.*tar\.gz\)/\1/')
+          if [ "${#GET_PackageVersion_1}" -ne 0 ]; then
+            echo "$i : $GET_PackageVersion_1"
+          elif [ "${#GET_PackageVersion_2}" -ne 0  ]; then
+            echo "$i : $GET_PackageVersion_2"
+          elif [ "${#GET_PackageVersion_3}" -ne 0  ]; then
+            echo "$i : $GET_PackageVersion_3"
+          else
+            if [ -n "$ServerName"  ] && [ "${#DownloadUrl[@]}" -ne 0 ]; then
+                echo "$i : 未识别的版本"
+            fi
+          fi
+      done
+      if  [ "${#DownloadUrl[@]}" -ne 0 ];then
+          read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] select Your install service version：" y
+      fi
+      if [[ "$y" =~ ^[0-9]+$ ]] && [ -n "$url" ] ; then
+          wget -P "$originate_dir/package" "${DownloadUrl[$y]}"
+           if [ $? -eq 0 ];then
+            echo "[$(date '+%Y-%m-%d %H:%M:%S')] 下载成功."
+            sed -i 's|info=.*|info=$download_address_name|g' "$originate_dir/soft/script/$download_address_name/.env"
+           else
+            echo "[$(date '+%Y-%m-%d %H:%M:%S')] 下载失败."
+            return 1
+          fi
+      else
+          echo "[$(date '+%Y-%m-%d %H:%M:%S')] 输入错误."
+          echo "[$(date '+%Y-%m-%d %H:%M:%S')] 下载失败."
+          return 1
+      fi
+     fi
+fi
 }
 function check_user_group(){
     local user=$1
@@ -249,10 +325,6 @@ PathCheck)
                   shift
                   PathCheck "$@"
                   ;;
-clean_tmp)
-                  shift
-                  clean_tmp
-                  ;;
 check_package_version)
                   shift
                   check_package_version "$@"
@@ -272,6 +344,10 @@ install_depend)
 check_user_group)
                   shift
                   check_user_group "$@"
+                  ;;
+download)
+                  shift
+                  download "$@"
                   ;;
 *)
                   echo "failed 404"

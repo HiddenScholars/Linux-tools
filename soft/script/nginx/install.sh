@@ -4,7 +4,6 @@
 originate_dir=$(pwd | awk -F '/Linux-tools' '{print $1 "/Linux-tools/"}')
 script_dir=$(pwd | awk -F '/Linux-tools' '{print $1 "/Linux-tools" $2}')
 function check(){
-    bash "$originate_dir"/detect/Check.sh clean_tmp
     source "$originate_dir"/install.conf
     bash "$originate_dir"/detect/Check.sh PathCheck "$install_path"/nginx/
     [ $? -ne 0 ] && exit 1
@@ -23,7 +22,7 @@ function install_nginx() {
     #安装依赖
     bash "$originate_dir"/detect/Check.sh install_depend nginx
     #解压安装包到tmp临时目录
-    bash "$originate_dir"/detect/Check.sh check_package_version nginx
+    bash "$originate_dir"/detect/Check.sh download nginx
     [ $? -ne 0 ] && exit 1
     cd "$originate_dir"/tmp/
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Start install... "
