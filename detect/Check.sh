@@ -9,7 +9,7 @@ function ProcessCheck() {
     if [ "${#process[@]}" -ne 0 ];then
         for pro in "${process[@]}"
         do
-          printf "{$process}进程检测\t\t"
+          printf "进程检测\t\t"
           local check_outcome=($(pgrep "$pro"))
           if [ "${#check_outcome[@]}" -ne 0 ]; then
               if docker info &>/dev/null; then
@@ -53,7 +53,7 @@ function PortCheck() {
     if [ "${#ports[@]}" -ne 0 ]; then
         for port in "${ports[@]}"
         do
-          printf "{$port}端口检测\t\t"
+          printf "端口检测\t\t"
           local PortCheckOutcome=($(netstat -anp | grep "$port" | grep -v grep))
           if [ "${#check_outcome[@]}" -ne 0 ]; then
               printf "\033[0;31m[✘]\033[0m\n"
@@ -226,18 +226,22 @@ DownloadUrl=(${$(get_url_arrays)[@]})
           read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] select Your install service version：" y
       fi
       if [[ "$y" =~ ^[0-9]+$ ]] && [ -n "$url" ] ; then
-           wget -P "$originate_dir/package" "${DownloadUrl[$y]}"
-           if [ $? -eq 0 ];then
-            echo "[$(date '+%Y-%m-%d %H:%M:%S')] 下载成功."
-            sed -i 's|info=.*|info=$download_address_name|g' "$originate_dir/soft/script/$download_address_name/.env"
-           else
-            echo "[$(date '+%Y-%m-%d %H:%M:%S')] 下载失败."
-            return 1
-          fi
-      else
-          echo "[$(date '+%Y-%m-%d %H:%M:%S')] 输入错误."
-          echo "[$(date '+%Y-%m-%d %H:%M:%S')] 下载失败."
-          return 1
+           if [ ! -f "$originate_dir/package/$(echo ${DownloadUrl[$y]}  | awk -F '/' '{print $NF}')" ];then
+               wget -P "$originate_dir/package" "${DownloadUrl[$y]}"
+               if [ $? -eq 0 ];then
+                echo "[$(date '+%Y-%m-%d %H:%M:%S')] 下载成功."
+                sed -i 's|info=.*|info=$download_address_name|g' "$originate_dir/soft/script/$download_address_name/.env"
+               else
+                echo "[$(date '+%Y-%m-%d %H:%M:%S')] 下载失败."
+                return 1
+              fi
+          else
+              echo "[$(date '+%Y-%m-%d %H:%M:%S')] 输入错误."
+              echo "[$(date '+%Y-%m-%d %H:%M:%S')] 下载失败."
+              return 1
+          else
+             echo "[$(date '+%Y-%m-%d %H:%M:%S')] 安装包存在不再下载"
+             sed -i 's|info=.*|info=$download_address_name|g' "$originate_dir/soft/script/$download_address_name/.env"
       fi
 elif [ -z $download_address_name ];then
      unset download_address_name
@@ -271,18 +275,21 @@ elif [ -z $download_address_name ];then
           read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] select Your install service version：" y
       fi
       if [[ "$y" =~ ^[0-9]+$ ]] && [ -n "$url" ] ; then
-          wget -P "$originate_dir/package" "${DownloadUrl[$y]}"
-           if [ $? -eq 0 ];then
-            echo "[$(date '+%Y-%m-%d %H:%M:%S')] 下载成功."
-            sed -i 's|info=.*|info=$download_address_name|g' "$originate_dir/soft/script/$download_address_name/.env"
-           else
-            echo "[$(date '+%Y-%m-%d %H:%M:%S')] 下载失败."
-            return 1
-          fi
-      else
-          echo "[$(date '+%Y-%m-%d %H:%M:%S')] 输入错误."
-          echo "[$(date '+%Y-%m-%d %H:%M:%S')] 下载失败."
-          return 1
+           if [ ! -f "$originate_dir/package/$(echo ${DownloadUrl[$y]} | awk -F '/' '{print $NF}')" ];then
+               wget -P "$originate_dir/package" "${DownloadUrl[$y]}"
+               if [ $? -eq 0 ];then
+                echo "[$(date '+%Y-%m-%d %H:%M:%S')] 安装包存在不再下载"
+                sed -i 's|info=.*|info=$download_address_name|g' "$originate_dir/soft/script/$download_address_name/.env"
+               else
+                echo "[$(date '+%Y-%m-%d %H:%M:%S')] 下载失败."
+                return 1
+              fi
+          else
+              echo "[$(date '+%Y-%m-%d %H:%M:%S')] 输入错误."
+              echo "[$(date '+%Y-%m-%d %H:%M:%S')] 下载失败."
+              return 1
+          else
+             echo "[$(date '+%Y-%m-%d %H:%M:%S')] 安装包存在不在安装"
       fi
      fi
 fi
