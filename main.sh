@@ -1,5 +1,6 @@
 #!/bin/bash
 
+version=2024-5-18
 #全局变量
 ## 网络环境 具体地址：url_address 没有网络环境：null
 network_env=''
@@ -13,7 +14,7 @@ controls=''
 download_path=''
 ## 存储下载下来的安装包名称,脚本内使用无需配置文件中持久存储
 download_package_name=''
-## 中间价安装路径
+## 软件安装路径
 soft_install_path=''
 ## 内置下载链接使用判断 y: 确认 其他*: 输入的自定义链接
 url_address_select=''
@@ -41,7 +42,7 @@ if [ -f $config_name ]; then
     printf "安装包存储路径: "
     PathCheck "$download_path"
     printf "\n\n"
-    [ -z "$soft_install_path" ] && read -rp "初次使用，定义中间件安装路径: " soft_install_path
+    [ -z "$soft_install_path" ] && read -rp "初次使用，定义软件安装路径: " soft_install_path
     printf "中间件安装路径: "
     PathCheck "$soft_install_path"
     printf "\n\n"
@@ -330,6 +331,7 @@ function Readme() {
   case $1 in
   level_1)
     printf "\n\n"
+    echo "version: $version"
     echo "使用方法："
     printf "\t - SetVariables - 作用：设置环境变量，参数：[变量名] [路径] [写入的文件]\n"
     printf "\t - PathCheck - 作用：检测路径是否存在，参数：[路径] ...\n"
