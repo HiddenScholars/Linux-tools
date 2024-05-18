@@ -3,30 +3,34 @@
 
 originate_dir=$(pwd | awk -F '/Linux-tools' '{print $1 "/Linux-tools/"}')
 script_dir=$(pwd | awk -F '/Linux-tools' '{print $1 "/Linux-tools" $2}')
-function check(){
-    bash "$originate_dir"/detect/Check.sh clean_tmp
     source "$originate_dir"/install.conf
+    source $script_dir/.env
+handle_error() {
+    if [ $? -ne 0 ];then
+        echo "出现运行错误，解决后再次运行！错误码：$?"
+        exit 1
+    fi
+}
+trap handle_error ERR
+function check(){
     bash "$originate_dir"/detect/Check.sh PathCheck "$install_path"/nginx/
-    [ $? -ne 0 ] && exit 1
     process=("nginx")
     port=(80)
     bash "$originate_dir"/detect/Check.sh PortCheck "${port[@]}"
-    [ $? -ne 0 ] && exit 1
     bash "$originate_dir"/detect/Check.sh ProcessCheck "${process[@]}"
-    [ $? -ne 0 ] && exit 1
 }
 
 function install_nginx() {
     #创建用户和用户组
     bash "$originate_dir"/detect/Check.sh check_user_group $nginx_user $nginx_group
-    [ $? -ne 0 ] && exit 1
     #安装依赖
+
     bash "$originate_dir"/detect/Check.sh install_depend nginx
-    #解压安装包到tmp临时目录
-    bash "$originate_dir"/detect/Check.sh check_package_version nginx
-    [ $? -ne 0 ] && exit 1
-    cd "$originate_dir"/tmp/
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Start install... "
+    #下载安装包
+    bash "$originate_dir"/detect/Check.sh download nginx
+    
+    cd "$originate_dir"/package/ && tar xvf $package_info
+
     nginx_install=$(echo "$install_path"/nginx/ | tr -s '/')
     set -x
     ./configure --prefix="$nginx_install" --user="$nginx_user" --group="$nginx_user" "${nginx_compile_parameter[@]}" && make && make install

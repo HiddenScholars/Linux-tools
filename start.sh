@@ -37,15 +37,14 @@ function SYSTEM_CHECK() {
     if [ -f /etc/os-release ]; then
         source /etc/os-release
         if [ "$ID" == "centos" ]; then
-            if [ "$VERSION_ID" == "7" ]; then
-               SystemVersion="centos_7"
-            fi
         elif [ "$ID" == "ubuntu" ]; then
             SystemVersion="ubuntu"
         elif [ "$ID" == "debian" ]; then
             SystemVersion="debian"
         elif [ "$ID" == "anolis" ]; then
             SystemVersion="Anolis OS"
+        elif [ "$ID" == "alpine" ]; then
+            SystemVersion="alpine"
         else
             echo "[$(date '+%Y-%m-%d %H:%M:%S')] 暂不支持$ID:$VERSION_ID的发行版本"
             exit 1
@@ -54,10 +53,8 @@ function SYSTEM_CHECK() {
       echo "[$(date '+%Y-%m-%d %H:%M:%S')] 系统检测失败..."
       exit 1
     fi
-    if [ "$(uname -m)" == "x86_64" ]; then
-        CPUArchitecture=$(uname -m)
-    else
-       echo "[$(date '+%Y-%m-%d %H:%M:%S')] 暂不支持$CPUArchitecture架构"
+    if [ "$(uname -m)" != "x86_64" ]; then
+       echo "[$(date '+%Y-%m-%d %H:%M:%S')] 不支持$CPUArchitecture架构"
        exit 1
     fi
     if command -v apt-get &>/dev/null; then
@@ -71,7 +68,6 @@ function SYSTEM_CHECK() {
   if [ -f "$script_dir"/install.conf ]; then
       sed -i "s|os=.*|os=$SystemVersion|g" "$script_dir"/install.conf
       sed -i "s|package_manager=.*|package_manager=$controls|g" "$script_dir"/install.conf
-      sed -i "s|os_arch=.*|os_arch=$CPUArchitecture|g" "$script_dir"/install.conf
   else
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] 修改install.conf文件失败,install.conf不存在"
     exit 1
@@ -345,14 +341,13 @@ function script_run() {
     local script_name=$(echo "$args" | awk -F '_'  '{print $3}')
     if [ "$install_uninstall" == "install" ]; then
        if [ "$script_path" == "soft" ]; then
-         "$script_dir"/Command/"$os_arch"/"$os"/figlet -f "$script_dir"/Command/font/slant.flf  install "$script_name" | tee -a >(while IFS= read -r line; do echo "[$(date +'%Y-%m-%d %H:%M:%S')]  $line"; done) > "$script_dir"/install.log
-          printf "$script_dir/$script_path/script/$os_arch/$script_name/install.sh\t\t"
-          if [ -f "$script_dir/$script_path/script/$os_arch/$script_name/install.sh" ] && [ -x "$script_dir/$script_path/script/$os_arch/$script_name/install.sh" ]; then
+          printf "$script_dir/$script_path/script/$script_name/install.sh\t\t"
+          if [ -f "$script_dir/$script_path/script/$script_name/install.sh" ] && [ -x "$script_dir/$script_path/script/$script_name/install.sh" ]; then
               printf "\033[0;32m[✔]\033[0m\n"
           else
-              if [ -f "$script_dir/$script_path/script/$os_arch/$script_name/install.sh" ]; then
-                  chmod +x "$script_dir/$script_path/script/$os_arch/$script_name/install.sh"
-                  if [ -x "$script_dir/$script_path/script/$os_arch/$script_name/install.sh" ];then
+              if [ -f "$script_dir/$script_path/script/$script_name/install.sh" ]; then
+                  chmod +x "$script_dir/$script_path/script/$script_name/install.sh"
+                  if [ -x "$script_dir/$script_path/script/$script_name/install.sh" ];then
                      printf "\033[0;32m[✔]\033[0m\n"
                   else
                      printf "\033[0;31m[×]\033[0m\n"
@@ -361,20 +356,19 @@ function script_run() {
                  printf "\033[0;31m[×]\033[0m\n"
               fi
           fi
-          bash "$script_dir/$script_path/script/$os_arch/$script_name/install.sh"
+          bash "$script_dir/$script_path/script/$script_name/install.sh"
         else
           exit 1
        fi
     elif [ "$install_uninstall" == "uninstall" ]; then
        if [ "$script_path" == "soft" ]; then
-         "$script_dir"/Command/"$os_arch"/"$os"/figlet -f "$script_dir"/Command/font/slant.flf uninstall "$script_name" | tee -a >(while IFS= read -r line; do echo "[$(date +'%Y-%m-%d %H:%M:%S')] $line"; done) > "$script_dir"/install.log
-         printf "$script_dir/$script_path/script/$os_arch/$script_name/uninstall.sh\t\t"
-          if [ -f "$script_dir/$script_path/script/$os_arch/$script_name/uninstall.sh" ] && [ -x "$script_dir/$script_path/script/$os_arch/$script_name/uninstall.sh" ]; then
+         printf "$script_dir/$script_path/script/$script_name/uninstall.sh\t\t"
+          if [ -f "$script_dir/$script_path/script/$script_name/uninstall.sh" ] && [ -x "$script_dir/$script_path/script/$script_name/uninstall.sh" ]; then
               printf "\033[0;32m[✔]\033[0m\n"
           else
-              if [ -f "$script_dir/$script_path/script/$os_arch/$script_name/uninstall.sh" ]; then
-                  chmod +x "$script_dir/$script_path/script/$os_arch/$script_name/uninstall.sh"
-                  if [ -x "$script_dir/$script_path/script/$os_arch/$script_name/uninstall.sh" ];then
+              if [ -f "$script_dir/$script_path/script/$script_name/uninstall.sh" ]; then
+                  chmod +x "$script_dir/$script_path/script/$script_name/uninstall.sh"
+                  if [ -x "$script_dir/$script_path/script/$script_name/uninstall.sh" ];then
                      printf "\033[0;32m[✔]\033[0m\n"
                   else
                      printf "\033[0;31m[×]\033[0m\n"
@@ -383,7 +377,7 @@ function script_run() {
                  printf "\033[0;31m[×]\033[0m\n"
               fi
           fi
-          bash "$script_dir/$script_path/script/$os_arch/$script_name/uninstall.sh"
+          bash "$script_dir/$script_path/script/$script_name/uninstall.sh"
        else
          exit 1
        fi
@@ -404,12 +398,6 @@ function main() {
 
 SYSTEM_CHECK
 source "$script_dir"/install.conf
-for i in $(find "$script_dir"/Command/"$os_arch"/"$os"/)
-do
-   if [ ! -x "$i" ];then
-      chmod +x "$i"
-   fi
-done
 temp_return_select=0
 while true; do
 [ "$temp_return_select" -ne 0 ] && read -rp "[$(date '+%Y-%m-%d %H:%M:%S')] 回车返回主菜单"
