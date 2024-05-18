@@ -1,1 +1,0 @@
-https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/static/stable/x86_64/docker-17.03.0-ce.tgz
