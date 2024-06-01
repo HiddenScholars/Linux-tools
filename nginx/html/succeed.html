@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>欢迎使用Linux-tools</title>
+
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #f0f0f0; /* 将背景颜色改为灰色 */
+        }
+        #container {
+            max-width: 600px;
+            width: 100%;
+        }
+        #output {
+            background-color: white; /* 将输出窗口的背景色改为白色 */
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: black; /* 修改文本颜色为黑色 */
+            position: relative; /* 添加这行以让子元素的绝对定位相对于父元素 */
+        }
+        #copyButton {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .copy-success {
+            background-color: rgba(76, 175, 80, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999;
+            display: none; /* 初始状态隐藏 */
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="output">
+            <h1>已经成功运行 </h1>
+            <p>点击Copy后粘贴到你的终端中开始使用吧</p>
+            <code id="command"></code>
+            <button id="copyButton">Copy</button>
+            <div class="copy-success" id="copySuccess">复制成功</div>
+        </div>
+    </div>
+
+    <script>
+        // 获取当前页面的 URL 地址和端口
+        var url = window.location.hostname;
+        var port = window.location.port || (window.location.protocol === 'https:' ? '443' : '80');
+
+        // 生成命令
+        var command = 'bash <(curl -L http://' + url + ':' + port + '/file/use_quick.sh)';
+
+        // 将命令显示在页面上
+        document.getElementById('command').textContent = command;
+
+        // 复制命令
+        document.getElementById('copyButton').addEventListener('click', function() {
+            var commandText = document.getElementById('command');
+            var range = document.createRange();
+            range.selectNode(commandText);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+
+            // 显示复制成功提示
+            document.getElementById('copySuccess').style.display = 'block';
+
+            // 3秒后隐藏提示
+            setTimeout(function() {
+                document.getElementById('copySuccess').style.display = 'none';
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

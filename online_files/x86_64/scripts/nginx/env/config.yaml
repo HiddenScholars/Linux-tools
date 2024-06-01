@@ -1,0 +1,45 @@
+# 系统信息
+os=
+## 系统版本
+os_version=
+## 系统架构
+os_arch=
+# 网络环境 CN | US | NULL
+network_type=
+# 安装包管理器 apt | yum | dnf
+controls=
+# 脚本获取url地址 https://raw.github.com | https://192.168.19.2
+get_url_address=
+# 中间件安装包下载保存地址
+download_dest_path=/usr/local/Linux-tools/download/soft/
+# 中间件安装包保存路径
+soft_save_path=/usr/local/Linux-tools/download/soft/
+# 中间件安装路径 在该路径下还会生成一个中间件名字的目录
+soft_install_path=/usr/local/Linux-tools/soft/
+# 备份路径
+backup_path=/usr/local/Linux-tools/backup/
+# 脚本安装初始路径(无需修改)
+install_sh_path=
+# nginx安装包绝对路径,为空或是文件不存在自动弹出网络下载
+nginx_install_package_path=
+# nginx的依赖安装方式  local | network
+nginx_depend_install=network
+# nginx网络依赖名,未配置包管理器安装对应的网络依赖包名此项失效
+nginx_apt_depend_name=(build-essential libpcre3-dev zlib1g-dev libssl-dev lua5.1 lua5.1-dev)
+nginx_yum_depend_name=(gcc pcre-devel zlib-devel openssl-devel lua lua-devel)
+## nginx离线依赖路径,nginx_depend_install为local或此项为空安装此项失效
+nginx_depend_path=$get_url_address/$os_arch/scripts/nginx/depend/
+## nginx编译配置
+nginx_configure_option=(--with-http_ssl_module --with-http_v2_module --with-http_gzip_static_module --with-stream --with-stream_ssl_module)
+# nginx工作进程启动用户
+nginx_user=nginx
+# nginx工作进程启动用户组
+nginx_group=nginx
+# mysql程序启动用户
+mysql_user=mysql
+# myql程序启动用户组
+mysql_group=mysql
+# mysql程序root密码
+mysql_password=
+# mysql程序启动端口
+mysql_port=13306

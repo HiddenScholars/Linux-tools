@@ -1,0 +1,19 @@
+version: '3.0'
+
+services:
+ nginx:
+   image: nginx:1.25.5
+   ports:
+     - "8880:80"
+   container_name: linux_tools_nginx
+   volumes:
+     - ./conf/:/etc/nginx/
+     - ./logs/:/var/log/nginx/
+     - ./html/succeed.html:/usr/share/nginx/html/index.html
+     - ../online_files/:/online_files/
+   restart: always
+   networks:
+     - Linux-tools
+networks:
+  Linux-tools:
+    driver: bridge
