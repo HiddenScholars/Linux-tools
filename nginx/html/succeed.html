@@ -68,7 +68,7 @@
         var port = window.location.port || (window.location.protocol === 'https:' ? '443' : '80');
 
         // 生成命令
-        var command = 'bash <(curl -L http://' + url + ':' + port + '/file/use_quick.sh)';
+        var command = 'bash <(curl -L http://' + url + ':' + port + '/file/quick_start.sh)';
 
         // 将命令显示在页面上
         document.getElementById('command').textContent = command;

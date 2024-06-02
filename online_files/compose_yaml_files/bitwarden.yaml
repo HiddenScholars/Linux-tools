@@ -1,0 +1,26 @@
+version: '3'
+services:
+  bitwarden:
+    image: docker.io/vaultwarden/server:1.30.1
+    container_name: bitwarden
+    ports:
+      - 8080:80
+      - 3012:3012
+    environment:
+      - SIGNUPS_ALLOWED=false
+      - WEB_VAULT_ENABLED=false
+      - DOMAIN=https://xxx.xxx.xxx
+      - ADMIN_TOKEN=xxxx
+      # 设置日志路径
+      - LOG_FILE=./data/access.log
+      # 日志级别选项：trace、debug、info、warn、error 以及 off
+      - LOG_LEVEL=error
+      - EXTENDED_LOGGING=true
+      # 显示密码提示：true启用，false禁用
+      - SHOW_PASSWORD_HINT=false
+      # 启用或禁用邀请：true启用，false禁用
+      - INVITATIONS_ALLOWED=false
+      # 启用或禁用分享发送功能，默认开启，启用true，禁用false
+      #- SENDS_ALLOWED=false
+    volumes:
+      - ./data/bitwarden:/data
